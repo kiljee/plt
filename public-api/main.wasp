@@ -6,14 +6,17 @@ app publicApi {
   head: [
     "<link rel='icon' href='/favicon.ico' />",
   ],
+  server: {
+    setupFn: import { serverSetup } from "@src/server/setup"
+  },
   auth: {
     userEntity: User,
     onAfterSignup: import { onAfterSignup } from "@src/auth/hooks",
     methods: {
       email: {
         fromField: {
-          name: "Basic App",
-          email: "hello@example.com"
+          name: "Paleto Events",
+          email: "noreply@paleto.local"
         },
         userSignupFields: import { userSignupFields } from "@src/auth/email/userSignupFields",
         emailVerification: {
@@ -123,6 +126,13 @@ api getEventsPublic {
   entities: [Event],
   auth: false,
   httpRoute: (GET, "/api/events")
+}
+
+api getEventBySlugPublic {
+  fn: import { getEventBySlugPublic } from "@src/events/apiSlug",
+  entities: [Event, Reservation],
+  auth: false,
+  httpRoute: (GET, "/api/events/by-slug")
 }
 
 api createReservationPublic {

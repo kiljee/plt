@@ -23,6 +23,8 @@ export const getEventsPublic: GetEventsPublic = async (req, res, context) => {
       ageCategory: true,
       capacity: true,
       imageUrls: true,
+      price: true,
+      currency: true,
       createdAt: true,
     },
   };

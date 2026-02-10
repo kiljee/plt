@@ -19,6 +19,8 @@ export type CreateEventArgs = {
   ageCategory: string;
   capacity: number;
   imageUrls: string[];
+  price: number;
+  currency: string;
 };
 
 export type UpdateEventArgs = CreateEventArgs & {
@@ -81,6 +83,8 @@ export const createEvent: CreateEvent<CreateEventArgs, Event> = async (
     ageCategory: args.ageCategory ?? "",
     capacity: Math.max(0, Number(args.capacity) || 0),
     imageUrls: getImageUrlsJson(args.imageUrls),
+    price: Math.max(0, Number(args.price) || 0),
+    currency: args.currency || "RSD",
     user: { connect: { id: userId } },
   };
   return context.entities.Event.create({
@@ -111,6 +115,8 @@ export const updateEvent: UpdateEventAction = async (
     ageCategory: args.ageCategory ?? "",
     capacity: Math.max(0, Number(args.capacity) || 0),
     imageUrls: getImageUrlsJson(args.imageUrls),
+    price: Math.max(0, Number(args.price) || 0),
+    currency: args.currency || "RSD",
   };
 
   return context.entities.Event.update({

@@ -99,6 +99,12 @@ export const EventDetailsPage = () => {
                   <span className="text-muted-foreground">Kapacitet</span>
                   <div className="font-medium">{event.capacity}</div>
                 </div>
+                <div>
+                  <span className="text-muted-foreground">Cena</span>
+                  <div className="font-medium">
+                    {event.price === 0 ? "Besplatno" : `${event.price} ${event.currency}`}
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

@@ -27,6 +27,8 @@ export interface EventFormValues {
   ageCategory: string;
   capacity: string;
   imageUrls: string[];
+  price: string;
+  currency: string;
 }
 
 export interface EventFormSubmitPayload {
@@ -39,6 +41,8 @@ export interface EventFormSubmitPayload {
   ageCategory: string;
   capacity: number;
   imageUrls: string[];
+  price: number;
+  currency: string;
 }
 
 const DEFAULT_DATE = dayjs().format("YYYY-MM-DD");
@@ -46,6 +50,8 @@ const DEFAULT_START_TIME = "10:00";
 const DEFAULT_END_TIME = "12:00";
 const DEFAULT_AGE_CATEGORY = "Adults";
 const DEFAULT_CAPACITY = "10";
+const DEFAULT_PRICE = "0";
+const DEFAULT_CURRENCY = "RSD";
 
 const getFilledImageUrls = (imageUrls: string[] = []) =>
   Array.from({ length: IMAGE_COUNT }, (_, i) => imageUrls[i] ?? "");
@@ -75,6 +81,8 @@ export const getEventFormDefaults = (
     ageCategory: DEFAULT_AGE_CATEGORY,
     capacity: DEFAULT_CAPACITY,
     imageUrls: getFilledImageUrls(),
+    price: DEFAULT_PRICE,
+    currency: DEFAULT_CURRENCY,
   };
   const imageUrls = getFilledImageUrls(
     overrides.imageUrls ?? baseValues.imageUrls,
@@ -95,6 +103,8 @@ export const mapEventToFormValues = (event: Event): EventFormValues => ({
   ageCategory: event.ageCategory || DEFAULT_AGE_CATEGORY,
   capacity: String(event.capacity ?? DEFAULT_CAPACITY),
   imageUrls: getFilledImageUrls(parseImageUrls(event.imageUrls)),
+  price: String(event.price ?? DEFAULT_PRICE),
+  currency: event.currency || DEFAULT_CURRENCY,
 });
 
 interface CreateEventFormProps {
@@ -129,6 +139,14 @@ export const CreateEventForm = ({
       return;
     }
 
+    const priceNum = parseInt(data.price, 10);
+    if (priceNum < 0) {
+      setError("price", {
+        message: "Cena ne može biti negativna.",
+      });
+      return;
+    }
+
     const start = dayjs(`2000-01-01 ${data.startTime}`);
     const end = dayjs(`2000-01-01 ${data.endTime}`);
     if (end.isBefore(start) || end.isSame(start)) {
@@ -147,6 +165,8 @@ export const CreateEventForm = ({
       ageCategory: data.ageCategory,
       capacity: capacityNum,
       imageUrls: data.imageUrls.filter((u) => u?.trim()).filter(Boolean),
+      price: priceNum,
+      currency: data.currency,
     };
 
     try {
@@ -203,12 +223,23 @@ export const CreateEventForm = ({
           },
         }}
         render={({ field, fieldState }) => (
-          <Input
-            label="Opis"
-            placeholder="Opis radionice"
-            fieldState={fieldState}
-            {...field}
-          />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="description" className="label">
+              Opis
+            </label>
+            <textarea
+              id="description"
+              placeholder="Opis radionice"
+              rows={4}
+              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              {...field}
+            />
+            {fieldState.error && (
+              <span className="text-sm text-red-500">
+                {fieldState.error.message}
+              </span>
+            )}
+          </div>
         )}
       />
 
@@ -382,6 +413,65 @@ export const CreateEventForm = ({
           </div>
         )}
       />
+
+      <div className="grid grid-cols-2 gap-4">
+        <Controller
+          name="price"
+          control={control}
+          rules={{
+            required: { value: true, message: "Cena je obavezna." },
+            min: {
+              value: 0,
+              message: "Cena ne može biti negativna.",
+            },
+          }}
+          render={({ field, fieldState }) => (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="price" className="label">
+                Cena
+              </label>
+              <input
+                id="price"
+                type="number"
+                min="0"
+                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                {...field}
+              />
+              {fieldState.error && (
+                <span className="text-sm text-red-500">
+                  {fieldState.error.message}
+                </span>
+              )}
+            </div>
+          )}
+        />
+        <Controller
+          name="currency"
+          control={control}
+          rules={{ required: { value: true, message: "Valuta je obavezna." } }}
+          render={({ field, fieldState }) => (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="currency" className="label">
+                Valuta
+              </label>
+              <select
+                id="currency"
+                className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                {...field}
+              >
+                <option value="RSD">RSD</option>
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
+              </select>
+              {fieldState.error && (
+                <span className="text-sm text-red-500">
+                  {fieldState.error.message}
+                </span>
+              )}
+            </div>
+          )}
+        />
+      </div>
 
       <div className="flex flex-col gap-2">
         <span className="label">Slike (do 6 URL-ova, opciono)</span>
