@@ -24,6 +24,7 @@ export const ReservationForm = ({
 }: ReservationFormProps) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,21 +40,21 @@ export const ReservationForm = ({
           : (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
       const url = `${base.replace(/\/$/, "")}/api/reservations`;
 
-      for (let i = 0; i < quantity; i++) {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            eventId,
-            email: email.trim(),
-            name: name.trim() || undefined,
-          }),
-        });
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId,
+          email: email.trim(),
+          name: name.trim() || undefined,
+          phone: phone.trim() || undefined,
+          seats: quantity,
+        }),
+      });
 
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error((data as { error?: string })?.error ?? res.statusText);
-        }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string })?.error ?? res.statusText);
       }
 
       onSuccess();
@@ -94,6 +95,20 @@ export const ReservationForm = ({
           onChange={(e) => setName(e.target.value)}
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 focus:border-[#2D9CDB] focus:outline-none focus:ring-1 focus:ring-[#2D9CDB]"
           placeholder="Vaše ime"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="phone" className="mb-1 block text-sm font-medium">
+          Broj telefona
+        </label>
+        <input
+          id="phone"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full rounded-lg border border-zinc-300 px-3 py-2 focus:border-[#2D9CDB] focus:outline-none focus:ring-1 focus:ring-[#2D9CDB]"
+          placeholder="+381 6x xxx xxxx"
         />
       </div>
 

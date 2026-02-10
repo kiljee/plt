@@ -19,7 +19,7 @@ export const RelatedEvents = ({ events, excludeId }: RelatedEventsProps) => {
       </h2>
       <div className={EVENT_CALENDAR.grid}>
         {related.map((event) => {
-          const soldOut = event.capacity <= 5;
+          const soldOut = (event.placesLeft ?? event.capacity) <= 0;
           return (
             <EventCard 
               key={event.id} 

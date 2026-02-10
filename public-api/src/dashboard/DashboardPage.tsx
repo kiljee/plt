@@ -98,6 +98,7 @@ export const DashboardPage = () => {
                             <th className="px-2 py-3 font-medium">Termin</th>
                             <th className="px-2 py-3 font-medium">Lokacija</th>
                             <th className="px-2 py-3 font-medium">Kapacitet</th>
+                            <th className="px-2 py-3 font-medium">Rezervisano</th>
                             <th className="px-2 py-3 font-medium text-right">
                               Akcije
                             </th>
@@ -136,6 +137,9 @@ export const DashboardPage = () => {
                                 <td className="px-2 py-3 text-muted-foreground">
                                   {event.capacity}
                                 </td>
+                                <td className="px-2 py-3 text-muted-foreground">
+                                  {(event as { reservedCount?: number }).reservedCount ?? 0}
+                                </td>
                                 <td className="px-2 py-3 text-right">
                                   <Button asChild size="sm">
                                     <Link
@@ -171,7 +175,7 @@ export const DashboardPage = () => {
                           </PaginationItem>
                           <PaginationItem>
                             <span className="px-3 text-sm text-muted-foreground">
-                              Strana {page} od {totalPages}
+                              Strana {page} od {totalPages} ({totalCount} ukupno)
                             </span>
                           </PaginationItem>
                           <PaginationItem>
@@ -212,6 +216,12 @@ export const DashboardPage = () => {
                     className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
                   >
                     Radionice
+                  </Link>
+                  <Link
+                    to="/rezervacije"
+                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+                  >
+                    Rezervacije
                   </Link>
                 </nav>
               </CardContent>

@@ -71,10 +71,12 @@ export const getEventBySlugPublic: GetEventBySlugPublic = async (
     return;
   }
 
-  const count = await context.entities.Reservation.count({
-    where: { eventId: event.id },
+  const reservations = await context.entities.Reservation.findMany({
+    where: { eventId: event.id, status: { in: ["PENDING", "CONFIRMED"] } },
+    select: { seats: true },
   });
-  const placesLeft = Math.max(0, event.capacity - count);
+  const totalReserved = reservations.reduce((s, r) => s + (r.seats ?? 1), 0);
+  const placesLeft = Math.max(0, event.capacity - totalReserved);
 
   res.json({
     ...event,

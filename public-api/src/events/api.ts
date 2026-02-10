@@ -9,7 +9,7 @@ export const getEventsPublic: GetEventsPublic = async (req, res, context) => {
       ? { location }
       : {};
 
-  const findManyArg = {
+  const events = await context.entities.Event.findMany({
     where,
     orderBy: { date: "asc" as const },
     select: {
@@ -27,9 +27,26 @@ export const getEventsPublic: GetEventsPublic = async (req, res, context) => {
       currency: true,
       createdAt: true,
     },
-  };
-  const events = await context.entities.Event.findMany(
-    findManyArg as Parameters<typeof context.entities.Event.findMany>[0],
-  );
-  res.json(events);
+  });
+
+  const eventIds = events.map((e) => e.id);
+  const reservations = await context.entities.Reservation.findMany({
+    where: {
+      eventId: { in: eventIds },
+      status: { in: ["PENDING", "CONFIRMED"] },
+    },
+    select: { eventId: true, seats: true },
+  });
+
+  const reservedByEvent: Record<string, number> = {};
+  for (const r of reservations) {
+    reservedByEvent[r.eventId] = (reservedByEvent[r.eventId] ?? 0) + (r.seats ?? 1);
+  }
+
+  const eventsWithPlaces = events.map((e) => ({
+    ...e,
+    placesLeft: Math.max(0, e.capacity - (reservedByEvent[e.id] ?? 0)),
+  }));
+
+  res.json(eventsWithPlaces);
 };

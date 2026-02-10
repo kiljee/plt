@@ -71,15 +71,12 @@ export const EventCalendar = ({
         {!error && events.length > 0 && (
           <div className={EVENT_CALENDAR.grid}>
             {events.map((event) => {
-              // Determine if event is sold out
-              // For demo purposes, let's make some events sold out randomly
-              // In real app, you'd check actual reservations vs capacity
-              const soldOut = event.capacity <= 5; // Events with low capacity are "sold out"
-              
+              const soldOut = (event.placesLeft ?? event.capacity) <= 0;
+
               return (
-                <EventCard 
-                  key={event.id} 
-                  event={event} 
+                <EventCard
+                  key={event.id}
+                  event={event}
                   soldOut={soldOut}
                 />
               );

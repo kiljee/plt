@@ -14,7 +14,7 @@ interface EventDetailsBlockProps {
 
 const LOCATION_DISPLAY: Record<string, string> = {
   BELGRADE: "Beograd",
-  NOVI_SAD: "Braće Ribnikar 7, 21000 Novi Sad",
+  NOVI_SAD: "Novi Sad",
 };
 
 const DETAIL_ITEMS = [
@@ -35,10 +35,15 @@ export const EventDetailsBlock = ({
   const dayName = d.format("dddd");
   const dateFormatted = d.format("DD.MM.YYYY");
 
+  const timeDisplay =
+    startTime || endTime
+      ? `${startTime || "—"} - ${endTime || "—"}`
+      : "Nije navedeno";
+
   const values = {
-    day: `${dayName} ${dateFormatted}`,
-    time: `${startTime} - ${endTime} h`,
-    age: ageCategory,
+    day: d.isValid() ? `${dayName} ${dateFormatted}` : "—",
+    time: timeDisplay,
+    age: ageCategory || "—",
     location: LOCATION_DISPLAY[location] ?? location,
   };
 

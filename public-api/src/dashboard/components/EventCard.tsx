@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
+import { Link } from "react-router-dom";
 import { type Event } from "wasp/entities";
 import {
   deleteReservation,
   getReservationsForEvent,
+  useAction,
   useQuery,
 } from "wasp/client/operations";
 import { Button } from "../../components/ui/button";
@@ -16,11 +18,12 @@ export const EventCard = ({ event }: EventCardProps) => {
   const { data: reservations, refetch } = useQuery(getReservationsForEvent, {
     eventId: event.id,
   });
+  const deleteReservationAction = useAction(deleteReservation);
 
   const handleDelete = async (reservationId: string) => {
     if (!window.confirm("Obrisati rezervaciju?")) return;
     try {
-      await deleteReservation({ id: reservationId });
+      await deleteReservationAction({ id: reservationId });
       refetch();
     } catch (err: unknown) {
       window.alert(`Greška: ${String(err)}`);
@@ -90,16 +93,24 @@ export const EventCard = ({ event }: EventCardProps) => {
                   )}
                   <span className="ml-2 text-xs text-muted-foreground">
                     {dayjs(r.createdAt).format("DD.MM.YYYY HH:mm")}
+                    {(r as { seats?: number }).seats && (r as { seats: number }).seats > 1
+                      ? ` · ${(r as { seats: number }).seats} mesta`
+                      : ""}
                   </span>
                 </div>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(r.id)}
-                >
-                  Obriši
-                </Button>
+                <div className="flex gap-1">
+                  <Button asChild size="sm" variant="outline">
+                    <Link to={`/rezervacije/${r.id}`}>Otvori</Link>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDelete(r.id)}
+                  >
+                    Obriši
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>

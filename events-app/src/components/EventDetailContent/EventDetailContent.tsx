@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { EventDetailItem } from "@/types/event";
 import { EventDetailsBlock } from "@/components/EventDetailsBlock/EventDetailsBlock";
@@ -26,18 +27,20 @@ const parseImageUrls = (json: string): string[] => {
 
 
 export const EventDetailContent = ({ event }: EventDetailContentProps) => {
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const images = parseImageUrls(event.imageUrls);
-  const placesLeft = event.placesLeft;
+  const placesLeft = event.placesLeft ?? 0;
   const canOrder = placesLeft > 0 && quantity > 0 && quantity <= placesLeft;
 
   const handleOrder = () => setShowForm(true);
   const handleReservationSuccess = () => {
     setShowForm(false);
     setSuccess(true);
+    router.refresh();
   };
 
   return (
@@ -82,28 +85,36 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
             </div>
           )}
 
-          {/* Quantity */}
-          <div className={EVENT_DETAIL_STYLES.quantitySection}>
-            <QuantitySelector
-              value={quantity}
-              min={1}
-              max={placesLeft}
-              onChange={setQuantity}
-              label="Količina"
-              price={event.price}
-              currency={event.currency}
-              showTotal={true}
-            />
-          </div>
+          {/* Quantity - hide when sold out */}
+          {placesLeft > 0 && (
+            <div className={EVENT_DETAIL_STYLES.quantitySection}>
+              <QuantitySelector
+                value={quantity}
+                min={1}
+                max={placesLeft}
+                onChange={setQuantity}
+                label="Količina"
+              />
+            </div>
+          )}
 
           {/* Places left */}
-          {placesLeft > 0 && (
+          {placesLeft > 0 ? (
             <div className={EVENT_DETAIL_STYLES.placesLeft.wrapper}>
-              <p 
+              <p
                 className={EVENT_DETAIL_STYLES.placesLeft.text}
                 style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
               >
                 Ostalo još {placesLeft} karata
+              </p>
+            </div>
+          ) : (
+            <div className={EVENT_DETAIL_STYLES.placesLeft.wrapper}>
+              <p
+                className={EVENT_DETAIL_STYLES.placesLeft.text}
+                style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
+              >
+                Rasprodato
               </p>
             </div>
           )}
@@ -120,6 +131,7 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
               onClick={handleOrder}
               disabled={!canOrder}
               loading={false}
+              soldOut={placesLeft <= 0}
             />
           </div>
 

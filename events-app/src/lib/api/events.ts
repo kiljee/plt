@@ -1,13 +1,13 @@
 import {
-  APP_BASE_URL,
-  EVENTS_NEXT_ROUTE,
+  EVENTS_ENDPOINT,
   EVENTS_REVALIDATE_SECONDS,
   WASP_API_BASE_URL,
   EVENTS_BY_SLUG_ENDPOINT,
 } from "@/config/api";
+import { normalizeEventDetailItem, normalizeEventItem } from "@/lib/normalizeEvent";
 import type { EventItem, EventDetailItem, EventLocation } from "@/types/event";
 
-const EVENTS_BASE = `${APP_BASE_URL.replace(/\/$/, "")}${EVENTS_NEXT_ROUTE}`;
+const EVENTS_BASE = `${WASP_API_BASE_URL.replace(/\/$/, "")}${EVENTS_ENDPOINT}`;
 
 export const getEvents = async (
   location?: EventLocation,
@@ -16,7 +16,7 @@ export const getEvents = async (
     ? `${EVENTS_BASE}?location=${encodeURIComponent(location)}`
     : EVENTS_BASE;
   const res = await fetch(url, {
-    next: { revalidate: EVENTS_REVALIDATE_SECONDS },
+    next: { revalidate: EVENTS_REVALIDATE_SECONDS, tags: ["events"] },
     headers: { Accept: "application/json" },
   });
 
@@ -31,7 +31,7 @@ export const getEvents = async (
     throw new Error("Invalid response");
   }
 
-  return data as EventItem[];
+  return data.map((item: Record<string, unknown>) => normalizeEventItem(item));
 };
 
 export const getEventBySlug = async (
@@ -41,7 +41,7 @@ export const getEventBySlug = async (
   const base = WASP_API_BASE_URL.replace(/\/$/, "");
   const url = `${base}${EVENTS_BY_SLUG_ENDPOINT}?city=${encodeURIComponent(city)}&slug=${encodeURIComponent(slug)}`;
   const res = await fetch(url, {
-    next: { revalidate: EVENTS_REVALIDATE_SECONDS },
+    next: { revalidate: EVENTS_REVALIDATE_SECONDS, tags: ["events"] },
     headers: { Accept: "application/json" },
   });
 
@@ -53,5 +53,5 @@ export const getEventBySlug = async (
   }
 
   const data = await res.json();
-  return data as EventDetailItem;
+  return normalizeEventDetailItem(data as Record<string, unknown>);
 };

@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { WASP_API_BASE_URL } from "@/config/api";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -22,6 +23,8 @@ export const POST = async (
         { status: res.status },
       );
     }
+
+    revalidateTag("events");
 
     return NextResponse.json(data);
   } catch (e) {

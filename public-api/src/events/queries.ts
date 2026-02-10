@@ -54,7 +54,26 @@ export const getAdminEvents: GetAdminEvents<
     context.entities.Event.count(),
   ]);
 
-  return { events, totalCount };
+  const eventIds = events.map((e) => e.id);
+  const reservations = await context.entities.Reservation.findMany({
+    where: {
+      eventId: { in: eventIds },
+      status: { in: ["PENDING", "CONFIRMED"] },
+    },
+    select: { eventId: true, seats: true },
+  });
+
+  const reservedByEvent: Record<string, number> = {};
+  for (const r of reservations) {
+    reservedByEvent[r.eventId] = (reservedByEvent[r.eventId] ?? 0) + (r.seats ?? 1);
+  }
+
+  const eventsWithReserved = events.map((e) => ({
+    ...e,
+    reservedCount: reservedByEvent[e.id] ?? 0,
+  }));
+
+  return { events: eventsWithReserved, totalCount };
 };
 
 export const getAdminEventById: AdminEventById = async ({ id }, context) => {

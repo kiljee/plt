@@ -14,6 +14,7 @@ export interface EventItem {
   price: number;
   currency: string;
   createdAt: string;
+  placesLeft?: number;
 }
 
 export interface EventDetailItem extends EventItem {

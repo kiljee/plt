@@ -32,6 +32,10 @@ app publicApi {
   },
   emailSender: {
     provider: Dummy,
+    defaultFrom: {
+      name: "Paleto Events",
+      email: "noreply@paleto.local"
+    },
   },
   client: {
     rootComponent: import { App } from "@src/App.tsx",
@@ -85,7 +89,7 @@ query getMe {
 
 query getAdminEvents {
   fn: import { getAdminEvents } from "@src/events/queries",
-  entities: [Event]
+  entities: [Event, Reservation]
 }
 
 query getAdminEventById {
@@ -101,6 +105,33 @@ query getReservationsForEvent {
 action deleteReservation {
   fn: import { deleteReservation } from "@src/reservations/actions",
   entities: [Reservation, User]
+}
+
+query getReservationsAdmin {
+  fn: import { getReservationsAdmin } from "@src/reservations/queries",
+  entities: [Reservation, Event, User]
+}
+
+query getReservationById {
+  fn: import { getReservationById } from "@src/reservations/queries",
+  entities: [Reservation, Event, User]
+}
+
+action confirmReservation {
+  fn: import { confirmReservation } from "@src/reservations/actions",
+  entities: [Reservation, Event, User]
+}
+
+route ReservationsRoute { path: "/rezervacije", to: ReservationsPage }
+page ReservationsPage {
+  authRequired: true,
+  component: import { ReservationsPage } from "@src/reservations/ReservationsPage.tsx"
+}
+
+route ReservationDetailRoute { path: "/rezervacije/:id", to: ReservationDetailPage }
+page ReservationDetailPage {
+  authRequired: true,
+  component: import { ReservationDetailPage } from "@src/reservations/ReservationDetailPage.tsx"
 }
 // #endregion Dashboard
 
@@ -123,7 +154,7 @@ action updateEvent {
 
 api getEventsPublic {
   fn: import { getEventsPublic } from "@src/events/api",
-  entities: [Event],
+  entities: [Event, Reservation],
   auth: false,
   httpRoute: (GET, "/api/events")
 }

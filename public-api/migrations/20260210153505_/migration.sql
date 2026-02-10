@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Reservation" ADD COLUMN     "phone" TEXT,
+ADD COLUMN     "seats" INTEGER NOT NULL DEFAULT 1,
+ADD COLUMN     "status" TEXT NOT NULL DEFAULT 'PENDING';

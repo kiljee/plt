@@ -30,7 +30,9 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
   const eventSlug = eventToSlug(event.title, event.date);
   const citySlug = locationToCitySlug(event.location);
   const eventUrl = `/${citySlug}/${eventSlug}`;
-  const formattedDate = dayjs(event.date).format("DD.MM.YYYY");
+  const formattedDate = dayjs(event.date).isValid()
+    ? dayjs(event.date).format("DD.MM.YYYY")
+    : "—";
 
 
   return (
@@ -86,36 +88,37 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
             </div>
           </div>
 
-          {/* Button */}
+          {/* Button - always clickable to see details */}
           {soldOut ? (
-            <div 
-              className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.soldOut}`}
+            <Link
+              href={eventUrl}
+              className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.soldOut} block`}
               style={{ borderColor: EVENT_CARD_CSS.colors.primaryBorder }}
             >
-              <span 
+              <span
                 className={`${EVENT_CARD_STYLES.buttonText.base} ${EVENT_CARD_STYLES.buttonText.soldOut}`}
-                style={{ 
+                style={{
                   fontFamily: "var(--font-geist-sans), 'Neue Haas Unica', sans-serif",
-                  color: EVENT_CARD_CSS.colors.primary
+                  color: EVENT_CARD_CSS.colors.primary,
                 }}
               >
                 Sold out
               </span>
-            </div>
+            </Link>
           ) : (
             <Link
               href={eventUrl}
               className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.available} block`}
-              style={{ 
+              style={{
                 backgroundColor: EVENT_CARD_CSS.colors.primary,
-                borderColor: EVENT_CARD_CSS.colors.primaryBorder
+                borderColor: EVENT_CARD_CSS.colors.primaryBorder,
               }}
             >
-              <span 
+              <span
                 className={`${EVENT_CARD_STYLES.buttonText.base} ${EVENT_CARD_STYLES.buttonText.available}`}
-                style={{ 
+                style={{
                   fontFamily: "var(--font-geist-sans), 'Neue Haas Unica', sans-serif",
-                  color: EVENT_CARD_CSS.colors.textWhite
+                  color: EVENT_CARD_CSS.colors.textWhite,
                 }}
               >
                 Book Now

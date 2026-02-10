@@ -12,12 +12,23 @@ export const createReservationPublic: CreateReservationPublic = async (
 
   const body =
     typeof req.body === "object" && req.body !== null
-      ? (req.body as { eventId?: string; email?: string; name?: string })
+      ? (req.body as {
+          eventId?: string;
+          email?: string;
+          name?: string;
+          phone?: string;
+          seats?: number;
+        })
       : {};
   const eventId = body.eventId;
   const email = typeof body?.email === "string" ? body.email.trim() : "";
   const name =
     typeof body?.name === "string" ? body.name.trim() || undefined : undefined;
+  const phone =
+    typeof body?.phone === "string" ? body.phone.trim() || undefined : undefined;
+  const seats = typeof body?.seats === "number" && body.seats > 0
+    ? Math.min(body.seats, 99)
+    : 1;
 
   if (!eventId || !email) {
     res.status(400).json({ error: "eventId i email su obavezni" });
@@ -33,11 +44,12 @@ export const createReservationPublic: CreateReservationPublic = async (
     return;
   }
 
-  const count = await context.entities.Reservation.count({
-    where: { eventId },
+  const reservations = await context.entities.Reservation.findMany({
+    where: { eventId, status: { in: ["PENDING", "CONFIRMED"] } },
   });
-  if (count >= event.capacity) {
-    res.status(400).json({ error: "Nema slobodnih mesta" });
+  const totalReserved = reservations.reduce((s, r) => s + (r.seats ?? 1), 0);
+  if (totalReserved + seats > event.capacity) {
+    res.status(400).json({ error: "Nema dovoljno slobodnih mesta" });
     return;
   }
 
@@ -46,6 +58,9 @@ export const createReservationPublic: CreateReservationPublic = async (
       eventId,
       email,
       name,
+      phone,
+      seats,
+      status: "PENDING",
     },
   });
 
@@ -54,6 +69,9 @@ export const createReservationPublic: CreateReservationPublic = async (
     eventId: reservation.eventId,
     email: reservation.email,
     name: reservation.name,
+    phone: reservation.phone,
+    seats: reservation.seats,
+    status: reservation.status,
     createdAt: reservation.createdAt,
   });
 };
