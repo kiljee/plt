@@ -1,0 +1,134 @@
+app publicApi {
+  wasp: {
+    version: "^0.17.1"
+  },
+  title: "public-api",
+  head: [
+    "<link rel='icon' href='/favicon.ico' />",
+  ],
+  auth: {
+    userEntity: User,
+    onAfterSignup: import { onAfterSignup } from "@src/auth/hooks",
+    methods: {
+      email: {
+        fromField: {
+          name: "Basic App",
+          email: "hello@example.com"
+        },
+        userSignupFields: import { userSignupFields } from "@src/auth/email/userSignupFields",
+        emailVerification: {
+          clientRoute: EmailVerificationRoute,
+        },
+        passwordReset: {
+          clientRoute: PasswordResetRoute,
+        }
+      },
+    },
+    onAuthSucceededRedirectTo: "/",
+    onAuthFailedRedirectTo: "/login",
+  },
+  emailSender: {
+    provider: Dummy,
+  },
+  client: {
+    rootComponent: import { App } from "@src/App.tsx",
+  }
+}
+
+// #region Auth
+route LoginRoute { path: "/login", to: LoginPage }
+page LoginPage {
+  component: import { LoginPage } from "@src/auth/email/LoginPage.tsx"
+}
+
+route SignupRoute { path: "/signup", to: SignupPage }
+page SignupPage {
+  component: import { SignupPage } from "@src/auth/email/SignupPage.tsx"
+}
+
+route RequestPasswordResetRoute { path: "/request-password-reset", to: RequestPasswordResetPage }
+page RequestPasswordResetPage {
+  component: import { RequestPasswordResetPage } from "@src/auth/email/RequestPasswordResetPage.tsx",
+}
+
+route PasswordResetRoute { path: "/password-reset", to: PasswordResetPage }
+page PasswordResetPage {
+  component: import { PasswordResetPage } from "@src/auth/email/PasswordResetPage.tsx",
+}
+
+route EmailVerificationRoute { path: "/email-verification", to: EmailVerificationPage }
+page EmailVerificationPage {
+  component: import { EmailVerificationPage } from "@src/auth/email/EmailVerificationPage.tsx",
+}
+// #endregion Auth
+
+// #region Dashboard
+route DashboardRoute { path: "/", to: DashboardPage }
+page DashboardPage {
+  authRequired: true,
+  component: import { DashboardPage } from "@src/dashboard/DashboardPage.tsx"
+}
+
+route RadionicaRoute { path: "/radionica/:id", to: EventDetailsPage }
+page EventDetailsPage {
+  authRequired: true,
+  component: import { EventDetailsPage } from "@src/dashboard/EventDetailsPage.tsx"
+}
+
+query getMe {
+  fn: import { getMe } from "@src/events/queries",
+  entities: [User]
+}
+
+query getAdminEvents {
+  fn: import { getAdminEvents } from "@src/events/queries",
+  entities: [Event]
+}
+
+query getAdminEventById {
+  fn: import { getAdminEventById } from "@src/events/queries",
+  entities: [Event, User]
+}
+
+query getReservationsForEvent {
+  fn: import { getReservationsForEvent } from "@src/reservations/queries",
+  entities: [Reservation, User]
+}
+
+action deleteReservation {
+  fn: import { deleteReservation } from "@src/reservations/actions",
+  entities: [Reservation, User]
+}
+// #endregion Dashboard
+
+// #region Events
+route EventsRoute { path: "/events", to: EventsPage }
+page EventsPage {
+  authRequired: true,
+  component: import { EventsPage } from "@src/events/EventsPage.tsx"
+}
+
+action createEvent {
+  fn: import { createEvent } from "@src/events/actions",
+  entities: [Event, User]
+}
+
+action updateEvent {
+  fn: import { updateEvent } from "@src/events/actions",
+  entities: [Event, User]
+}
+
+api getEventsPublic {
+  fn: import { getEventsPublic } from "@src/events/api",
+  entities: [Event],
+  auth: false,
+  httpRoute: (GET, "/api/events")
+}
+
+api createReservationPublic {
+  fn: import { createReservationPublic } from "@src/reservations/api",
+  entities: [Reservation, Event],
+  auth: false,
+  httpRoute: (POST, "/api/reservations")
+}
+// #endregion Events

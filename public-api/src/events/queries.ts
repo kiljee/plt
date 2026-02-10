@@ -1,0 +1,70 @@
+import { type Event } from "wasp/entities";
+import { type _Event, type _User, type AuthenticatedQueryDefinition } from "wasp/server/_types";
+import { type GetMe, type GetAdminEvents } from "wasp/server/operations";
+import { HttpError } from "wasp/server";
+
+const DEFAULT_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 50;
+
+export type GetAdminEventsInput = {
+  page?: number;
+  pageSize?: number;
+};
+
+export type GetAdminEventsResult = {
+  events: Event[];
+  totalCount: number;
+};
+
+type AdminEventById = AuthenticatedQueryDefinition<
+  [_Event, _User],
+  { id: string },
+  Event
+>;
+
+export const getMe: GetMe<void, { isAdmin: boolean } | null> = async (
+  _args,
+  context,
+) => {
+  if (!context.user) return null;
+  const user = await context.entities.User.findUnique({
+    where: { id: context.user.id },
+    select: { isAdmin: true },
+  });
+  return user;
+};
+
+export const getAdminEvents: GetAdminEvents<
+  GetAdminEventsInput,
+  GetAdminEventsResult
+> = async (args, context) => {
+  const page = Math.max(1, args?.page ?? 1);
+  const pageSize = Math.min(
+    MAX_PAGE_SIZE,
+    Math.max(1, args?.pageSize ?? DEFAULT_PAGE_SIZE),
+  );
+  const skip = (page - 1) * pageSize;
+
+  const [events, totalCount] = await Promise.all([
+    context.entities.Event.findMany({
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: pageSize,
+    }),
+    context.entities.Event.count(),
+  ]);
+
+  return { events, totalCount };
+};
+
+export const getAdminEventById: AdminEventById = async ({ id }, context) => {
+  if (!context.user) throw new HttpError(401);
+  const user = await context.entities.User.findUnique({
+    where: { id: context.user.id },
+    select: { isAdmin: true },
+  });
+  if (!user?.isAdmin) throw new HttpError(403, "Samo admin može videti događaj.");
+  const event = await context.entities.Event.findUnique({ where: { id } });
+  if (!event) throw new HttpError(404, "Radionica nije pronađena.");
+  return event;
+};
