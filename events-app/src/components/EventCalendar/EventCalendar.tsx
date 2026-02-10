@@ -1,16 +1,11 @@
 import type { EventItem, EventLocation } from "@/types/event";
 import { LocationSwitch } from "@/components/LocationSwitch/LocationSwitch";
+import { EventCard } from "@/components/EventCard/EventCard";
 import { EVENT_CALENDAR } from "./EventCalendar.styles";
 
 const INTRO_TEXT =
   "Sve radionice uključuju stručno vođstvo, neophodan materijal i neograničena pića. Grupe su male, kako bismo svakom učesniku posvetili individualnu pažnju. Na slikarskim radionicama, učesnici biraju sopstvenu temu, uz podršku tokom celog procesa stvaranja.";
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("sr-RS", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
 
 interface EventCalendarProps {
   events: EventItem[];
@@ -75,26 +70,20 @@ export const EventCalendar = ({
 
         {!error && events.length > 0 && (
           <div className={EVENT_CALENDAR.grid}>
-            {events.map((event) => (
-              <article key={event.id} className={EVENT_CALENDAR.card}>
-                <div className="relative">
-                  <div
-                    className={EVENT_CALENDAR.cardImage}
-                    aria-hidden
-                  />
-                </div>
-                <div className={EVENT_CALENDAR.cardBody}>
-                  <time className={EVENT_CALENDAR.cardDate} dateTime={event.createdAt}>
-                    {formatDate(event.createdAt)}
-                  </time>
-                  <h2 className={EVENT_CALENDAR.cardTitle}>{event.title}</h2>
-                  <p className={EVENT_CALENDAR.cardPrice}>— RSD</p>
-                  <button type="button" className={EVENT_CALENDAR.cardButton}>
-                    REZERVIŠITE
-                  </button>
-                </div>
-              </article>
-            ))}
+            {events.map((event) => {
+              // Determine if event is sold out
+              // For demo purposes, let's make some events sold out randomly
+              // In real app, you'd check actual reservations vs capacity
+              const soldOut = event.capacity <= 5; // Events with low capacity are "sold out"
+              
+              return (
+                <EventCard 
+                  key={event.id} 
+                  event={event} 
+                  soldOut={soldOut}
+                />
+              );
+            })}
           </div>
         )}
       </main>

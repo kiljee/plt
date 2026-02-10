@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import type { EventItem } from "@/types/event";
 import { EVENT_LIST } from "./EventList.styles";
 
@@ -6,8 +7,7 @@ interface EventListProps {
   error: string | null;
 }
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("sr-RS");
+const formatDate = (iso: string) => dayjs(iso).format("DD.MM.YYYY");
 
 export const EventList = ({ events, error }: EventListProps) => {
   return (
@@ -24,7 +24,7 @@ export const EventList = ({ events, error }: EventListProps) => {
               <li key={event.id} className={EVENT_LIST.item}>
                 <span className={EVENT_LIST.itemTitle}>{event.title}</span>
                 <span className={EVENT_LIST.itemDate}>
-                  {formatDate(event.createdAt)}
+                  {formatDate(event.date)}
                 </span>
               </li>
             ))}

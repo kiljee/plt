@@ -8,3 +8,4 @@ export const EVENTS_REVALIDATE_SECONDS = 60;
 
 export const EVENTS_ENDPOINT = "/api/events";
 export const EVENTS_NEXT_ROUTE = "/api/events";
+export const EVENTS_BY_SLUG_ENDPOINT = "/api/events/by-slug";

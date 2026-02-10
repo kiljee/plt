@@ -1,1 +1,1 @@
-export { getEvents } from "./events";
+export { getEvents, getEventBySlug } from "./events";

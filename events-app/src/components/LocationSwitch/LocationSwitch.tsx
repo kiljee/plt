@@ -18,6 +18,7 @@ export const LocationSwitch = ({ current }: LocationSwitchProps) => {
         <Link
           key={value}
           href={value === "BELGRADE" ? "/" : `/?location=${value}`}
+          scroll={false}
           role="tab"
           aria-selected={current === value}
           className={`${LOCATION_SWITCH.link} ${
