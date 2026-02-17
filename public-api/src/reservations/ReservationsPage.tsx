@@ -9,6 +9,7 @@ import {
   useQuery,
   useAction,
 } from "wasp/client/operations";
+import { StatusFilter } from "./types";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { Input } from "../components/ui/input";
@@ -26,13 +27,6 @@ const STATUS_LABELS: Record<string, string> = {
   CONFIRMED: "Potvrđena",
   CANCELLED: "Otkazana",
 };
-
-enum StatusFilter {
-  ACTIVE = "active",
-  PENDING = "pending",
-  CONFIRMED = "confirmed",
-  CANCELLED = "cancelled",
-}
 
 const TAB_OPTIONS: { value: StatusFilter; label: string }[] = [
   { value: StatusFilter.ACTIVE, label: "Aktivne" },

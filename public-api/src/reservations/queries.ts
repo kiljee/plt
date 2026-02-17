@@ -6,17 +6,81 @@ import {
   type GetReservationsAdmin,
   type GetReservationById,
 } from "wasp/server/operations";
+import { StatusFilter } from "./types";
 
-export const getReservationsForEvent: GetReservationsForEvent<
-  { eventId: string },
-  Reservation[]
-> = async ({ eventId }, context) => {
+enum ReservationStatus {
+  PENDING = "PENDING",
+  CONFIRMED = "CONFIRMED",
+  CANCELLED = "CANCELLED",
+}
+
+const ACTIVE_STATUSES: string[] = [
+  ReservationStatus.PENDING,
+  ReservationStatus.CONFIRMED,
+];
+
+const FILTER_TO_STATUS: Record<Exclude<StatusFilter, "active">, string> = {
+  [StatusFilter.PENDING]: ReservationStatus.PENDING,
+  [StatusFilter.CONFIRMED]: ReservationStatus.CONFIRMED,
+  [StatusFilter.CANCELLED]: ReservationStatus.CANCELLED,
+};
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 50;
+
+const RESERVATION_SELECT = {
+  id: true,
+  status: true,
+  seats: true,
+  createdAt: true,
+  email: true,
+  name: true,
+  phone: true,
+  event: { select: { id: true, title: true, date: true, price: true, currency: true } },
+} as const;
+
+const checkAdmin = async (
+  context: { user?: { id: string }; entities: { User: { findUnique: (args: { where: { id: string }; select: { isAdmin: true } }) => Promise<{ isAdmin: boolean } | null> } } },
+) => {
   if (!context.user) throw new HttpError(401);
   const user = await context.entities.User.findUnique({
     where: { id: context.user.id },
     select: { isAdmin: true },
   });
   if (!user?.isAdmin) throw new HttpError(403, "Samo admin može videti rezervacije.");
+};
+
+const buildStatusWhere = (filter: StatusFilter): Prisma.ReservationWhereInput["status"] => {
+  if (filter === StatusFilter.ACTIVE) return { in: ACTIVE_STATUSES };
+  const status = FILTER_TO_STATUS[filter];
+  return status ?? { in: ACTIVE_STATUSES };
+};
+
+const buildWhere = (args: GetReservationsAdminInput): Prisma.ReservationWhereInput => {
+  const filter = (args?.statusFilter as StatusFilter) ?? StatusFilter.ACTIVE;
+  const search = (typeof args?.search === "string" ? args.search : "").trim();
+
+  return {
+    status: buildStatusWhere(filter),
+    ...(args?.eventId ? { eventId: args.eventId } : {}),
+    ...(search
+      ? {
+          OR: [
+            { email: { contains: search, mode: "insensitive" } },
+            { name: { contains: search, mode: "insensitive" } },
+            { phone: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : {}),
+  };
+};
+
+export const getReservationsForEvent: GetReservationsForEvent<
+  { eventId: string },
+  Reservation[]
+> = async ({ eventId }, context) => {
+  await checkAdmin(context);
   return context.entities.Reservation.findMany({
     where: { eventId },
     orderBy: { createdAt: "desc" },
@@ -27,7 +91,7 @@ export type GetReservationsAdminInput = {
   page?: number;
   pageSize?: number;
   search?: string;
-  statusFilter?: "active" | "pending" | "confirmed" | "cancelled";
+  statusFilter?: StatusFilter;
   eventId?: string;
 };
 
@@ -47,54 +111,16 @@ export type GetReservationsAdminResult = {
   totalCount: number;
 };
 
-const STATUS_MAP = {
-  pending: "PENDING",
-  confirmed: "CONFIRMED",
-  cancelled: "CANCELLED",
-} as const;
-
-type StatusFilter = keyof typeof STATUS_MAP | "active";
-
 export const getReservationsAdmin: GetReservationsAdmin<
   GetReservationsAdminInput,
   GetReservationsAdminResult
 > = async (args, context) => {
-  if (!context.user) throw new HttpError(401);
+  await checkAdmin(context);
 
-  const user = await context.entities.User.findUnique({
-    where: { id: context.user.id },
-    select: { isAdmin: true },
-  });
-  if (!user?.isAdmin) throw new HttpError(403, "Samo admin može videti rezervacije.");
-
-  const page = Math.max(1, args?.page ?? 1);
-  const pageSize = Math.min(50, Math.max(1, args?.pageSize ?? 10));
+  const page = Math.max(DEFAULT_PAGE, args?.page ?? DEFAULT_PAGE);
+  const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, args?.pageSize ?? DEFAULT_PAGE_SIZE));
   const skip = (page - 1) * pageSize;
-
-  const search = (typeof args?.search === "string" ? args.search : "").trim();
-  const statusFilter: StatusFilter = (args?.statusFilter as StatusFilter) ?? "active";
-
-  const activeStatuses: string[] = ["PENDING", "CONFIRMED"]
-  const statusWhere: Prisma.ReservationWhereInput["status"] =
-    statusFilter === "active"
-      ? { in: activeStatuses }
-      : STATUS_MAP[statusFilter]
-        ? STATUS_MAP[statusFilter]
-        : { in: activeStatuses };
-
-  const where: Prisma.ReservationWhereInput = {
-    status: statusWhere,
-    ...(args?.eventId ? { eventId: args.eventId } : {}),
-    ...(search
-      ? {
-          OR: [
-            { email: { contains: search, mode: "insensitive" } },
-            { name: { contains: search, mode: "insensitive" } },
-            { phone: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {}),
-  };
+  const where = buildWhere(args);
 
   const [reservations, totalCount] = await Promise.all([
     context.entities.Reservation.findMany({
@@ -102,16 +128,7 @@ export const getReservationsAdmin: GetReservationsAdmin<
       orderBy: { createdAt: "desc" },
       skip,
       take: pageSize,
-      select: {
-        id: true,
-        status: true,
-        seats: true,
-        createdAt: true,
-        email: true,
-        name: true,
-        phone: true,
-        event: { select: { id: true, title: true, date: true, price: true, currency: true } },
-      },
+      select: RESERVATION_SELECT,
     }),
     context.entities.Reservation.count({ where }),
   ]);
@@ -124,12 +141,7 @@ export const getReservationById: GetReservationById<
   { id: string },
   (Reservation & { event: { id: string; title: string; date: Date; price: number; currency: string } }) | null
 > = async ({ id }, context) => {
-  if (!context.user) throw new HttpError(401);
-  const adminUser = await context.entities.User.findUnique({
-    where: { id: context.user.id },
-    select: { isAdmin: true },
-  });
-  if (!adminUser?.isAdmin) throw new HttpError(403, "Samo admin može videti rezervacije.");
+  await checkAdmin(context);
   const reservation = await context.entities.Reservation.findUnique({
     where: { id },
     include: { event: { select: { id: true, title: true, date: true, price: true, currency: true } } },
