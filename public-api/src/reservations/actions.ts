@@ -1,5 +1,5 @@
-import { emailSender } from "wasp/server/email";
 import { HttpError } from "wasp/server";
+import { sendEmail } from "../lib/mailtrap";
 import {
   type DeleteReservation,
   type ConfirmReservation,
@@ -51,12 +51,12 @@ export const confirmReservation: ConfirmReservation<{ id: string }> = async (
     ? reservation.event.date.toLocaleDateString("sr-RS")
     : String(reservation.event.date);
 
-  await emailSender.send({
+  await sendEmail({
     to: reservation.email,
     subject: "Rezervacija potvrđena – Paleto Events",
     text: `Poštovani,\n\nVaša rezervacija za radionicu "${reservation.event.title}" (${eventDate}) je uspešno potvrđena.\n\nBroj mesta: ${reservation.seats ?? 1}\nIznos za uplatu: ${amountToPay} ${reservation.event.currency}\n\nHvala za poverenje!`,
     html: `<p>Poštovani,</p><p>Vaša rezervacija za radionicu <strong>${reservation.event.title}</strong> (${eventDate}) je uspešno potvrđena.</p><p><strong>Broj mesta:</strong> ${reservation.seats ?? 1}<br><strong>Iznos za uplatu:</strong> ${amountToPay} ${reservation.event.currency}</p><p>Hvala za poverenje!</p>`,
-  });
+  })
 
   return updated;
 };

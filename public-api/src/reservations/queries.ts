@@ -67,6 +67,7 @@ const buildWhere = (args: GetReservationsAdminInput): Prisma.ReservationWhereInp
     ...(search
       ? {
           OR: [
+            { id: { contains: search, mode: "insensitive" } },
             { email: { contains: search, mode: "insensitive" } },
             { name: { contains: search, mode: "insensitive" } },
             { phone: { contains: search, mode: "insensitive" } },

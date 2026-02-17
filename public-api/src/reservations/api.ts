@@ -1,4 +1,20 @@
+import dayjs from "dayjs";
 import type { CreateReservationPublic } from "wasp/server/api";
+import { sendEmail } from "../lib/mailtrap";
+import {
+  buildReservationConfirmationHtml,
+  buildReservationConfirmationText,
+  formatOrderId,
+} from "../email/reservation-confirmation";
+
+const formatOrderDate = (date: Date) =>
+  dayjs(date).format("DD.MM YYYY. - HH:mm")
+
+const formatEventDateTime = (date: Date, startTime: string) => {
+  const dateStr = dayjs(date).format("DD.MM.YYYY.")
+  const time = startTime || "—"
+  return `${dateStr} u ${time}`
+}
 
 export const createReservationPublic: CreateReservationPublic = async (
   req,
@@ -63,6 +79,47 @@ export const createReservationPublic: CreateReservationPublic = async (
       status: "PENDING",
     },
   });
+
+  const seatsCount = reservation.seats ?? 1
+  const totalAmount = event.price * seatsCount
+
+  const location: "BELGRADE" | "NOVI_SAD" =
+    event.location === "NOVI_SAD" || event.location === "BELGRADE"
+      ? event.location
+      : "NOVI_SAD"
+
+  const emailData = {
+    orderId: formatOrderId(reservation.id),
+    reservationId: reservation.id,
+    orderDate: formatOrderDate(reservation.createdAt),
+    location,
+    customerName: name ?? "",
+    customerEmail: email,
+    customerPhone: phone ?? "",
+    items: [
+      {
+        title: event.title,
+        dateTime: formatEventDateTime(event.date, event.startTime),
+        price: event.price,
+        currency: event.currency,
+        quantity: seatsCount,
+        total: totalAmount,
+      },
+    ],
+    total: totalAmount,
+    currency: event.currency,
+  }
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: "Porudžbina primljena – Paleto Events",
+      text: buildReservationConfirmationText(emailData),
+      html: buildReservationConfirmationHtml(emailData),
+    })
+  } catch (err) {
+    console.error("Failed to send reservation confirmation email:", err)
+  }
 
   res.status(201).json({
     id: reservation.id,

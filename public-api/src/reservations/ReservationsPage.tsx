@@ -138,7 +138,7 @@ export const ReservationsPage = () => {
                 className="flex gap-2"
               >
                 <Input
-                  placeholder="Pretraži po emailu, imenu, telefonu..."
+                  placeholder="Pretraži po ID, emailu, imenu, telefonu..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="max-w-xs"
@@ -168,6 +168,7 @@ export const ReservationsPage = () => {
                   <table className="w-full text-left text-sm">
                     <thead className="border-b text-xs uppercase tracking-wide text-muted-foreground">
                       <tr>
+                        <th className="px-2 py-3 font-medium">ID</th>
                         <th className="px-2 py-3 font-medium">Datum rezervacije</th>
                         <th className="px-2 py-3 font-medium">Radionica</th>
                         <th className="px-2 py-3 font-medium">Email</th>
@@ -186,6 +187,9 @@ export const ReservationsPage = () => {
                         const seats = res.seats ?? 1;
                         return (
                           <tr key={res.id} className="hover:bg-muted/30">
+                            <td className="px-2 py-3 font-mono text-xs text-muted-foreground">
+                              {res.id.slice(0, 8)}
+                            </td>
                             <td className="px-2 py-3 text-muted-foreground">
                               {dayjs(res.createdAt).format("DD.MM.YYYY HH:mm")}
                             </td>
