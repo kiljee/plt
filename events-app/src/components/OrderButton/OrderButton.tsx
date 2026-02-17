@@ -7,6 +7,7 @@ interface OrderButtonProps {
   disabled?: boolean;
   loading?: boolean;
   soldOut?: boolean;
+  label?: string;
 }
 
 export const OrderButton = ({
@@ -14,6 +15,7 @@ export const OrderButton = ({
   disabled = false,
   loading = false,
   soldOut = false,
+  label,
 }: OrderButtonProps) => (
   <button
     type="button"
@@ -22,6 +24,6 @@ export const OrderButton = ({
     className={`${ORDER_BUTTON_STYLES.button} ${ORDER_BUTTON_STYLES.responsive}`}
     style={{ fontFamily: "var(--font-geist-sans), 'Inter', sans-serif" }}
   >
-    {loading ? "OBRADA…" : soldOut ? "Sold out" : "ORDER NOW"}
+    {loading ? "OBRADA…" : soldOut ? "Sold out" : label ?? "ORDER NOW"}
   </button>
 );

@@ -6,6 +6,7 @@ interface PaymentSlipProps {
   amount: number
   currency: string
   location: string
+  orderId: string
   customerName: string
   customerEmail: string
   customerPhone: string
@@ -15,6 +16,7 @@ export const renderPaymentSlip = ({
   amount,
   currency,
   location,
+  orderId,
   customerName,
   customerEmail,
   customerPhone,
@@ -35,10 +37,26 @@ export const renderPaymentSlip = ({
         </tr>
         <tr>
           <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted}; width: 180px;">
+            Banka
+          </td>
+          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
+            ${BANK_ACCOUNT.bank}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted}; width: 180px;">
             Primaoc
           </td>
           <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
             ${BANK_ACCOUNT.recipient}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
+            PIB / MB
+          </td>
+          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
+            ${BANK_ACCOUNT.pib} / ${BANK_ACCOUNT.mb}
           </td>
         </tr>
         <tr>
@@ -67,10 +85,18 @@ export const renderPaymentSlip = ({
         </tr>
         <tr>
           <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            Poziv na broj (model)
+            Model
           </td>
           <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
             ${BANK_ACCOUNT.model}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
+            Poziv na broj
+          </td>
+          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text}; font-weight: bold;">
+            ${orderId}
           </td>
         </tr>
         <tr>

@@ -9,6 +9,7 @@ interface QuantitySelectorProps {
   max?: number;
   onChange: (value: number) => void;
   label?: string;
+  showLabel?: boolean;
 }
 
 const SELECTOR_CLASS_NAME = [
@@ -23,6 +24,7 @@ export const QuantitySelector = ({
   max = 99,
   onChange,
   label = "Količina",
+  showLabel = true,
 }: QuantitySelectorProps) => {
   const handleDecrement = () => {
     if (value > min) onChange(value - 1);
@@ -34,11 +36,13 @@ export const QuantitySelector = ({
 
   return (
     <div className={QUANTITY_SELECTOR_STYLES.container}>
-      <div className="flex flex-col gap-2">
-        <span className={QUANTITY_SELECTOR_STYLES.label}>
-          {label} ({value} u korpi)
-        </span>
-      </div>
+      {showLabel && (
+        <div className="flex flex-col gap-2">
+          <span className={QUANTITY_SELECTOR_STYLES.label}>
+            {label} ({value} u korpi)
+          </span>
+        </div>
+      )}
       
       <div className={SELECTOR_CLASS_NAME}>
         <QuantityButton

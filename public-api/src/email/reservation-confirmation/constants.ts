@@ -49,4 +49,6 @@ export const BANK_ACCOUNT = {
   bank: "Raiffeisen banka A.D. Beograd",
   model: "97",
   purpose: "Uplata za rezervaciju",
+  pib: COMPANY.pib,
+  mb: COMPANY.mb,
 } as const

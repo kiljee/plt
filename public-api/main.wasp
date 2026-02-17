@@ -172,4 +172,11 @@ api createReservationPublic {
   auth: false,
   httpRoute: (POST, "/api/reservations")
 }
+
+api createReservationsBulkPublic {
+  fn: import { createReservationsBulkPublic } from "@src/reservations/apiBulk",
+  entities: [Reservation, Event],
+  auth: false,
+  httpRoute: (POST, "/api/reservations/bulk")
+}
 // #endregion Events

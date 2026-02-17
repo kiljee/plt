@@ -2,14 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useCartStore } from "@/store/cart";
 import { HEADER } from "./Header.styles";
 
 const NAV_LEFT = [{ href: "/", label: "Calendar" }] as const;
-const NAV_RIGHT = [{ href: "/about", label: "O nama" }] as const;
+const NAV_RIGHT = [
+  { href: "/korpa", label: "Korpa" },
+  { href: "/about", label: "O nama" },
+] as const;
 const NAV_MOBILE = [...NAV_LEFT, ...NAV_RIGHT];
 
 export const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const totalItems = useCartStore((s) => s.totalItems());
 
   return (
     <header className={HEADER.root}>
@@ -42,10 +47,15 @@ export const Header = () => {
             <Link
               key={href}
               href={href}
-              className={HEADER.navLink}
+              className={`${HEADER.navLink} relative`}
               onClick={() => setMobileOpen(false)}
             >
               {label}
+              {href === "/korpa" && totalItems > 0 && (
+                <span className="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
@@ -93,10 +103,15 @@ export const Header = () => {
             <Link
               key={href}
               href={href}
-              className={HEADER.mobileNavLink}
+              className={`${HEADER.mobileNavLink} relative`}
               onClick={() => setMobileOpen(false)}
             >
               {label}
+              {href === "/korpa" && totalItems > 0 && (
+                <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

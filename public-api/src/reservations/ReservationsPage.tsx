@@ -9,7 +9,7 @@ import {
   useQuery,
   useAction,
 } from "wasp/client/operations";
-import { StatusFilter } from "./types";
+import { StatusFilter, type StatusFilterType } from "./types";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { Input } from "../components/ui/input";
@@ -28,7 +28,7 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Otkazana",
 };
 
-const TAB_OPTIONS: { value: StatusFilter; label: string }[] = [
+const TAB_OPTIONS: { value: StatusFilterType; label: string }[] = [
   { value: StatusFilter.ACTIVE, label: "Aktivne" },
   { value: StatusFilter.PENDING, label: "Nepotvrđene" },
   { value: StatusFilter.CONFIRMED, label: "Potvrđene" },
@@ -46,7 +46,7 @@ export const ReservationsPage = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.ACTIVE);
+  const [statusFilter, setStatusFilter] = useState<StatusFilterType>(StatusFilter.ACTIVE);
 
   const { data, isLoading, refetch } = useQuery(getReservationsAdmin, {
     page,

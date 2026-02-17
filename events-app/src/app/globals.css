@@ -3,6 +3,17 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Design tokens - keep in sync with @/lib/colors.ts */
+  --color-primary: #5CA2BC;
+  --color-primary-light: rgba(92, 162, 188, 0.1);
+  --color-primary-border: rgba(92, 162, 188, 0.6);
+  --color-text-primary: #000914;
+  --color-text-muted: #86B4C5;
+  --color-text-disabled: #BCBCBC;
+  --color-text-label: #989B9C;
+  --color-border-default: #D9D9D9;
+  --color-border-light: #E5E5E5;
+  --color-error: #DC0000;
 }
 
 @theme inline {

@@ -57,11 +57,15 @@ Ukupno zaduženje: ${formatPrice(data.total, data.currency)}
 UPLATNICA – PODACI ZA UPLATU
 --------------------------------------------------------------------------------
 
+Banka: ${BANK_ACCOUNT.bank}
 Primaoc: ${BANK_ACCOUNT.recipient}
+PIB: ${BANK_ACCOUNT.pib}
+MB: ${BANK_ACCOUNT.mb}
 Adresa primaoca: ${getAddressByLocation(data.location)}
 Broj računa: ${BANK_ACCOUNT.accountNumber}
 Iznos: ${formatPrice(data.total, data.currency)}
-Poziv na broj (model): ${BANK_ACCOUNT.model}
+Model: ${BANK_ACCOUNT.model}
+Poziv na broj: ${data.orderId}
 Svrha uplate: ${BANK_ACCOUNT.purpose}
 
 Podaci o kupcu:

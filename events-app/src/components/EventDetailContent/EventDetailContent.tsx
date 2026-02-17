@@ -3,12 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { EventDetailItem } from "@/types/event";
+import { eventToSlug } from "@/lib/slug";
+import { useCartStore } from "@/store/cart";
 import { EventDetailsBlock } from "@/components/EventDetailsBlock/EventDetailsBlock";
 import { ImageGallery } from "@/components/ImageGallery/ImageGallery";
 import { OrderButton } from "@/components/OrderButton/OrderButton";
 import { PolicyInfoBlock } from "@/components/PolicyInfoBlock/PolicyInfoBlock";
 import { QuantitySelector } from "@/components/QuantitySelector/QuantitySelector";
-import { ReservationForm } from "@/components/ReservationForm/ReservationForm";
 import { EVENT_DETAIL_STYLES } from "./EventDetailContent.styles";
 import { formatTotalPrice } from "@/lib/price";
 
@@ -28,21 +29,27 @@ const parseImageUrls = (json: string): string[] => {
 
 export const EventDetailContent = ({ event }: EventDetailContentProps) => {
   const router = useRouter();
+  const addToCart = useCartStore((s) => s.addItem);
   const [quantity, setQuantity] = useState(1);
-  const [showForm, setShowForm] = useState(false);
+
   const [success, setSuccess] = useState(false);
 
   const images = parseImageUrls(event.imageUrls);
   const placesLeft = event.placesLeft ?? 0;
   const canOrder = placesLeft > 0 && quantity > 0 && quantity <= placesLeft;
 
-  const handleOrder = () => setShowForm(true);
-  const handleReservationSuccess = () => {
-    setShowForm(false);
-    setSuccess(true);
-    router.refresh();
+  const handleAddToCart = () => {
+    const slug = eventToSlug(event.title, event.date);
+    addToCart(
+      {
+       ...event,
+        slug,
+      },
+      quantity,
+    );
   };
 
+ 
   return (
     <section className={EVENT_DETAIL_STYLES.section}>
       {/* Decorative element */}
@@ -125,14 +132,16 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
             </div>
           )}
 
-          {/* Order Button */}
-          <div className={EVENT_DETAIL_STYLES.orderSection}>
+          {/* Order Buttons */}
+          <div className={`${EVENT_DETAIL_STYLES.orderSection} flex flex-col sm:flex-row gap-3`}>
             <OrderButton
-              onClick={handleOrder}
+              onClick={handleAddToCart}
               disabled={!canOrder}
               loading={false}
               soldOut={placesLeft <= 0}
+              label="Dodaj u korpu"
             />
+          
           </div>
 
           {/* Event Details */}
@@ -153,21 +162,7 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
         </div>
       </div>
 
-      {showForm && (
-        <div className={EVENT_DETAIL_STYLES.modal.overlay}>
-          <div className={EVENT_DETAIL_STYLES.modal.content}>
-            <ReservationForm
-              eventId={event.id}
-              eventTitle={event.title}
-              quantity={quantity}
-              price={event.price}
-              currency={event.currency}
-              onSuccess={handleReservationSuccess}
-              onCancel={() => setShowForm(false)}
-            />
-          </div>
-        </div>
-      )}
+      
     </section>
   );
 };

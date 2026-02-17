@@ -6,20 +6,14 @@ import {
   type GetReservationsAdmin,
   type GetReservationById,
 } from "wasp/server/operations";
-import { StatusFilter } from "./types";
+import {
+  StatusFilter,
+  type StatusFilterType,
+  ReservationStatus,
+  ActiveReservationStatuses,
+} from "./types";
 
-enum ReservationStatus {
-  PENDING = "PENDING",
-  CONFIRMED = "CONFIRMED",
-  CANCELLED = "CANCELLED",
-}
-
-const ACTIVE_STATUSES: string[] = [
-  ReservationStatus.PENDING,
-  ReservationStatus.CONFIRMED,
-];
-
-const FILTER_TO_STATUS: Record<Exclude<StatusFilter, "active">, string> = {
+const FILTER_TO_STATUS: Record<Exclude<StatusFilterType, "ACTIVE">, string> = {
   [StatusFilter.PENDING]: ReservationStatus.PENDING,
   [StatusFilter.CONFIRMED]: ReservationStatus.CONFIRMED,
   [StatusFilter.CANCELLED]: ReservationStatus.CANCELLED,
@@ -51,14 +45,14 @@ const checkAdmin = async (
   if (!user?.isAdmin) throw new HttpError(403, "Samo admin može videti rezervacije.");
 };
 
-const buildStatusWhere = (filter: StatusFilter): Prisma.ReservationWhereInput["status"] => {
-  if (filter === StatusFilter.ACTIVE) return { in: ACTIVE_STATUSES };
+const buildStatusWhere = (filter: StatusFilterType): Prisma.ReservationWhereInput["status"] => {
+  if (filter === StatusFilter.ACTIVE) return { in: [...ActiveReservationStatuses] };
   const status = FILTER_TO_STATUS[filter];
-  return status ?? { in: ACTIVE_STATUSES };
+  return status ?? { in: [...ActiveReservationStatuses] };
 };
 
 const buildWhere = (args: GetReservationsAdminInput): Prisma.ReservationWhereInput => {
-  const filter = (args?.statusFilter as StatusFilter) ?? StatusFilter.ACTIVE;
+  const filter = (args?.statusFilter as StatusFilterType) ?? StatusFilter.ACTIVE;
   const search = (typeof args?.search === "string" ? args.search : "").trim();
 
   return {
@@ -92,7 +86,7 @@ export type GetReservationsAdminInput = {
   page?: number;
   pageSize?: number;
   search?: string;
-  statusFilter?: StatusFilter;
+  statusFilter?: StatusFilterType;
   eventId?: string;
 };
 

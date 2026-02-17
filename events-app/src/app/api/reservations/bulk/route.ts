@@ -1,15 +1,16 @@
 import { revalidateTag } from "next/cache";
 import { WASP_API_BASE_URL } from "@/config/api";
+import type { BulkReservationRequest } from "@/types/reservation";
 import { NextRequest, NextResponse } from "next/server";
 
-const RESERVATIONS_URL = `${WASP_API_BASE_URL.replace(/\/$/, "")}/api/reservations`;
+const BULK_URL = `${WASP_API_BASE_URL.replace(/\/$/, "")}/api/reservations/bulk`;
 
 export const POST = async (
   request: NextRequest,
-): Promise<NextResponse<unknown>> => {
+) => {
   try {
-    const body = await request.json();
-    const res = await fetch(RESERVATIONS_URL, {
+    const body = (await request.json()) as BulkReservationRequest;
+    const res = await fetch(BULK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

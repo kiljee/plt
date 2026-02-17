@@ -35,6 +35,7 @@ export const buildReservationConfirmationHtml = (data: ReservationConfirmationDa
       amount: data.total,
       currency: data.currency,
       location: data.location,
+      orderId: data.orderId,
       customerName: data.customerName,
       customerEmail: data.customerEmail,
       customerPhone: data.customerPhone,
