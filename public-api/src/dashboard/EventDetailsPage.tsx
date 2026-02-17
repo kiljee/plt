@@ -55,9 +55,14 @@ export const EventDetailsPage = () => {
               {event?.title ?? "Radionica"}
             </h1>
           </div>
-          <Button asChild variant="outline">
-            <Link to="/">Sve radionice</Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button asChild variant="outline">
+              <Link to={`/rezervacije?eventId=${eventId}`}>Rezervacije</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to="/">Sve radionice</Link>
+            </Button>
+          </div>
         </div>
 
         {isLoading && (

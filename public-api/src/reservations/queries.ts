@@ -28,6 +28,7 @@ export type GetReservationsAdminInput = {
   pageSize?: number;
   search?: string;
   statusFilter?: "active" | "pending" | "confirmed" | "cancelled";
+  eventId?: string;
 };
 
 export type ReservationWithEvent = {
@@ -83,6 +84,7 @@ export const getReservationsAdmin: GetReservationsAdmin<
 
   const where: Prisma.ReservationWhereInput = {
     status: statusWhere,
+    ...(args?.eventId ? { eventId: args.eventId } : {}),
     ...(search
       ? {
           OR: [

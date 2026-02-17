@@ -141,13 +141,18 @@ export const DashboardPage = () => {
                                   {(event as { reservedCount?: number }).reservedCount ?? 0}
                                 </td>
                                 <td className="px-2 py-3 text-right">
-                                  <Button asChild size="sm">
-                                    <Link
-                                      to={`/radionica/${event.id}`}
-                                    >
-                                      Otvori
-                                    </Link>
-                                  </Button>
+                                  <div className="flex justify-end gap-1">
+                                    <Button asChild size="sm" variant="outline">
+                                      <Link to={`/rezervacije?eventId=${event.id}`}>
+                                        Rezervacije
+                                      </Link>
+                                    </Button>
+                                    <Button asChild size="sm">
+                                      <Link to={`/radionica/${event.id}`}>
+                                        Otvori
+                                      </Link>
+                                    </Button>
+                                  </div>
                                 </td>
                               </tr>
                             );

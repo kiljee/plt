@@ -72,8 +72,11 @@ export const EventCard = ({ event }: EventCardProps) => {
         </div>
       </CardHeader>
       <CardContent className="pt-6">
-        <h3 className="mb-3 text-sm font-medium">
-          Rezervacije ({reservations?.length ?? 0})
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-medium">
+          <span>Rezervacije ({reservations?.length ?? 0})</span>
+          <Button asChild size="sm" variant="ghost" className="h-auto p-0 text-primary">
+            <Link to={`/rezervacije?eventId=${event.id}`}>Pogledaj sve</Link>
+          </Button>
         </h3>
         {!reservations || reservations.length === 0 ? (
           <p className="rounded-lg bg-muted px-3 py-4 text-sm text-muted-foreground">

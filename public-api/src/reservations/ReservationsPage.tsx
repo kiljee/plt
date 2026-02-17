@@ -1,15 +1,16 @@
 import dayjs from "dayjs";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
   getReservationsAdmin,
+  getAdminEventById,
   deleteReservation,
   useQuery,
   useAction,
 } from "wasp/client/operations";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import {
   Pagination,
@@ -26,30 +27,45 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELLED: "Otkazana",
 };
 
-type StatusFilter = "active" | "pending" | "confirmed" | "cancelled";
+enum StatusFilter {
+  ACTIVE = "active",
+  PENDING = "pending",
+  CONFIRMED = "confirmed",
+  CANCELLED = "cancelled",
+}
 
 const TAB_OPTIONS: { value: StatusFilter; label: string }[] = [
-  { value: "active", label: "Aktivne" },
-  { value: "pending", label: "Nepotvrđene" },
-  { value: "confirmed", label: "Potvrđene" },
-  { value: "cancelled", label: "Otkazane" },
+  { value: StatusFilter.ACTIVE, label: "Aktivne" },
+  { value: StatusFilter.PENDING, label: "Nepotvrđene" },
+  { value: StatusFilter.CONFIRMED, label: "Potvrđene" },
+  { value: StatusFilter.CANCELLED, label: "Otkazane" },
 ];
+
 
 const formatAmount = (price: number, currency: string, seats: number) =>
   `${price * seats} ${currency}`;
 
 export const ReservationsPage = () => {
+  const [searchParams] = useSearchParams()
+  const eventId = searchParams.get("eventId") ?? undefined
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("active");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(StatusFilter.ACTIVE);
 
   const { data, isLoading, refetch } = useQuery(getReservationsAdmin, {
     page,
     pageSize: PAGE_SIZE,
     search: searchDebounced || undefined,
     statusFilter,
+    eventId,
   });
+  const { data: event } = useQuery(getAdminEventById,   { id: eventId || "" });
+
+  useEffect(() => {
+    setPage(1);
+  }, [eventId]);
   const deleteAction = useAction(deleteReservation);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -85,15 +101,24 @@ export const ReservationsPage = () => {
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              Rezervacije
+              {eventId ? `Rezervacije: ${event?.title ?? "Radionica"}` : "Rezervacije"}
             </h1>
             <p className="mt-1 text-muted-foreground">
-              Pregled svih rezervacija sa filterima i pretragom
+              {eventId
+                ? "Rezervacije za izabranu radionicu"
+                : "Pregled svih rezervacija sa filterima i pretragom"}
             </p>
           </div>
-          <Button asChild variant="outline">
-            <Link to="/">← Nazad na dashboard</Link>
-          </Button>
+          <div className="flex gap-2">
+            {eventId && (
+              <Button asChild variant="outline">
+                <Link to="/rezervacije">Sve rezervacije</Link>
+              </Button>
+            )}
+            <Button asChild variant="outline">
+              <Link to="/">← Nazad na dashboard</Link>
+            </Button>
+          </div>
         </header>
 
         <Card>
