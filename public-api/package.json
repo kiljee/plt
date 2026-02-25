@@ -2,7 +2,10 @@
   "name": "public-api",
   "type": "module",
   "scripts": {
-    "db:seed-reservations": "prisma db execute --file scripts/seed-100-reservations.sql"
+    "lint": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

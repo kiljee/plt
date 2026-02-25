@@ -4,10 +4,11 @@ const LOCATIONS = ["BELGRADE", "NOVI_SAD"] as const;
 
 export const getEventsPublic: GetEventsPublic = async (req, res, context) => {
   const location = req.query.location as string | undefined;
-  const where =
+  const locationFilter =
     location && LOCATIONS.includes(location as (typeof LOCATIONS)[number])
       ? { location }
       : {};
+  const where = { status: "ACTIVE" as const, ...locationFilter };
 
   const events = await context.entities.Event.findMany({
     where,

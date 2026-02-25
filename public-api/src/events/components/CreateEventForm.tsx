@@ -17,6 +17,8 @@ export const CAPACITY_MAX = 500;
 
 const URL_PATTERN = /^https?:\/\/.+/;
 
+export type EventStatus = "ACTIVE" | "INACTIVE";
+
 export interface EventFormValues {
   title: string;
   description: string;
@@ -29,6 +31,7 @@ export interface EventFormValues {
   imageUrls: string[];
   price: string;
   currency: string;
+  status: EventStatus;
 }
 
 export interface EventFormSubmitPayload {
@@ -43,6 +46,7 @@ export interface EventFormSubmitPayload {
   imageUrls: string[];
   price: number;
   currency: string;
+  status?: EventStatus;
 }
 
 const DEFAULT_DATE = dayjs().format("YYYY-MM-DD");
@@ -83,6 +87,7 @@ export const getEventFormDefaults = (
     imageUrls: getFilledImageUrls(),
     price: DEFAULT_PRICE,
     currency: DEFAULT_CURRENCY,
+    status: "ACTIVE",
   };
   const imageUrls = getFilledImageUrls(
     overrides.imageUrls ?? baseValues.imageUrls,
@@ -105,6 +110,7 @@ export const mapEventToFormValues = (event: Event): EventFormValues => ({
   imageUrls: getFilledImageUrls(parseImageUrls(event.imageUrls)),
   price: String(event.price ?? DEFAULT_PRICE),
   currency: event.currency || DEFAULT_CURRENCY,
+  status: event.status === "INACTIVE" ? "INACTIVE" : "ACTIVE",
 });
 
 interface CreateEventFormProps {
@@ -169,6 +175,7 @@ export const CreateEventForm = ({
       imageUrls: data.imageUrls.filter((u) => u?.trim()).filter(Boolean),
       price: priceNum,
       currency: data.currency,
+      status: data.status,
     };
 
     try {
@@ -261,6 +268,32 @@ export const CreateEventForm = ({
             >
               <option value="BELGRADE">Beograd</option>
               <option value="NOVI_SAD">Novi Sad</option>
+            </select>
+            {fieldState.error && (
+              <span className="text-sm text-red-500">
+                {fieldState.error.message}
+              </span>
+            )}
+          </div>
+        )}
+      />
+
+      <Controller
+        name="status"
+        control={control}
+        rules={{ required: { value: true, message: "Status je obavezan." } }}
+        render={({ field, fieldState }) => (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="status" className="label">
+              Status
+            </label>
+            <select
+              id="status"
+              className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              {...field}
+            >
+              <option value="ACTIVE">Aktivna</option>
+              <option value="INACTIVE">Neaktivna</option>
             </select>
             {fieldState.error && (
               <span className="text-sm text-red-500">

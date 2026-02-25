@@ -32,33 +32,7 @@ export const EventCalendar = ({
           <LocationSwitch current={location} />
         </div>
 
-        <div className={EVENT_CALENDAR.filterBar}>
-          <span className={EVENT_CALENDAR.filterLabel}>
-            <svg
-              className={EVENT_CALENDAR.filterIcon}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 10h16M4 14h16M4 18h16"
-              />
-              <circle cx="6" cy="6" r="1.5" fill="currentColor" />
-              <circle cx="6" cy="14" r="1.5" fill="currentColor" />
-            </svg>
-            Filteri
-          </span>
-          <span className={EVENT_CALENDAR.calendarToggle}>Kalendar</span>
-          <div className={EVENT_CALENDAR.sortWrap}>
-            <span>Sortiranje po:</span>
-            <select className={EVENT_CALENDAR.sortSelect} defaultValue="title">
-              <option value="title">Abecedi</option>
-              <option value="date">Datumu</option>
-            </select>
-          </div>
+        <div className={EVENT_CALENDAR.countBar}>
           <span className={EVENT_CALENDAR.count}>
             {events.length} događaja
           </span>

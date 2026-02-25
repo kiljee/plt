@@ -152,6 +152,11 @@ action updateEvent {
   entities: [Event, User]
 }
 
+action updateEventStatus {
+  fn: import { updateEventStatus } from "@src/events/actions",
+  entities: [Event, User]
+}
+
 api getEventsPublic {
   fn: import { getEventsPublic } from "@src/events/api",
   entities: [Event, Reservation],

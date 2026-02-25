@@ -1,7 +1,12 @@
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getAdminEvents, useQuery } from "wasp/client/operations";
+import {
+  getAdminEvents,
+  updateEventStatus,
+  useQuery,
+} from "wasp/client/operations";
+import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -21,8 +26,21 @@ import { useAddEventModal } from "../shared/context/AddEventModalContext";
 
 const PAGE_SIZE = 10;
 
+type EventStatus = "ACTIVE" | "INACTIVE";
+
+const STATUS_LABELS: Record<EventStatus, string> = {
+  ACTIVE: "Aktivna",
+  INACTIVE: "Neaktivna",
+};
+
+const STATUS_BADGE_CLASS: Record<EventStatus, string> = {
+  ACTIVE: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
+  INACTIVE: "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300",
+};
+
 export const DashboardPage = () => {
   const [page, setPage] = useState(1);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const { open: openAddEventModal, onSuccessRef } = useAddEventModal();
 
   const { data, isLoading, refetch } = useQuery(getAdminEvents, {
@@ -36,6 +54,19 @@ export const DashboardPage = () => {
       onSuccessRef.current = null;
     };
   }, [refetch, onSuccessRef]);
+
+  const handleStatusChange = async (eventId: string, status: EventStatus) => {
+    setUpdatingId(eventId);
+    try {
+      await updateEventStatus({ id: eventId, status });
+      toast.success("Status je ažuriran.");
+      refetch();
+    } catch (err) {
+      toast.error(`Greška: ${String(err)}`);
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   const events = data?.events ?? [];
   const totalCount = data?.totalCount ?? 0;
@@ -82,6 +113,7 @@ export const DashboardPage = () => {
                         <thead className="border-b text-xs uppercase tracking-wide text-muted-foreground">
                           <tr>
                             <th className="px-2 py-3 font-medium">Naziv</th>
+                            <th className="px-2 py-3 font-medium">Status</th>
                             <th className="px-2 py-3 font-medium">Termin</th>
                             <th className="px-2 py-3 font-medium">Lokacija</th>
                             <th className="px-2 py-3 font-medium">Kapacitet</th>
@@ -103,6 +135,8 @@ export const DashboardPage = () => {
                               event.location === "NOVI_SAD"
                                 ? "Novi Sad"
                                 : "Beograd";
+                            const status = (event as { status?: EventStatus })
+                              .status ?? "ACTIVE";
 
                             return (
                               <tr key={event.id} className="hover:bg-muted/30">
@@ -113,6 +147,30 @@ export const DashboardPage = () => {
                                   >
                                     {event.title}
                                   </Link>
+                                </td>
+                                <td className="px-2 py-3">
+                                  <select
+                                    value={status}
+                                    disabled={updatingId === event.id}
+                                    onChange={(e) => {
+                                      const value = e.target
+                                        .value as EventStatus;
+                                      if (
+                                        value === "ACTIVE" ||
+                                        value === "INACTIVE"
+                                      ) {
+                                        handleStatusChange(event.id, value);
+                                      }
+                                    }}
+                                    className={`rounded-md border px-2 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary ${STATUS_BADGE_CLASS[status]} border-transparent disabled:opacity-60`}
+                                  >
+                                    <option value="ACTIVE">
+                                      {STATUS_LABELS.ACTIVE}
+                                    </option>
+                                    <option value="INACTIVE">
+                                      {STATUS_LABELS.INACTIVE}
+                                    </option>
+                                  </select>
                                 </td>
                                 <td className="px-2 py-3 text-muted-foreground">
                                   <div>{dateLabel}</div>

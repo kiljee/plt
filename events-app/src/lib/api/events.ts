@@ -32,7 +32,9 @@ export const getEvents = cache(async (
     throw new Error("Invalid response");
   }
 
-  return data.map((item: Record<string, unknown>) => normalizeEventItem(item));
+  return data.map((item: Record<string, unknown>) =>
+    normalizeEventItem(item),
+  );
 });
 
 export const getEventBySlug = cache(async (

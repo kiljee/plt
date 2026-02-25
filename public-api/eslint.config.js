@@ -10,6 +10,19 @@ export default defineConfig([
   { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   eslintTypescript.configs.recommended,
   eslintReact.configs.flat.recommended,
-  eslintReact.configs.flat['jsx-runtime'],
+  eslintReact.configs.flat["jsx-runtime"],
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
+  {
+    settings: {
+      react: { version: "detect" },
+    },
+  },
   eslintPrettier,
 ]);

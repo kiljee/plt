@@ -48,7 +48,7 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
             alt={event.title}
             fill
             className="object-cover"
-            sizes="(max-width: 640px) 100vw, 289px"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             unoptimized={mainImage.startsWith("http") || mainImage.startsWith("data:")}
           />
         </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { EventDetailItem } from "@/types/event";
 import { eventToSlug } from "@/lib/slug";
@@ -28,11 +27,9 @@ const parseImageUrls = (json: string): string[] => {
 
 
 export const EventDetailContent = ({ event }: EventDetailContentProps) => {
-  const router = useRouter();
   const addToCart = useCartStore((s) => s.addItem);
   const [quantity, setQuantity] = useState(1);
 
-  const [success, setSuccess] = useState(false);
 
   const images = parseImageUrls(event.imageUrls);
   const placesLeft = event.placesLeft ?? 0;
@@ -126,11 +123,6 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
             </div>
           )}
 
-          {success && (
-            <div className={EVENT_DETAIL_STYLES.successMessage}>
-              Rezervacija je uspešna! Primićete potvrdu putem emaila.
-            </div>
-          )}
 
           {/* Order Buttons */}
           <div className={`${EVENT_DETAIL_STYLES.orderSection} flex flex-col sm:flex-row gap-3`}>

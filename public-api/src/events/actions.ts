@@ -9,6 +9,8 @@ import { type CreateEvent } from "wasp/server/operations";
 
 const MAX_IMAGES = 6;
 
+export type EventStatus = "ACTIVE" | "INACTIVE";
+
 export type CreateEventArgs = {
   title: string;
   description: string;
@@ -25,6 +27,7 @@ export type CreateEventArgs = {
 
 export type UpdateEventArgs = CreateEventArgs & {
   id: string;
+  status?: EventStatus;
 };
 
 type UpdateEventAction = AuthenticatedActionDefinition<
@@ -117,10 +120,43 @@ export const updateEvent: UpdateEventAction = async (
     imageUrls: getImageUrlsJson(args.imageUrls),
     price: Math.max(0, Number(args.price) || 0),
     currency: args.currency || "RSD",
+    ...(args.status === "ACTIVE" || args.status === "INACTIVE"
+      ? { status: args.status }
+      : {}),
   };
 
   return context.entities.Event.update({
     where: { id: args.id },
     data,
+  });
+};
+
+export type UpdateEventStatusArgs = { id: string; status: EventStatus };
+
+type UpdateEventStatusAction = AuthenticatedActionDefinition<
+  [_Event, _User],
+  UpdateEventStatusArgs,
+  Event
+>;
+
+export const updateEventStatus: UpdateEventStatusAction = async (
+  args,
+  context,
+) => {
+  await getAdminUserId(context);
+  const existing = await context.entities.Event.findUnique({
+    where: { id: args.id },
+  });
+  if (!existing) {
+    throw new HttpError(404, "Radionica nije pronađena.");
+  }
+  if (args.status !== "ACTIVE" && args.status !== "INACTIVE") {
+    throw new HttpError(400, "Status mora biti ACTIVE ili INACTIVE.");
+  }
+  return context.entities.Event.update({
+    where: { id: args.id },
+    data: { status: args.status } as Parameters<
+      typeof context.entities.Event.update
+    >[0]["data"],
   });
 };

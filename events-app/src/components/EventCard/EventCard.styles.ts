@@ -2,31 +2,29 @@ import { COLORS } from "@/lib/colors";
 
 export const EVENT_CARD_STYLES = {
   card: {
-    container:
-      "flex w-full flex-col sm:max-w-[289px] sm:h-[526px] sm:w-[289px]",
-    wrapper:
-      "flex w-full flex-col justify-end items-end sm:max-w-[289px] sm:h-[526px] sm:w-[289px]",
+    container: "flex h-full w-full flex-col",
+    wrapper: "flex min-h-0 flex-1 flex-col",
   },
   image: {
     container:
-      "aspect-[289/357] w-full shrink-0 bg-cover bg-center bg-no-repeat sm:h-[357px] sm:w-[289px]",
+      "relative aspect-[289/357] w-full shrink-0 overflow-hidden bg-cover bg-center bg-no-repeat",
     overlay: "absolute inset-0 bg-black/10",
   },
   content: {
     container:
-      "flex w-full flex-col justify-center items-end gap-4 border-0 border-r border-b border-l border-solid p-3 sm:min-h-[169px] sm:w-[289px] sm:gap-6 sm:p-4",
-    inner: "flex w-full flex-col items-start gap-2 sm:max-w-[249px]",
+      "flex min-h-[152px] flex-1 flex-col justify-between border-0 border-r border-b border-l border-solid p-3 sm:p-4",
+    inner: "flex w-full flex-col items-start gap-2 min-w-0",
   },
   title: {
-    base: "w-full min-w-0 sm:w-[249px]",
+    base: "w-full min-w-0 line-clamp-2",
     available: "font-semibold",
     soldOut: "font-normal",
     text: "text-base leading-tight tracking-[0.5px] sm:text-xl sm:leading-[22px]",
   },
-  priceContainer: "flex w-full flex-row items-center gap-2 sm:w-[249px] sm:h-4",
-  price: "flex flex-1 items-center text-sm leading-4 sm:text-base sm:w-[249px]",
+  priceContainer: "flex w-full flex-row items-center gap-2",
+  price: "flex flex-1 items-center text-sm leading-4 sm:text-base",
   button: {
-    base: "box-border relative w-full min-h-[41px] border border-solid sm:w-[249px] sm:h-[41px]",
+    base: "box-border relative w-full min-h-[41px] border border-solid",
     available: "",
     soldOut: "bg-transparent",
   },
