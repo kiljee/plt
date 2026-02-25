@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCartStore } from "@/store/cart";
 import type { BulkReservationRequest } from "@/types/reservation";
-import { isValidSerbianMobile, parseSerbianMobile } from "@/lib/phone";
+import { isValidPhoneNumber } from "@/lib/phone";
 import { CartReceipt } from "@/components/CartReceipt/CartReceipt";
 import { CheckoutFormFields, type CheckoutFormData } from "@/components/CheckoutForm/CheckoutFormFields";
 import { CART_PAGE_STYLES } from "./CartPageContent.styles";
@@ -25,7 +25,7 @@ const checkoutSchema = yup.object({
   phone: yup
     .string()
     .required("Unesite broj telefona za kontakt")
-    .test("serbian-mobile", "Unesite ispravan broj mobilnog telefona (npr. 061 234 5678)", isValidSerbianMobile),
+    .test("valid-phone", "Unesite ispravan broj telefona", isValidPhoneNumber),
   address: yup.string().optional().default(""),
   postalCode: yup.string().optional().default(""),
   city: yup.string().optional().default(""),
@@ -89,7 +89,7 @@ export const CartPageContent = () => {
         items: items.map((i) => ({ eventId: i.eventId, seats: i.seats })),
         email: formData.email.trim(),
         name: [formData.firstName, formData.lastName].filter(Boolean).join(" ") || undefined,
-        phone: formData.phone.trim() ? `+381${parseSerbianMobile(formData.phone)}` : undefined,
+        phone: formData.phone.trim() || undefined,
       };
       const res = await fetch(url, {
         method: "POST",
@@ -104,6 +104,7 @@ export const CartPageContent = () => {
 
       clearCart();
       setOrderSuccess(true);
+      router.refresh();
     } catch (err) {
       methods.setError("root", {
         type: "manual",

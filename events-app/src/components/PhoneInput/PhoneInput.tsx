@@ -1,11 +1,10 @@
 "use client";
 
 import { useCallback } from "react";
+import PhoneInputComponent from "react-phone-number-input";
 import type { UseFormRegisterReturn } from "react-hook-form";
 import { CHECKOUT_FORM_STYLES } from "@/components/CheckoutForm/CheckoutForm.styles";
-import { formatSerbianMobile } from "@/lib/phone";
-
-const PLACEHOLDER = "06x xxx xxxx";
+import "react-phone-number-input/style.css";
 
 interface PhoneInputProps {
   id: string;
@@ -21,10 +20,14 @@ export const PhoneInput = ({
   error,
 }: PhoneInputProps) => {
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const formatted = formatSerbianMobile(e.target.value);
-      e.target.value = formatted;
-      register.onChange(e);
+    (value: string | undefined) => {
+      const event = {
+        target: {
+          name: register.name,
+          value: value || "",
+        },
+      };
+      register.onChange(event);
     },
     [register]
   );
@@ -34,15 +37,15 @@ export const PhoneInput = ({
       <label className={CHECKOUT_FORM_STYLES.label} htmlFor={id}>
         {label}
       </label>
-      <input
-        {...register}
+      <PhoneInputComponent
         id={id}
-        type="tel"
-        inputMode="numeric"
-        autoComplete="tel"
-        placeholder={PLACEHOLDER}
-        className={`${CHECKOUT_FORM_STYLES.input} ${error ? CHECKOUT_FORM_STYLES.inputError : ""}`}
+        name={register.name}
+        defaultCountry="RS"
+        placeholder="Unesite broj telefona"
+        value={register.value || ""}
         onChange={handleChange}
+        autoComplete="tel"
+        className={`${CHECKOUT_FORM_STYLES.input} ${error ? CHECKOUT_FORM_STYLES.inputError : ""}`}
       />
       {error?.message && (
         <span className={CHECKOUT_FORM_STYLES.errorMessage}>

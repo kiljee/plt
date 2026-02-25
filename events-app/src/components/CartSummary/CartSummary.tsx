@@ -44,10 +44,10 @@ export const CartSummary = ({
   const agreeTerms = watch("agreeTerms");
   const hasAgreeTermsError = !!errors.agreeTerms;
   const hasRootError = !!errors.root;
-
+  console.log(hasRootError, agreeTerms, loading);
   const getButtonClassName = () => {
-    if (hasRootError) return CART_SUMMARY_STYLES.submitButtonError;
-    return agreeTerms ? CART_SUMMARY_STYLES.submitButtonActive : CART_SUMMARY_STYLES.submitButton;
+    if (hasRootError || agreeTerms ) return CART_SUMMARY_STYLES.submitButtonError;
+    return CART_SUMMARY_STYLES.submitButtonActive ;
   };
 
   return (

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   EVENTS_ENDPOINT,
   EVENTS_REVALIDATE_SECONDS,
@@ -9,7 +10,7 @@ import type { EventItem, EventDetailItem, EventLocation } from "@/types/event";
 
 const EVENTS_BASE = `${WASP_API_BASE_URL.replace(/\/$/, "")}${EVENTS_ENDPOINT}`;
 
-export const getEvents = async (
+export const getEvents = cache(async (
   location?: EventLocation,
 ): Promise<EventItem[]> => {
   const url = location
@@ -32,9 +33,9 @@ export const getEvents = async (
   }
 
   return data.map((item: Record<string, unknown>) => normalizeEventItem(item));
-};
+});
 
-export const getEventBySlug = async (
+export const getEventBySlug = cache(async (
   city: string,
   slug: string,
 ): Promise<EventDetailItem | null> => {
@@ -54,4 +55,14 @@ export const getEventBySlug = async (
 
   const data = await res.json();
   return normalizeEventDetailItem(data as Record<string, unknown>);
-};
+});
+
+export const loadEventPageData = cache(
+  async (city: string, slug: string, location: EventLocation) => {
+    const [event, events] = await Promise.all([
+      getEventBySlug(city, slug),
+      getEvents(location),
+    ]);
+    return { event, events };
+  },
+);

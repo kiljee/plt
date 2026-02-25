@@ -1,3 +1,5 @@
+import { COLORS } from "@/lib/colors";
+
 export const CART_SUMMARY_STYLES = {
   root: "flex flex-col gap-0 w-full pt-4",
   divider: "w-full h-px bg-[#D9D9D9] border-0 my-0",
@@ -14,9 +16,9 @@ export const CART_SUMMARY_STYLES = {
   totalValue:
     "font-[var(--font-comfortaa)] font-bold text-xl leading-[22px] tracking-[0.5px] text-[#000914]",
   submitButton:
-    "flex flex-row justify-center items-center py-3 px-[90px] gap-2.5 w-full bg-[#9DC7D7] border border-[rgba(92,162,188,0.6)] font-[var(--font-geist-sans)] text-xs font-normal leading-3 tracking-[5px] uppercase text-white rounded mt-4",
+    `flex flex-row justify-center items-center py-3 px-[90px] gap-2.5 w-full bg-[${COLORS.primary}] hover:bg-[${COLORS.primaryHover}] border border-[${COLORS.primaryBorder}] font-[var(--font-geist-sans)] text-xs font-normal leading-3 tracking-[5px] uppercase text-white rounded mt-4 cursor-pointer transition-colors`,
   submitButtonActive:
-    "flex flex-row justify-center items-center py-3 px-[90px] gap-2.5 w-full bg-[#059669] hover:bg-[#047857] border border-[#047857] font-[var(--font-geist-sans)] text-xs font-normal leading-3 tracking-[5px] uppercase text-white rounded mt-4 cursor-pointer transition-colors",
+    `flex flex-row justify-center items-center py-3 px-[90px] gap-2.5 w-full bg-[${COLORS.primary}] hover:bg-[${COLORS.primaryHover}] border border-[${COLORS.primaryBorder}] font-[var(--font-geist-sans)] text-xs font-normal leading-3 tracking-[5px] uppercase text-white rounded mt-4 cursor-pointer transition-colors`,
   submitButtonError:
     "flex flex-row justify-center items-center py-3 px-[90px] gap-2.5 w-full bg-red-500 border border-red-600 font-[var(--font-geist-sans)] text-xs font-normal leading-3 tracking-[5px] uppercase text-white rounded mt-4",
   rootErrorMessage:

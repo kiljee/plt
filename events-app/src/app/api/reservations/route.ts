@@ -24,7 +24,7 @@ export const POST = async (
       );
     }
 
-    revalidateTag("events", "max");
+    revalidateTag("events", { expire: 0 });
 
     return NextResponse.json(data);
   } catch (e) {

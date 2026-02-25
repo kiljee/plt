@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { FormInput } from "@/components/FormInput/FormInput";
 import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
-import { isValidSerbianMobile } from "@/lib/phone";
+import { isValidPhoneNumber } from "@/lib/phone";
 import { CHECKOUT_FORM_STYLES } from "./CheckoutForm.styles";
 
 export interface CheckoutFormData {
@@ -30,7 +30,7 @@ const checkoutSchema = yup.object({
   phone: yup
     .string()
     .required("Unesite broj telefona za kontakt")
-    .test("serbian-mobile", "Unesite ispravan broj mobilnog telefona (npr. 061 234 5678)", isValidSerbianMobile),
+    .test("valid-phone", "Unesite ispravan broj telefona", isValidPhoneNumber),
   address: yup.string().optional().default(""),
   postalCode: yup.string().optional().default(""),
   city: yup.string().optional().default(""),

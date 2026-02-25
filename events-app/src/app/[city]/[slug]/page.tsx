@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getEventBySlug, getEvents } from "@/lib/api";
+import { getEventBySlug, loadEventPageData } from "@/lib/api";
 import { EventDetailContent } from "@/components/EventDetailContent/EventDetailContent";
 import { RelatedEvents } from "@/components/RelatedEvents/RelatedEvents";
 import { citySlugToLocation } from "@/lib/slug";
@@ -40,10 +40,7 @@ export default async function EventDetailPage({ params }: PageProps) {
   const location = citySlugToLocation(city);
   if (!location) notFound();
 
-  const [event, events] = await Promise.all([
-    getEventBySlug(city, slug),
-    getEvents(location),
-  ]);
+  const { event, events } = await loadEventPageData(city, slug, location);
 
   if (!event) notFound();
 
