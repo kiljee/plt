@@ -1,7 +1,6 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import { getAdminEvents, useQuery } from "wasp/client/operations";
 import { Button } from "../components/ui/button";
 import {
@@ -11,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { Dialog, DialogContent } from "../components/ui/dialog";
 import {
   Pagination,
   PaginationContent,
@@ -19,19 +17,25 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../components/ui/pagination";
-import { CreateEventForm } from "../events/components/CreateEventForm";
+import { useAddEventModal } from "../shared/context/AddEventModalContext";
 
 const PAGE_SIZE = 10;
-const SUCCESS_MESSAGE = "Radionica je uspešno dodata.";
 
 export const DashboardPage = () => {
   const [page, setPage] = useState(1);
-  const [modalOpen, setModalOpen] = useState(false);
+  const { open: openAddEventModal, onSuccessRef } = useAddEventModal();
 
   const { data, isLoading, refetch } = useQuery(getAdminEvents, {
     page,
     pageSize: PAGE_SIZE,
   });
+
+  useEffect(() => {
+    onSuccessRef.current = refetch;
+    return () => {
+      onSuccessRef.current = null;
+    };
+  }, [refetch, onSuccessRef]);
 
   const events = data?.events ?? [];
   const totalCount = data?.totalCount ?? 0;
@@ -39,29 +43,9 @@ export const DashboardPage = () => {
   const hasPrev = page > 1;
   const hasNext = page < totalPages;
 
-  const handleAddSuccess = () => {
-    setModalOpen(false);
-    toast.success(SUCCESS_MESSAGE);
-    refetch();
-  };
-
   return (
     <div className="min-h-screen bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              Admin dashboard
-            </h1>
-            <p className="mt-1 text-muted-foreground">
-              Pregled radionica i rezervacija
-            </p>
-          </div>
-          <Button onClick={() => setModalOpen(true)} className="shrink-0">
-            Dodaj radionicu
-          </Button>
-        </header>
-
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
           <section className="order-1">
             <Card>
@@ -83,9 +67,12 @@ export const DashboardPage = () => {
                 )}
 
                 {!isLoading && events.length === 0 && (
-                  <p className="py-8 text-center text-muted-foreground">
-                    Nema radionica. Kliknite „Dodaj radionicu” da kreirate prvu.
-                  </p>
+                  <div className="flex flex-col items-center gap-4 py-8">
+                    <p className="text-center text-muted-foreground">
+                      Nema radionica. Kliknite „Dodaj radionicu” da kreirate prvu.
+                    </p>
+                    <Button onClick={openAddEventModal}>Dodaj radionicu</Button>
+                  </div>
                 )}
 
                 {!isLoading && events.length > 0 && (
@@ -222,6 +209,14 @@ export const DashboardPage = () => {
                   >
                     Radionice
                   </Link>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="justify-start"
+                    onClick={openAddEventModal}
+                  >
+                    Dodaj radionicu
+                  </Button>
                   <Link
                     to="/rezervacije"
                     className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
@@ -234,12 +229,6 @@ export const DashboardPage = () => {
           </aside>
         </div>
       </div>
-
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto sm:max-w-2xl">
-          <CreateEventForm onSuccess={handleAddSuccess} />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

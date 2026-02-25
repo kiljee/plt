@@ -2,9 +2,11 @@ import { logout, useAuth } from "wasp/client/auth";
 import { Link } from "wasp/client/router";
 import Logo from "../../assets/logo.svg";
 import { Button } from "../../components/ui/button";
+import { useAddEventModal } from "../context/AddEventModalContext";
 
 export function Header() {
   const { data: user } = useAuth();
+  const { open: openAddEventModal } = useAddEventModal();
 
   return (
     <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white shadow-sm">
@@ -18,12 +20,15 @@ export function Header() {
         </Link>
         <nav className="flex items-center gap-3 sm:gap-6">
           {user && (
-            <Link
-              to="/events"
-              className="text-sm font-medium text-zinc-600 hover:text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 rounded-md px-2 py-1"
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={openAddEventModal}
+              className="shrink-0"
             >
               Dodaj radionicu
-            </Link>
+            </Button>
           )}
           {user ? (
             <Button onClick={logout} className="shrink-0">

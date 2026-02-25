@@ -114,6 +114,7 @@ interface CreateEventFormProps {
   submitLabel?: string;
   title?: string;
   resetOnSuccess?: boolean;
+  formClassName?: string;
 }
 
 export const CreateEventForm = ({
@@ -123,6 +124,7 @@ export const CreateEventForm = ({
   submitLabel,
   title,
   resetOnSuccess = true,
+  formClassName,
 }: CreateEventFormProps) => {
   const defaultValues = getEventFormDefaults(initialValues);
   const { handleSubmit, control, reset, setError, formState } =
@@ -183,7 +185,7 @@ export const CreateEventForm = ({
   return (
     <form
       onSubmit={handleSubmit(onSubmitHandler)}
-      className="flex w-full max-w-xl flex-col gap-4"
+      className={formClassName ?? "flex w-full max-w-xl flex-col gap-4"}
     >
       <h2 className="text-xl font-semibold text-zinc-900">
         {title ?? "Nova radionica"}

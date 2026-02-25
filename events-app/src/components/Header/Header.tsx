@@ -18,6 +18,7 @@ export const Header = () => {
 
   return (
     <header className={HEADER.root}>
+      <div className={HEADER.inner}>
       <nav className={HEADER.navLeft} aria-label="Glavna navigacija">
         {NAV_LEFT.map(({ href, label }) => (
           <Link
@@ -91,6 +92,7 @@ export const Header = () => {
             )}
           </svg>
         </button>
+      </div>
       </div>
 
       {mobileOpen && (

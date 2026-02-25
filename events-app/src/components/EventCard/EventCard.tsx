@@ -42,13 +42,13 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
     >
       <div className={EVENT_CARD_STYLES.card.wrapper}>
         {/* Image */}
-        <div className="relative w-[289px] h-[357px] overflow-hidden">
+        <div className={`relative w-full overflow-hidden ${EVENT_CARD_STYLES.image.container}`}>
           <Image
             src={mainImage}
             alt={event.title}
             fill
             className="object-cover"
-            sizes="289px"
+            sizes="(max-width: 640px) 100vw, 289px"
             unoptimized={mainImage.startsWith("http") || mainImage.startsWith("data:")}
           />
         </div>
