@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import "dayjs/locale/sr";
+import { EventLocation, LOCATION_LABELS } from "@/types/event";
 import { EVENT_DETAILS_STYLES } from "./EventDetailsBlock.styles";
 
 dayjs.locale("sr");
@@ -9,13 +10,8 @@ interface EventDetailsBlockProps {
   startTime: string;
   endTime: string;
   ageCategory: string;
-  location: string;
+  location: EventLocation | string;
 }
-
-const LOCATION_DISPLAY: Record<string, string> = {
-  BELGRADE: "Beograd",
-  NOVI_SAD: "Novi Sad",
-};
 
 const DETAIL_ITEMS = [
   { label: "Dan", key: "day" as const },
@@ -31,6 +27,10 @@ export const EventDetailsBlock = ({
   ageCategory,
   location,
 }: EventDetailsBlockProps) => {
+  const locationLabel =
+    location in LOCATION_LABELS
+      ? LOCATION_LABELS[location as EventLocation]
+      : location;
   const d = dayjs(date);
   const dayName = d.format("dddd");
   const dateFormatted = d.format("DD.MM.YYYY");
@@ -44,7 +44,7 @@ export const EventDetailsBlock = ({
     day: d.isValid() ? `${dayName} ${dateFormatted}` : "—",
     time: timeDisplay,
     age: ageCategory || "—",
-    location: LOCATION_DISPLAY[location] ?? location,
+    location: locationLabel,
   };
 
   return (

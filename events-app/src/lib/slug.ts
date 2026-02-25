@@ -16,18 +16,21 @@ export const eventToSlug = (title: string, date: string): string => {
   return `${base}-${formatted}`;
 };
 
+import { EventLocation } from "@/types/event";
+
+export const LOCATION_TO_SLUG: Record<EventLocation, string> = {
+  [EventLocation.BELGRADE]: "beograd",
+  [EventLocation.NOVI_SAD]: "novi-sad",
+};
+
 export const CITY_SLUGS = ["beograd", "novi-sad"] as const;
 export type CitySlug = (typeof CITY_SLUGS)[number];
 
-export const locationToCitySlug = (
-  location: "BELGRADE" | "NOVI_SAD",
-): CitySlug =>
-  location === "NOVI_SAD" ? "novi-sad" : "beograd";
+export const locationToCitySlug = (location: EventLocation): CitySlug =>
+  LOCATION_TO_SLUG[location] as CitySlug;
 
-export const citySlugToLocation = (
-  city: string,
-): "BELGRADE" | "NOVI_SAD" | null => {
-  if (city === "novi-sad") return "NOVI_SAD";
-  if (city === "beograd") return "BELGRADE";
+export const citySlugToLocation = (city: string): EventLocation | null => {
+  if (city === LOCATION_TO_SLUG[EventLocation.NOVI_SAD]) return EventLocation.NOVI_SAD;
+  if (city === LOCATION_TO_SLUG[EventLocation.BELGRADE]) return EventLocation.BELGRADE;
   return null;
 };

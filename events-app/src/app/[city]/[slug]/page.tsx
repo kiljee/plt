@@ -3,6 +3,7 @@ import { getEventBySlug, loadEventPageData } from "@/lib/api";
 import { EventDetailContent } from "@/components/EventDetailContent/EventDetailContent";
 import { RelatedEvents } from "@/components/RelatedEvents/RelatedEvents";
 import { citySlugToLocation } from "@/lib/slug";
+import { LOCATION_LABELS } from "@/types/event";
 import type { Metadata } from "next";
 
 interface PageProps {
@@ -22,7 +23,7 @@ export const generateMetadata = async ({
   const event = await getEventBySlug(city, slug);
   if (!event) return { title: "Događaj nije pronađen" };
 
-  const cityName = location === "NOVI_SAD" ? "Novi Sad" : "Beograd";
+  const cityName = LOCATION_LABELS[location];
 
   return {
     title: `${event.title} | ${cityName}`,

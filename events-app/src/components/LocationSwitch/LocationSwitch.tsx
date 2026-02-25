@@ -1,23 +1,30 @@
 import Link from "next/link";
-import type { EventLocation } from "@/types/event";
+import { EventLocation, LOCATION_LABELS } from "@/types/event";
 import { LOCATION_SWITCH } from "./LocationSwitch.styles";
 
-const LOCATIONS: { value: EventLocation; label: string }[] = [
-  { value: "BELGRADE", label: "Beograd" },
-  { value: "NOVI_SAD", label: "Novi Sad" },
+type LocationFilter = EventLocation | undefined;
+
+const ALL_OPTION = { value: undefined as LocationFilter, label: "Sve" };
+const LOCATIONS: { value: LocationFilter; label: string }[] = [
+  ALL_OPTION,
+  { value: EventLocation.BELGRADE, label: LOCATION_LABELS[EventLocation.BELGRADE] },
+  { value: EventLocation.NOVI_SAD, label: LOCATION_LABELS[EventLocation.NOVI_SAD] },
 ];
 
 interface LocationSwitchProps {
-  current: EventLocation;
+  current: LocationFilter;
 }
+
+const hrefForLocation = (value: LocationFilter): string =>
+  value === undefined ? "/" : `/?location=${value}`;
 
 export const LocationSwitch = ({ current }: LocationSwitchProps) => {
   return (
     <div className={LOCATION_SWITCH.root} role="tablist" aria-label="Lokacija">
       {LOCATIONS.map(({ value, label }) => (
         <Link
-          key={value}
-          href={value === "BELGRADE" ? "/" : `/?location=${value}`}
+          key={label}
+          href={hrefForLocation(value)}
           scroll={false}
           role="tab"
           aria-selected={current === value}

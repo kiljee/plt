@@ -1,4 +1,12 @@
-export type EventLocation = "BELGRADE" | "NOVI_SAD";
+export enum EventLocation {
+  BELGRADE = "BELGRADE",
+  NOVI_SAD = "NOVI_SAD",
+}
+
+export const LOCATION_LABELS: Record<EventLocation, string> = {
+  [EventLocation.BELGRADE]: "Beograd",
+  [EventLocation.NOVI_SAD]: "Novi Sad",
+};
 
 export interface EventItem {
   id: string;

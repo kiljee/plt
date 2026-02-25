@@ -3,13 +3,15 @@ import { LocationSwitch } from "@/components/LocationSwitch/LocationSwitch";
 import { EventCard } from "@/components/EventCard/EventCard";
 import { EVENT_CALENDAR } from "./EventCalendar.styles";
 
+export type LocationFilter = EventLocation | undefined;
+
 const INTRO_TEXT =
   "Sve radionice uključuju stručno vođstvo, neophodan materijal i neograničena pića. Grupe su male, kako bismo svakom učesniku posvetili individualnu pažnju. Na slikarskim radionicama, učesnici biraju sopstvenu temu, uz podršku tokom celog procesa stvaranja.";
 
 
 interface EventCalendarProps {
   events: EventItem[];
-  location: EventLocation;
+  location: LocationFilter;
   error: string | null;
 }
 

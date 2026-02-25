@@ -3,6 +3,7 @@
 import { useFormContext } from "react-hook-form";
 import { FormInput } from "@/components/FormInput/FormInput";
 import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
+import { EventLocation, LOCATION_LABELS } from "@/types/event";
 import { CHECKOUT_FORM_STYLES } from "./CheckoutForm.styles";
 
 export interface CheckoutFormData {
@@ -74,7 +75,7 @@ export const CheckoutFormFields = ({ loading = false }: CheckoutFormFieldsProps)
           <FormInput
             id="city"
             label="Grad"
-            placeholder="Novi Sad"
+            placeholder={LOCATION_LABELS[EventLocation.NOVI_SAD]}
             register={register("city")}
             optional
             className="flex-1"

@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { FormInput } from "@/components/FormInput/FormInput";
 import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { isValidPhoneNumber } from "@/lib/phone";
+import { EventLocation, LOCATION_LABELS } from "@/types/event";
 import { CHECKOUT_FORM_STYLES } from "./CheckoutForm.styles";
 
 export interface CheckoutFormData {
@@ -135,7 +136,7 @@ export const CheckoutForm = ({
           <FormInput
             id="city"
             label="Grad"
-            placeholder="Novi Sad"
+            placeholder={LOCATION_LABELS[EventLocation.NOVI_SAD]}
             register={register("city")}
             optional
             className="flex-1"

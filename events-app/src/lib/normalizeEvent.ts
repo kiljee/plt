@@ -1,3 +1,4 @@
+import { EventLocation } from "@/types/event";
 import type { EventItem, EventDetailItem } from "@/types/event";
 
 const ensureString = (v: unknown, fallback = ""): string =>
@@ -10,7 +11,10 @@ export const normalizeEventItem = (raw: Record<string, unknown>): EventItem => (
   id: ensureString(raw.id),
   title: ensureString(raw.title),
   description: ensureString(raw.description),
-  location: (raw.location === "NOVI_SAD" ? "NOVI_SAD" : "BELGRADE") as EventItem["location"],
+  location:
+    raw.location === EventLocation.NOVI_SAD
+      ? EventLocation.NOVI_SAD
+      : EventLocation.BELGRADE,
   date: ensureString(raw.date),
   startTime: ensureString(raw.startTime),
   endTime: ensureString(raw.endTime),

@@ -1,6 +1,6 @@
 import { EventCalendar } from "@/components/EventCalendar/EventCalendar";
 import { getEvents } from "@/lib/api";
-import type { EventLocation } from "@/types/event";
+import { EventLocation } from "@/types/event";
 
 const getErrorMessage = (e: unknown): string => {
   const msg = e instanceof Error ? e.message : "Greška pri učitavanju.";
@@ -10,8 +10,12 @@ const getErrorMessage = (e: unknown): string => {
   return msg;
 };
 
-const parseLocation = (s: string | undefined): EventLocation =>
-  s === "NOVI_SAD" ? "NOVI_SAD" : "BELGRADE";
+
+const parseLocation = (city: string | undefined): EventLocation | undefined => {
+  if (city === EventLocation.BELGRADE) return EventLocation.BELGRADE;
+  if (city === EventLocation.NOVI_SAD) return EventLocation.NOVI_SAD;
+  return undefined;
+};
 
 export const dynamic = "force-dynamic";
 
