@@ -16,6 +16,7 @@ interface CheckoutFormFieldsProps {
 export const CheckoutFormFields = ({ loading = false }: CheckoutFormFieldsProps) => {
   const {
     register,
+    watch,
     formState: { errors },
   } = useFormContext<CheckoutFormData>();
 
@@ -77,6 +78,7 @@ export const CheckoutFormFields = ({ loading = false }: CheckoutFormFieldsProps)
           id="phone"
           label="Broj telefona *"
           register={register("phone")}
+          value={watch("phone")}
           error={errors.phone}
         />
         <FormInput

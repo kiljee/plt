@@ -10,6 +10,7 @@ interface PhoneInputProps {
   id: string;
   label: string;
   register: UseFormRegisterReturn;
+  value?: string;
   error?: { message?: string };
 }
 
@@ -17,6 +18,7 @@ export const PhoneInput = ({
   id,
   label,
   register,
+  value = "",
   error,
 }: PhoneInputProps) => {
   const handleChange = useCallback(
@@ -42,7 +44,7 @@ export const PhoneInput = ({
         name={register.name}
         defaultCountry="RS"
         placeholder="Unesite broj telefona"
-        value={register.value || ""}
+        value={value}
         onChange={handleChange}
         autoComplete="tel"
         className={`${CHECKOUT_FORM_STYLES.input} ${CHECKOUT_FORM_STYLES.inputFocusWithin} ${error ? CHECKOUT_FORM_STYLES.inputError : ""} ${error ? CHECKOUT_FORM_STYLES.inputErrorFocusWithin : ""}`}
