@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const BY_SLUG_URL = `${WASP_API_BASE_URL.replace(/\/$/, "")}${EVENTS_BY_SLUG_ENDPOINT}`;
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 export const GET = async (
   request: NextRequest,

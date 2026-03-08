@@ -1,4 +1,5 @@
 import type { GetEventBySlugPublic } from "wasp/server/api";
+import { EventStatus } from "./constants";
 
 type LocationSlug = "BELGRADE" | "NOVI_SAD";
 const CITY_TO_LOCATION: Record<string, LocationSlug> = {
@@ -44,7 +45,7 @@ export const getEventBySlugPublic: GetEventBySlugPublic = async (
   }
 
   const events = await context.entities.Event.findMany({
-    where: { location, status: "ACTIVE" },
+    where: { location, status: EventStatus.ACTIVE },
     select: {
       id: true,
       title: true,

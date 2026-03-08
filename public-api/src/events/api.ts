@@ -1,4 +1,7 @@
+import dayjs from "dayjs";
 import type { GetEventsPublic } from "wasp/server/api";
+import { parsePaginationParams } from "../lib/pagination";
+import { EventStatus, EVENT_PUBLIC_SELECT, type EventPublicRow } from "./constants";
 
 const LOCATIONS = ["BELGRADE", "NOVI_SAD"] as const;
 
@@ -8,46 +11,50 @@ export const getEventsPublic: GetEventsPublic = async (req, res, context) => {
     location && LOCATIONS.includes(location as (typeof LOCATIONS)[number])
       ? { location }
       : {};
-  const where = { status: "ACTIVE" as const, ...locationFilter };
+  const where = { status: EventStatus.ACTIVE, ...locationFilter };
+  const { pageSize, skip } = parsePaginationParams(
+    req.query as Record<string, string | string[] | undefined>,
+  );
 
-  const events = await context.entities.Event.findMany({
-    where,
-    orderBy: { date: "asc" as const },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      location: true,
-      date: true,
-      startTime: true,
-      endTime: true,
-      ageCategory: true,
-      capacity: true,
-      imageUrls: true,
-      price: true,
-      currency: true,
-      createdAt: true,
-    },
-  });
+  const today = dayjs().startOf("day").toDate();
 
-  const eventIds = events.map((e) => e.id);
-  const reservations = await context.entities.Reservation.findMany({
-    where: {
-      eventId: { in: eventIds },
-      status: { in: ["PENDING", "CONFIRMED"] },
-    },
-    select: { eventId: true, seats: true },
-  });
+  const [past, upcoming] = await Promise.all([
+    context.entities.Event.findMany({
+      where: { ...where, date: { lt: today } },
+      orderBy: { date: "desc" as const },
+      select: EVENT_PUBLIC_SELECT,
+    }),
+    context.entities.Event.findMany({
+      where: { ...where, date: { gte: today } },
+      orderBy: { date: "asc" as const },
+      select: EVENT_PUBLIC_SELECT,
+    }),
+  ]);
+
+  const all = [...past, ...upcoming] as EventPublicRow[];
+  const totalCount = all.length;
+  const page = all.slice(skip, skip + pageSize);
+
+  const eventIds = page.map((e) => e.id);
+  const reservations = eventIds.length > 0
+    ? await context.entities.Reservation.findMany({
+        where: {
+          eventId: { in: eventIds },
+          status: { in: ["PENDING", "CONFIRMED"] },
+        },
+        select: { eventId: true, seats: true },
+      })
+    : [];
 
   const reservedByEvent: Record<string, number> = {};
   for (const r of reservations) {
     reservedByEvent[r.eventId] = (reservedByEvent[r.eventId] ?? 0) + (r.seats ?? 1);
   }
 
-  const eventsWithPlaces = events.map((e) => ({
+  const events = page.map((e) => ({
     ...e,
     placesLeft: Math.max(0, e.capacity - (reservedByEvent[e.id] ?? 0)),
   }));
 
-  res.json(eventsWithPlaces);
+  res.json({ events, totalCount });
 };

@@ -9,13 +9,33 @@ import { normalizeEventDetailItem, normalizeEventItem } from "@/lib/normalizeEve
 import type { EventItem, EventDetailItem, EventLocation } from "@/types/event";
 
 const EVENTS_BASE = `${WASP_API_BASE_URL.replace(/\/$/, "")}${EVENTS_ENDPOINT}`;
+const DEFAULT_PAGE_SIZE = 12;
+
+export interface GetEventsResult {
+  events: EventItem[];
+  totalCount: number;
+}
+
+const buildEventsUrl = (
+  location?: EventLocation,
+  page?: number,
+  pageSize?: number,
+): string => {
+  const params = new URLSearchParams();
+  if (location) params.set("location", location);
+  const p = Math.max(1, page ?? 1);
+  const ps = Math.max(1, pageSize ?? DEFAULT_PAGE_SIZE);
+  params.set("page", String(p));
+  params.set("pageSize", String(ps));
+  return `${EVENTS_BASE}?${params.toString()}`;
+};
 
 export const getEvents = cache(async (
   location?: EventLocation,
-): Promise<EventItem[]> => {
-  const url = location
-    ? `${EVENTS_BASE}?location=${encodeURIComponent(location)}`
-    : EVENTS_BASE;
+  page = 1,
+  pageSize = DEFAULT_PAGE_SIZE,
+): Promise<GetEventsResult> => {
+  const url = buildEventsUrl(location, page, pageSize);
   const res = await fetch(url, {
     next: { revalidate: EVENTS_REVALIDATE_SECONDS, tags: ["events"] },
     headers: { Accept: "application/json" },
@@ -27,14 +47,15 @@ export const getEvents = cache(async (
     throw new Error(msg);
   }
 
-  const data = await res.json();
-  if (!Array.isArray(data)) {
+  const data = (await res.json()) as { events?: unknown[]; totalCount?: number };
+  if (!Array.isArray(data?.events) || typeof data?.totalCount !== "number") {
     throw new Error("Invalid response");
   }
 
-  return data.map((item: Record<string, unknown>) =>
+  const events = (data.events as Record<string, unknown>[]).map((item) =>
     normalizeEventItem(item),
   );
+  return { events, totalCount: data.totalCount };
 });
 
 export const getEventBySlug = cache(async (
@@ -61,10 +82,10 @@ export const getEventBySlug = cache(async (
 
 export const loadEventPageData = cache(
   async (city: string, slug: string, location: EventLocation) => {
-    const [event, events] = await Promise.all([
+    const [event, result] = await Promise.all([
       getEventBySlug(city, slug),
-      getEvents(location),
+      getEvents(location, 1, 50),
     ]);
-    return { event, events };
+    return { event, events: result.events };
   },
 );

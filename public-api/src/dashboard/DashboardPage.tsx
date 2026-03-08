@@ -23,19 +23,20 @@ import {
   PaginationPrevious,
 } from "../components/ui/pagination";
 import { useAddEventModal } from "../shared/context/AddEventModalContext";
+import { EventStatus } from "../events/constants";
 
 const PAGE_SIZE = 10;
 
-type EventStatus = "ACTIVE" | "INACTIVE";
-
 const STATUS_LABELS: Record<EventStatus, string> = {
-  ACTIVE: "Aktivna",
-  INACTIVE: "Neaktivna",
+  [EventStatus.ACTIVE]: "Aktivna",
+  [EventStatus.INACTIVE]: "Neaktivna",
 };
 
 const STATUS_BADGE_CLASS: Record<EventStatus, string> = {
-  ACTIVE: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
-  INACTIVE: "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300",
+  [EventStatus.ACTIVE]:
+    "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
+  [EventStatus.INACTIVE]:
+    "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300",
 };
 
 export const DashboardPage = () => {
@@ -136,7 +137,7 @@ export const DashboardPage = () => {
                                 ? "Novi Sad"
                                 : "Beograd";
                             const status = (event as { status?: EventStatus })
-                              .status ?? "ACTIVE";
+                              .status ?? EventStatus.ACTIVE;
 
                             return (
                               <tr key={event.id} className="hover:bg-muted/30">

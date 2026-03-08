@@ -15,8 +15,10 @@ interface LocationSwitchProps {
   current: LocationFilter;
 }
 
-const hrefForLocation = (value: LocationFilter): string =>
-  value === undefined ? "/" : `/?location=${value}`;
+const hrefForLocation = (value: LocationFilter): string => {
+  if (value === undefined) return "/";
+  return `/?location=${encodeURIComponent(value)}`;
+};
 
 export const LocationSwitch = ({ current }: LocationSwitchProps) => {
   return (

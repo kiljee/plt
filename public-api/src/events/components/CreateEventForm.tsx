@@ -4,6 +4,7 @@ import { type Event } from "wasp/entities";
 import { createEvent } from "wasp/client/operations";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../shared/components/Input";
+import { EventStatus } from "../constants";
 
 export const AGE_CATEGORIES = [
   { value: "Adults", label: "Odrasli" },
@@ -16,8 +17,6 @@ export const CAPACITY_MIN = 1;
 export const CAPACITY_MAX = 500;
 
 const URL_PATTERN = /^https?:\/\/.+/;
-
-export type EventStatus = "ACTIVE" | "INACTIVE";
 
 export interface EventFormValues {
   title: string;
@@ -87,7 +86,7 @@ export const getEventFormDefaults = (
     imageUrls: getFilledImageUrls(),
     price: DEFAULT_PRICE,
     currency: DEFAULT_CURRENCY,
-    status: "ACTIVE",
+    status: EventStatus.ACTIVE,
   };
   const imageUrls = getFilledImageUrls(
     overrides.imageUrls ?? baseValues.imageUrls,
@@ -110,7 +109,7 @@ export const mapEventToFormValues = (event: Event): EventFormValues => ({
   imageUrls: getFilledImageUrls(parseImageUrls(event.imageUrls)),
   price: String(event.price ?? DEFAULT_PRICE),
   currency: event.currency || DEFAULT_CURRENCY,
-  status: event.status === "INACTIVE" ? "INACTIVE" : "ACTIVE",
+  status: event.status === EventStatus.INACTIVE ? EventStatus.INACTIVE : EventStatus.ACTIVE,
 });
 
 interface CreateEventFormProps {
@@ -292,8 +291,8 @@ export const CreateEventForm = ({
               className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               {...field}
             >
-              <option value="ACTIVE">Aktivna</option>
-              <option value="INACTIVE">Neaktivna</option>
+              <option value={EventStatus.ACTIVE}>Aktivna</option>
+              <option value={EventStatus.INACTIVE}>Neaktivna</option>
             </select>
             {fieldState.error && (
               <span className="text-sm text-red-500">
