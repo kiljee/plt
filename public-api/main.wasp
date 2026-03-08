@@ -157,6 +157,16 @@ action updateEventStatus {
   entities: [Event, User]
 }
 
+action uploadEventImage {
+  fn: import { uploadEventImage } from "@src/events/actions",
+  entities: [Event, User]
+}
+
+action deleteEvent {
+  fn: import { deleteEvent } from "@src/events/actions",
+  entities: [Event, User]
+}
+
 api getEventsPublic {
   fn: import { getEventsPublic } from "@src/events/api",
   entities: [Event, Reservation],

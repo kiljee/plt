@@ -6,119 +6,177 @@ import {
 } from "./types";
 import { sendReservationConfirmation } from "./sendReservationConfirmation";
 
+const sendConfirmationWithRetry = async (
+  params: Parameters<typeof sendReservationConfirmation>[0],
+  retries = 2,
+): Promise<void> => {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      await sendReservationConfirmation(params);
+      return;
+    } catch (err) {
+      lastError = err;
+      if (process.env.NODE_ENV === "development") {
+        console.warn(`[apiBulk] email attempt ${attempt + 1}/${retries} failed`, err);
+      }
+    }
+  }
+  console.error("[createReservationsBulkPublic] email failed after retries", lastError);
+};
+
 export const createReservationsBulkPublic: CreateReservationsBulkPublic =
   async (req, res, context) => {
-    if (req.method !== "POST") {
-      res.status(405).json({ error: "Method not allowed" });
-      return;
-    }
+    try {
+      if (req.method !== "POST") {
+        res.status(405).json({ error: "Method not allowed" });
+        return;
+      }
 
-    const body: object =
-      typeof req.body === "object" && req.body !== null ? req.body : {};
-    const { items, email, name, phone } = parseBulkRequestBody(body);
+      const body: Record<string, unknown> =
+        typeof req.body === "object" && req.body !== null
+          ? (req.body as Record<string, unknown>)
+          : {};
 
-    console.log("[apiBulk] parsed:", { items, email, name, phone });
+      const { items, email, name, phone } = parseBulkRequestBody(body);
 
-    if (!items?.length || !email) {
-      console.log("[apiBulk] 400: items ili email nedostaju");
-      res.status(400).json({ error: "items i email su obavezni" });
-      return;
-    }
+      if (!Array.isArray(items) || items.length === 0) {
+        res.status(400).json({ error: "items su obavezni" });
+        return;
+      }
 
-    const eventIds = [...new Set(items.map((i) => i.eventId))];
+      if (!email || typeof email !== "string") {
+        res.status(400).json({ error: "email je obavezan" });
+        return;
+      }
 
-    const events = await context.entities.Event.findMany({
-      where: { id: { in: eventIds } },
-    });
+      for (const item of items) {
+        if (!item?.eventId || typeof item.eventId !== "string") {
+          res.status(400).json({
+            error: "Svaki item mora imati validan eventId",
+          });
+          return;
+        }
+        if (!Number.isInteger(item.seats) || item.seats <= 0) {
+          res.status(400).json({
+            error: "Broj mesta mora biti pozitivan ceo broj",
+          });
+          return;
+        }
+      }
 
-    const eventMap = new Map(events.map((e) => [e.id, e]));
-    const missingEventId = eventIds.find((id) => !eventMap.has(id));
-    if (missingEventId) {
-      console.log("[apiBulk] 404: događaj nije pronađen:", missingEventId);
-      res.status(404).json({
-        error: `Događaj ${missingEventId} nije pronađen`,
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedName = typeof name === "string" ? name.trim() || null : null;
+      const normalizedPhone = typeof phone === "string" ? phone.trim() || null : null;
+
+      const eventIds = [...new Set(items.map((i) => i.eventId))];
+
+      const requestedByEvent = new Map<string, number>();
+      for (const item of items) {
+        requestedByEvent.set(
+          item.eventId,
+          (requestedByEvent.get(item.eventId) ?? 0) + item.seats,
+        );
+      }
+
+      const events = await context.entities.Event.findMany({
+        where: { id: { in: eventIds } },
       });
-      return;
-    }
 
-    const existingReservations = await context.entities.Reservation.findMany({
-      where: {
-        eventId: { in: eventIds },
-        status: { in: [...ActiveReservationStatuses] },
-      },
-    });
+      const eventMap = new Map(events.map((e) => [e.id, e]));
+      const missingEventIds = eventIds.filter((id) => !eventMap.has(id));
 
-    const reservedByEvent = new Map<string, number>();
-    for (const r of existingReservations) {
-      const current = reservedByEvent.get(r.eventId) ?? 0;
-      reservedByEvent.set(r.eventId, current + (r.seats ?? 1));
-    }
-
-    for (const item of items) {
-      const event = eventMap.get(item.eventId)!;
-      const totalReserved = reservedByEvent.get(item.eventId) ?? 0;
-
-      if (totalReserved + item.seats > event.capacity) {
-        console.log("[apiBulk] 400: nema mesta", {
-          eventId: item.eventId,
-          eventTitle: event.title,
-          totalReserved,
-          requested: item.seats,
-          capacity: event.capacity,
-        });
-        res.status(400).json({
-          error: `Nema dovoljno mesta za "${event.title}"`,
+      if (missingEventIds.length > 0) {
+        res.status(404).json({
+          error: `Nisu pronađeni događaji: ${missingEventIds.join(", ")}`,
         });
         return;
       }
 
-      reservedByEvent.set(
-        item.eventId,
-        (reservedByEvent.get(item.eventId) ?? 0) + item.seats
-      );
-    }
-
-    const created = await context.entities.Reservation.createManyAndReturn({
-      data: items.map((item) => ({
-        eventId: item.eventId,
-        email,
-        name,
-        phone,
-        seats: item.seats,
-        status: ReservationStatus.PENDING,
-      })),
-    });
-
-    const reservationsWithEvent = created.map((r) => {
-      const event = eventMap.get(r.eventId)!;
-      return {
-        id: r.id,
-        eventId: r.eventId,
-        seats: r.seats ?? 1,
-        createdAt: r.createdAt,
-        event: {
-          title: event.title,
-          date: event.date,
-          startTime: event.startTime,
-          price: event.price,
-          currency: event.currency,
-          location: event.location,
+      const existingReservations = await context.entities.Reservation.findMany({
+        where: {
+          eventId: { in: eventIds },
+          status: { in: [...ActiveReservationStatuses] },
         },
-      };
-    });
+      });
 
-    await sendReservationConfirmation({
-      reservations: reservationsWithEvent,
-      customerEmail: email,
-      customerName: name,
-      customerPhone: phone,
-    });
+      const reservedByEvent = new Map<string, number>();
+      for (const r of existingReservations) {
+        reservedByEvent.set(
+          r.eventId,
+          (reservedByEvent.get(r.eventId) ?? 0) + (r.seats ?? 1),
+        );
+      }
 
-    res.status(201).json({
-      reservations: reservationsWithEvent.map((r) => ({
-        id: r.id,
-        eventId: r.eventId,
-        seats: r.seats,
-      })),
-    });
+      for (const [eventId, requestedSeats] of requestedByEvent.entries()) {
+        const event = eventMap.get(eventId)!;
+        const capacity = event.capacity;
+        const alreadyReserved = reservedByEvent.get(eventId) ?? 0;
+
+        if (!Number.isInteger(capacity) || capacity < 1) {
+          res.status(400).json({
+            error: `Događaj "${event.title}" nema validan kapacitet`,
+          });
+          return;
+        }
+
+        if (alreadyReserved + requestedSeats > capacity) {
+          res.status(400).json({
+            error: `Nema dovoljno mesta za "${event.title}"`,
+            eventId,
+            availableSeats: Math.max(0, capacity - alreadyReserved),
+            requestedSeats,
+          });
+          return;
+        }
+      }
+
+      const createdReservations =
+        await context.entities.Reservation.createManyAndReturn({
+          data: items.map((item) => ({
+            eventId: item.eventId,
+            email: normalizedEmail,
+            name: normalizedName,
+            phone: normalizedPhone,
+            seats: item.seats,
+            status: ReservationStatus.PENDING,
+          })),
+        });
+
+      const reservationsWithEvent = createdReservations.map((r) => {
+        const event = eventMap.get(r.eventId)!;
+        return {
+          id: r.id,
+          eventId: r.eventId,
+          seats: r.seats ?? 1,
+          createdAt: r.createdAt,
+          event: {
+            title: event.title,
+            date: event.date,
+            startTime: event.startTime,
+            price: event.price,
+            currency: event.currency,
+            location: event.location,
+          },
+        };
+      });
+
+      await sendConfirmationWithRetry({
+        reservations: reservationsWithEvent,
+        customerEmail: normalizedEmail,
+        customerName: normalizedName ?? "",
+        customerPhone: normalizedPhone ?? "",
+      });
+
+      res.status(201).json({
+        reservations: reservationsWithEvent.map((r) => ({
+          id: r.id,
+          eventId: r.eventId,
+          seats: r.seats,
+        })),
+      });
+    } catch (error) {
+      console.error("[createReservationsBulkPublic] unexpected error", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   };

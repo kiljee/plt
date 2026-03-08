@@ -4,7 +4,9 @@ import { toast } from "sonner";
 import {
   getAdminEventById,
   updateEvent,
+  deleteEvent,
   useQuery,
+  useAction,
 } from "wasp/client/operations";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
@@ -23,11 +25,24 @@ export const EventDetailsPage = () => {
     id: eventId,
   });
 
+  const deleteEventAction = useAction(deleteEvent);
+
   const handleUpdate = async (payload: EventFormSubmitPayload) => {
     try {
       await updateEvent({ id: eventId, ...payload });
       toast.success(SUCCESS_MESSAGE);
       refetch();
+    } catch (err: unknown) {
+      toast.error(`Greška: ${String(err)}`);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Da li ste sigurni da želite da obrišete ovu radionicu? Sve slike će biti obrisane.")) return;
+    try {
+      await deleteEventAction({ id: eventId });
+      toast.success("Radionica je obrisana.");
+      window.location.href = "/";
     } catch (err: unknown) {
       toast.error(`Greška: ${String(err)}`);
     }
@@ -61,6 +76,9 @@ export const EventDetailsPage = () => {
             </Button>
             <Button asChild variant="outline">
               <Link to="/">Sve radionice</Link>
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Obriši radionicu
             </Button>
           </div>
         </div>

@@ -1,9 +1,12 @@
 import dayjs from "dayjs";
+import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { type Event } from "wasp/entities";
-import { createEvent } from "wasp/client/operations";
+import { createEvent, uploadEventImage, useAction } from "wasp/client/operations";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../shared/components/Input";
+import { uploadImageFile } from "./uploadImageFile";
 import { EventStatus } from "../constants";
 
 export const AGE_CATEGORIES = [
@@ -15,8 +18,6 @@ export const AGE_CATEGORIES = [
 export const IMAGE_COUNT = 6;
 export const CAPACITY_MIN = 1;
 export const CAPACITY_MAX = 500;
-
-const URL_PATTERN = /^https?:\/\/.+/;
 
 export interface EventFormValues {
   title: string;
@@ -132,10 +133,36 @@ export const CreateEventForm = ({
   formClassName,
 }: CreateEventFormProps) => {
   const defaultValues = getEventFormDefaults(initialValues);
-  const { handleSubmit, control, reset, setError, formState } =
+  const { handleSubmit, control, reset, setError, setValue, formState } =
     useForm<EventFormValues>({
       defaultValues,
+      mode: "onTouched",
     });
+  const uploadAction = useAction(uploadEventImage);
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+
+  const handleFileSelect = useCallback(
+    async (index: number, file: File | null) => {
+      if (!file) return;
+      setUploadingIndex(index);
+      try {
+        const url = await uploadImageFile(file, uploadAction);
+        setValue(`imageUrls.${index}`, url);
+      } catch (err) {
+        toast.error(`Greška pri otpremanju: ${String(err)}`);
+      } finally {
+        setUploadingIndex(null);
+      }
+    },
+    [uploadAction, setValue],
+  );
+
+  const handleRemoveImage = useCallback(
+    (index: number) => {
+      setValue(`imageUrls.${index}`, "");
+    },
+    [setValue],
+  );
 
   const onSubmitHandler = async (data: EventFormValues) => {
     const capacityNum = parseInt(data.capacity, 10);
@@ -184,7 +211,7 @@ export const CreateEventForm = ({
       }
       onSuccess?.();
     } catch (err: unknown) {
-      window.alert(`Greška: ${String(err)}`);
+      toast.error(`Greška: ${String(err)}`);
     }
   };
 
@@ -508,30 +535,47 @@ export const CreateEventForm = ({
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="label">Slike (do 6 URL-ova, opciono)</span>
+        <span className="label">Slike (do 6, opciono)</span>
         {Array.from({ length: IMAGE_COUNT }, (_, i) => (
           <Controller
             key={i}
             name={`imageUrls.${i}`}
             control={control}
-            rules={{
-              validate: (v) => {
-                if (!v?.trim()) return true;
-                return URL_PATTERN.test(v.trim()) || "Unesite ispravan URL (npr. https://…).";
-              },
-            }}
-            render={({ field, fieldState }) => (
+            render={({ field }) => (
               <div className="flex flex-col gap-0.5">
-                <input
-                  type="url"
-                  placeholder={`Slika ${i + 1}`}
-                  className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-800 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                  {...field}
-                />
-                {fieldState.error && (
-                  <span className="text-sm text-red-500">
-                    {fieldState.error.message}
-                  </span>
+                {field.value ? (
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={field.value}
+                      alt={`Slika ${i + 1}`}
+                      className="h-16 w-16 rounded object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleRemoveImage(i)}
+                    >
+                      Ukloni
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="w-full max-w-xs text-sm text-zinc-600 file:mr-2 file:rounded file:border-0 file:bg-primary-100 file:px-3 file:py-1.5 file:text-primary-700"
+                      disabled={uploadingIndex !== null}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) void handleFileSelect(i, f);
+                        e.target.value = "";
+                      }}
+                    />
+                    {uploadingIndex === i && (
+                      <span className="text-sm text-zinc-500">Otpremanje…</span>
+                    )}
+                  </div>
                 )}
               </div>
             )}

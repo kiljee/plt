@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { type Event } from "wasp/entities";
 import {
   deleteReservation,
@@ -26,7 +27,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       await deleteReservationAction({ id: reservationId });
       refetch();
     } catch (err: unknown) {
-      window.alert(`Greška: ${String(err)}`);
+      toast.error(`Greška: ${String(err)}`);
     }
   };
 

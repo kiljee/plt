@@ -53,12 +53,12 @@ export const CartItem = ({
           alt={item.event.title}
           width={100}
           height={100}
+          sizes="100px"
           className={CART_ITEM_STYLES.image}
           unoptimized={
             mainImage.startsWith("http") || mainImage.startsWith("data:")
           }
         />
-        <span className={CART_ITEM_STYLES.badge}>{item.seats}</span>
       </Link>
       <div className={CART_ITEM_STYLES.content}>
         <div className={CART_ITEM_STYLES.titleRow}>

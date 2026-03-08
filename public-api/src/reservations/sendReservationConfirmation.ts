@@ -84,5 +84,6 @@ export const sendReservationConfirmation = async (
     });
   } catch (err) {
     console.error("Failed to send reservation confirmation email:", err);
+    throw err;
   }
 };

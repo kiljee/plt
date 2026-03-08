@@ -16,7 +16,11 @@ export const CART_PAGE_STYLES = {
   successTitle:
     "font-[var(--font-comfortaa)] font-bold text-2xl leading-[27px] text-[#000914]",
   successSubtitle:
-    "font-[var(--font-geist-sans)] text-base text-[#5F6368]",
+    "font-[var(--font-geist-sans)] text-base leading-relaxed text-[#5F6368] max-w-md",
+  successBody:
+    "font-[var(--font-geist-sans)] text-sm leading-relaxed text-[#989B9C] max-w-md",
+  successContact:
+    "font-[var(--font-geist-sans)] text-sm text-[#5CA2BC] hover:underline focus:outline-none focus:underline",
   backButton:
     "inline-flex items-center justify-center py-3 px-8 bg-[#5CA2BC] text-white font-[var(--font-geist-sans)] text-sm tracking-[2px] uppercase rounded hover:bg-[#4a8fa9] transition-colors",
 } as const;

@@ -5,47 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useCartStore } from "@/store/cart";
 import type { BulkReservationRequest } from "@/types/reservation";
-import { isValidPhoneNumber } from "@/lib/phone";
 import { CartReceipt } from "@/components/CartReceipt/CartReceipt";
 import { CheckoutFormFields, type CheckoutFormData } from "@/components/CheckoutForm/CheckoutFormFields";
+import {
+  checkoutSchema,
+  checkoutDefaultValues,
+} from "@/components/CheckoutForm/checkoutSchema";
 import { CART_PAGE_STYLES } from "./CartPageContent.styles";
 
 const FORM_ID = "checkout-form";
-
-const checkoutSchema = yup.object({
-  firstName: yup.string().optional().default(""),
-  lastName: yup.string().optional().default(""),
-  email: yup
-    .string()
-    .required("Unesite email adresu")
-    .email("Unesite ispravnu email adresu (npr. primer@email.com)"),
-  phone: yup
-    .string()
-    .required("Unesite broj telefona za kontakt")
-    .test("valid-phone", "Unesite ispravan broj telefona", isValidPhoneNumber),
-  address: yup.string().optional().default(""),
-  postalCode: yup.string().optional().default(""),
-  city: yup.string().optional().default(""),
-  country: yup.string().optional().default(""),
-  agreeTerms: yup
-    .boolean()
-    .oneOf([true], "Morate prihvatiti uslove korišćenja da biste nastavili"),
-});
-
-const defaultValues: CheckoutFormData = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  address: "",
-  postalCode: "",
-  city: "",
-  country: "Serbia",
-  agreeTerms: false,
-};
 
 export const CartPageContent = () => {
   const router = useRouter();
@@ -59,7 +29,7 @@ export const CartPageContent = () => {
   const [orderSuccess, setOrderSuccess] = useState(false);
 
   const methods = useForm<CheckoutFormData>({
-    defaultValues,
+    defaultValues: checkoutDefaultValues,
     resolver: yupResolver(checkoutSchema) as never,
   });
 
@@ -124,13 +94,23 @@ export const CartPageContent = () => {
       <section className={CART_PAGE_STYLES.section}>
         <div className={CART_PAGE_STYLES.successContainer}>
           <h1 className={CART_PAGE_STYLES.successTitle}>
-            Proverite vaš mail
+            Porudžbina je primljena
           </h1>
           <p className={CART_PAGE_STYLES.successSubtitle}>
-            Vidimo se na radionici!
+            Na vašu email adresu smo poslali instrukcije za plaćanje.
+          </p>
+          <p className={CART_PAGE_STYLES.successBody}>
+            Ako niste dobili mail, proverite spam folder ili{" "}
+            <a
+              href="mailto:info@paleto.rs"
+              className={CART_PAGE_STYLES.successContact}
+            >
+              kontaktirajte nas
+            </a>
+            .
           </p>
           <Link href="/" className={CART_PAGE_STYLES.backButton}>
-            Nazad
+            Nazad na početnu
           </Link>
         </div>
       </section>

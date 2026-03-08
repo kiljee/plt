@@ -5,18 +5,9 @@ import { FormInput } from "@/components/FormInput/FormInput";
 import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
 import { EventLocation, LOCATION_LABELS } from "@/types/event";
 import { CHECKOUT_FORM_STYLES } from "./CheckoutForm.styles";
+import type { CheckoutFormData } from "./checkoutSchema";
 
-export interface CheckoutFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address?: string;
-  postalCode?: string;
-  city?: string;
-  country?: string;
-  agreeTerms: boolean;
-}
+export type { CheckoutFormData } from "./checkoutSchema";
 
 interface CheckoutFormFieldsProps {
   loading?: boolean;
@@ -35,14 +26,15 @@ export const CheckoutFormFields = ({ loading = false }: CheckoutFormFieldsProps)
         <div className={`${CHECKOUT_FORM_STYLES.row} flex-wrap`}>
           <FormInput
             id="firstName"
-            label="Ime"
+            label="Ime *"
             placeholder="Ana"
             register={register("firstName")}
+            error={errors.firstName}
             className="flex-1 min-w-[200px]"
           />
           <FormInput
             id="lastName"
-            label="Prezime"
+            label="Prezime *"
             placeholder="Jovanović"
             register={register("lastName")}
             error={errors.lastName}
