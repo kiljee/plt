@@ -8,9 +8,10 @@ generator client {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  username String
-  isAdmin  Boolean @default(false)
+  id            String  @id @default(uuid())
+  username      String
+  isAdmin       Boolean @default(false)
+  isSuperAdmin  Boolean @default(false)
 
   events       Event[]
   reservations Reservation[]

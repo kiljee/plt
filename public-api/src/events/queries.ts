@@ -23,14 +23,13 @@ type AdminEventById = AuthenticatedQueryDefinition<
   Event
 >;
 
-export const getMe: GetMe<void, { isAdmin: boolean } | null> = async (
-  _args,
-  context,
-) => {
+export type MeResult = { isAdmin: boolean; isSuperAdmin: boolean } | null;
+
+export const getMe: GetMe<void, MeResult> = async (_args, context) => {
   if (!context.user) return null;
   const user = await context.entities.User.findUnique({
     where: { id: context.user.id },
-    select: { isAdmin: true },
+    select: { isAdmin: true, isSuperAdmin: true },
   });
   return user;
 };

@@ -1,4 +1,5 @@
 import { logout, useAuth } from "wasp/client/auth";
+import { getMe, useQuery } from "wasp/client/operations";
 import { Link } from "wasp/client/router";
 import Logo from "../../assets/logo.svg";
 import { Button } from "../../components/ui/button";
@@ -6,7 +7,9 @@ import { useAddEventModal } from "../context/AddEventModalContext";
 
 export function Header() {
   const { data: user } = useAuth();
+  const { data: me } = useQuery(getMe);
   const { open: openAddEventModal } = useAddEventModal();
+  const isAdmin = me?.isAdmin ?? false;
 
   return (
     <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white shadow-sm">
@@ -19,7 +22,7 @@ export function Header() {
           <span className="text-xl font-semibold text-zinc-900">Dashboard</span>
         </Link>
         <nav className="flex items-center gap-3 sm:gap-6">
-          {user && (
+          {user && isAdmin && (
             <Button
               type="button"
               variant="outline"

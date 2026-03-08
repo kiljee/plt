@@ -31,10 +31,10 @@ app publicApi {
     onAuthFailedRedirectTo: "/login",
   },
   emailSender: {
-    provider: Dummy,
+    provider: SMTP,
     defaultFrom: {
       name: "Paleto Events",
-      email: "noreply@paleto.local"
+      email: "noreply@paleto.rs"
     },
   },
   client: {
@@ -66,6 +66,12 @@ page PasswordResetPage {
 route EmailVerificationRoute { path: "/email-verification", to: EmailVerificationPage }
 page EmailVerificationPage {
   component: import { EmailVerificationPage } from "@src/auth/email/EmailVerificationPage.tsx",
+}
+
+route NoAccessRoute { path: "/no-access", to: NoAccessPage }
+page NoAccessPage {
+  authRequired: true,
+  component: import { NoAccessPage } from "@src/auth/NoAccessPage.tsx",
 }
 // #endregion Auth
 

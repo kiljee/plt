@@ -11,8 +11,10 @@ import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
+import { useRequireAdmin } from "../hooks/useRequireAdmin";
 
 export const EmailBlacklistPage = () => {
+  const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const { data: list = [], isLoading, refetch } = useQuery(getEmailBlacklist);
   const addAction = useAction(addEmailToBlacklist);
   const removeAction = useAction(removeEmailFromBlacklist);
@@ -52,6 +54,8 @@ export const EmailBlacklistPage = () => {
       setRemovingId(null);
     }
   };
+
+  if (isAuthLoading || !isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-muted/30">

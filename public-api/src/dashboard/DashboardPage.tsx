@@ -22,6 +22,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../components/ui/pagination";
+import { useRequireAdmin } from "../hooks/useRequireAdmin";
 import { useAddEventModal } from "../shared/context/AddEventModalContext";
 import { EventStatus } from "../events/constants";
 
@@ -48,6 +49,7 @@ const STATUS_FILTER_OPTIONS: { value: StatusFilterValue; label: string }[] = [
 ];
 
 export const DashboardPage = () => {
+  const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -88,6 +90,8 @@ export const DashboardPage = () => {
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
   const hasPrev = page > 1;
   const hasNext = page < totalPages;
+
+  if (isAuthLoading || !isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-muted/30">

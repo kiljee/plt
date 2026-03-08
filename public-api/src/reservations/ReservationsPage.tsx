@@ -9,6 +9,7 @@ import {
   useQuery,
   useAction,
 } from "wasp/client/operations";
+import { useRequireAdmin } from "../hooks/useRequireAdmin";
 import { StatusFilter, type StatusFilterType } from "./types";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
@@ -40,6 +41,7 @@ const formatAmount = (price: number, currency: string, seats: number) =>
   `${price * seats} ${currency}`;
 
 export const ReservationsPage = () => {
+  const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const [searchParams] = useSearchParams()
   const eventId = searchParams.get("eventId") ?? undefined
 
@@ -88,6 +90,8 @@ export const ReservationsPage = () => {
     setSearchDebounced(search);
     setPage(1);
   };
+
+  if (isAuthLoading || !isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-muted/30">

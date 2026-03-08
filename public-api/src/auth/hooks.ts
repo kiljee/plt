@@ -10,12 +10,14 @@ export const onAfterSignup: OnAfterSignupHook = async ({
   prisma,
   providerId,
 }) => {
-  const count = await prisma.user.count();
-  if (count !== 1) return;
+  await prisma.$transaction(async (tx) => {
+    const count = await tx.user.count();
+    if (count !== 1) return;
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { isAdmin: true },
+    await tx.user.update({
+      where: { id: user.id },
+      data: { isAdmin: true, isSuperAdmin: true },
+    });
   });
 
   if (providerId.providerName === "email") {

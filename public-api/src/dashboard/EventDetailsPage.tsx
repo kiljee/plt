@@ -15,10 +15,12 @@ import {
   type EventFormSubmitPayload,
   mapEventToFormValues,
 } from "../events/components/CreateEventForm";
+import { useRequireAdmin } from "../hooks/useRequireAdmin";
 
 const SUCCESS_MESSAGE = "Radionica je uspešno ažurirana.";
 
 export const EventDetailsPage = () => {
+  const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const { id } = useParams();
   const eventId = id ?? "";
   const { data: event, isLoading, refetch } = useQuery(getAdminEventById, {
@@ -47,6 +49,8 @@ export const EventDetailsPage = () => {
       toast.error(`Greška: ${String(err)}`);
     }
   };
+
+  if (isAuthLoading || !isAdmin) return null;
 
   if (!eventId) {
     return (

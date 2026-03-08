@@ -11,6 +11,7 @@ import {
 } from "wasp/client/operations";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { useRequireAdmin } from "../hooks/useRequireAdmin";
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING: "Nepotvrđena",
@@ -19,6 +20,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export const ReservationDetailPage = () => {
+  const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const { id } = useParams();
   const reservationId = id ?? "";
   const { data: reservation, isLoading, refetch } = useQuery(
@@ -57,6 +59,8 @@ export const ReservationDetailPage = () => {
       setDeleting(false);
     }
   };
+
+  if (isAuthLoading || !isAdmin) return null;
 
   if (!reservationId) {
     return (
