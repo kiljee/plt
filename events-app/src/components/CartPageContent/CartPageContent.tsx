@@ -49,10 +49,7 @@ export const CartPageContent = () => {
     setLoading(true);
 
     try {
-      const base =
-        typeof window !== "undefined"
-          ? window.location.origin
-          : (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000");
+      const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
       const url = `${base.replace(/\/$/, "")}/api/reservations/bulk`;
 
       const payload: BulkReservationRequest = {
