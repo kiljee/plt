@@ -51,3 +51,9 @@ model Reservation {
   user    User?  @relation(fields: [userId], references: [id])
   userId  String?
 }
+
+model EmailBlacklist {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

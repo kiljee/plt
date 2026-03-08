@@ -7,8 +7,8 @@ const client = TOKEN
   : null
 
 const DEFAULT_FROM = {
-  name: "Paleto Events",
-  email: "hello@demomailtrap.co",
+  name: "Paleto.rs",
+  email: "rezervacije@paleto.rs",
 }
 
 export interface SendEmailOptions {

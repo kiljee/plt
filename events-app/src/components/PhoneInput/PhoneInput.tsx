@@ -45,7 +45,7 @@ export const PhoneInput = ({
         value={register.value || ""}
         onChange={handleChange}
         autoComplete="tel"
-        className={`${CHECKOUT_FORM_STYLES.input} ${error ? CHECKOUT_FORM_STYLES.inputError : ""}`}
+        className={`${CHECKOUT_FORM_STYLES.input} ${CHECKOUT_FORM_STYLES.inputFocusWithin} ${error ? CHECKOUT_FORM_STYLES.inputError : ""} ${error ? CHECKOUT_FORM_STYLES.inputErrorFocusWithin : ""}`}
       />
       {error?.message && (
         <span className={CHECKOUT_FORM_STYLES.errorMessage}>

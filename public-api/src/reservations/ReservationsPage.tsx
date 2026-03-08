@@ -102,13 +102,30 @@ export const ReservationsPage = () => {
                 ? "Rezervacije za izabranu radionicu"
                 : "Pregled svih rezervacija sa filterima i pretragom"}
             </p>
+            <nav className="mt-2 flex gap-4 text-sm">
+            <Link
+              to="/rezervacije"
+              className={eventId ? "text-muted-foreground hover:text-foreground" : "font-medium text-foreground"}
+            >
+              Rezervacije
+            </Link>
+            <Link
+              to="/rezervacije/blacklist"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Blacklist emailova
+            </Link>
+          </nav>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {eventId && (
               <Button asChild variant="outline">
                 <Link to="/rezervacije">Sve rezervacije</Link>
               </Button>
             )}
+            <Button asChild variant="outline">
+              <Link to="/rezervacije/blacklist">Blacklist</Link>
+            </Button>
             <Button asChild variant="outline">
               <Link to="/">← Nazad na dashboard</Link>
             </Button>

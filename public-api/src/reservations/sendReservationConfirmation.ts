@@ -3,11 +3,17 @@ import { sendEmail } from "../lib/mailtrap";
 import {
   buildReservationConfirmationHtml,
   buildReservationConfirmationText,
+  buildReservationThankYouHtml,
+  buildReservationThankYouText,
   formatOrderId,
 } from "../email/reservation-confirmation";
 import type { EventLocationType } from "./types";
 
-const EMAIL_SUBJECT = "Porudžbina primljena – Paleto Events";
+const locationToCityName = (location: EventLocationType): string =>
+  location === "BELGRADE" ? "Beograd" : "Novi Sad";
+
+const getEmailSubject = (location: EventLocationType): string =>
+  `Porudžbina primljena – Paleto.rs · ${locationToCityName(location)}`;
 
 const formatOrderDate = (date: Date) =>
   dayjs(date).format("DD.MM YYYY. - HH:mm");
@@ -78,12 +84,37 @@ export const sendReservationConfirmation = async (
   try {
     await sendEmail({
       to: customerEmail,
-      subject: EMAIL_SUBJECT,
+      subject: getEmailSubject(location),
       text: buildReservationConfirmationText(emailData),
       html: buildReservationConfirmationHtml(emailData),
     });
   } catch (err) {
     console.error("Failed to send reservation confirmation email:", err);
+    throw err;
+  }
+};
+
+const SHORT_EMAIL_SUBJECT = "Rezervacija primljena – Paleto.rs";
+
+export interface SendShortEmailParams {
+  customerEmail: string;
+  customerName?: string;
+}
+
+export const sendReservationShortEmail = async (
+  params: SendShortEmailParams
+): Promise<void> => {
+  const { customerEmail, customerName } = params;
+  const data = { customerName: customerName ?? "" };
+  try {
+    await sendEmail({
+      to: customerEmail,
+      subject: SHORT_EMAIL_SUBJECT,
+      text: buildReservationThankYouText(data),
+      html: buildReservationThankYouHtml(data),
+    });
+  } catch (err) {
+    console.error("Failed to send reservation short email:", err);
     throw err;
   }
 };

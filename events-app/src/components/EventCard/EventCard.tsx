@@ -4,8 +4,10 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import Image from "next/image";
 import type { EventItem } from "@/types/event";
+import { LOCATION_LABELS } from "@/types/event";
 import { eventToSlug, locationToCitySlug } from "@/lib/slug";
 import { formatPrice } from "@/lib/price";
+import { COLORS } from "@/lib/colors";
 import { EVENT_CARD_STYLES, EVENT_CARD_CSS } from "./EventCard.styles";
 
 interface EventCardProps {
@@ -74,7 +76,7 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
                {formattedDate} - {event.title}
             </h3>
 
-            {/* Price */}
+            {/* Price · Grad */}
             <div className={EVENT_CARD_STYLES.priceContainer}>
               <span 
                 className={EVENT_CARD_STYLES.price}
@@ -84,6 +86,15 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
                 }}
               >
                 {formatPrice(event.price, event.currency)}
+                <span
+                  className={EVENT_CARD_STYLES.priceCity}
+                  style={{ color: COLORS.text.label }}
+                >
+                  {" · "}
+                  {event.location in LOCATION_LABELS
+                    ? LOCATION_LABELS[event.location as keyof typeof LOCATION_LABELS]
+                    : event.location}
+                </span>
               </span>
             </div>
           </div>

@@ -9,6 +9,7 @@ export const CART_ITEM_STYLES = {
     "font-[var(--font-comfortaa)] text-xs font-normal leading-[22px] tracking-[0.5px] text-[#000914]",
   price:
     "font-[var(--font-comfortaa)] text-xs font-normal leading-[22px] tracking-[0.5px] text-[#000914] shrink-0",
+  cityLabel: "font-normal",
   meta: "font-[var(--font-geist-sans)] text-[10px] font-normal leading-[11px] tracking-[0.5px] text-[#989B9C]",
   removeButton:
     "mt-1 text-left font-[var(--font-geist-sans)] text-[10px] text-[#DC0000] hover:underline",

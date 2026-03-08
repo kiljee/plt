@@ -9,6 +9,7 @@ const MAX_PAGE_SIZE = 50;
 export type GetAdminEventsInput = {
   page?: number;
   pageSize?: number;
+  statusFilter?: "ACTIVE" | "INACTIVE";
 };
 
 export type GetAdminEventsResult = {
@@ -44,14 +45,18 @@ export const getAdminEvents: GetAdminEvents<
     Math.max(1, args?.pageSize ?? DEFAULT_PAGE_SIZE),
   );
   const skip = (page - 1) * pageSize;
+  const where = args?.statusFilter
+    ? { status: args.statusFilter }
+    : undefined;
 
   const [events, totalCount] = await Promise.all([
     context.entities.Event.findMany({
+      where,
       orderBy: { createdAt: "desc" },
       skip,
       take: pageSize,
     }),
-    context.entities.Event.count(),
+    context.entities.Event.count({ where }),
   ]);
 
   const eventIds = events.map((e) => e.id);

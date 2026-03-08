@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import dayjs from "dayjs";
 import type { CartItem as CartItemType } from "@/types/cart";
+import { LOCATION_LABELS } from "@/types/event";
+import { COLORS } from "@/lib/colors";
 import { formatPrice } from "@/lib/price";
 import { locationToCitySlug } from "@/lib/slug";
 import { useCartStore } from "@/store/cart";
@@ -65,6 +67,17 @@ export const CartItem = ({
           <span className={CART_ITEM_STYLES.title}>{item.event.title}</span>
           <span className={CART_ITEM_STYLES.price}>
             {formatPrice(item.event.price * item.seats, item.event.currency)}
+            {item.event.location in LOCATION_LABELS && (
+              <>
+                {" · "}
+                <span
+                  className={CART_ITEM_STYLES.cityLabel}
+                  style={{ color: COLORS.text.label }}
+                >
+                  {LOCATION_LABELS[item.event.location as keyof typeof LOCATION_LABELS]}
+                </span>
+              </>
+            )}
           </span>
         </div>
         <div className={CART_ITEM_STYLES.meta}>

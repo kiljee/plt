@@ -1,6 +1,8 @@
 import { STYLES, FONT_FAMILY } from "../styles"
 import { formatPrice } from "../utils"
-import { BANK_ACCOUNT, getAddressByLocation } from "../constants"
+import { BANK_ACCOUNT, PAYMENT_SLIP, getAddressByLocation } from "../constants"
+import type { LocationKey } from "../constants"
+import type { ReservationItem } from "./ItemList"
 
 interface PaymentSlipProps {
   amount: number
@@ -10,7 +12,20 @@ interface PaymentSlipProps {
   customerName: string
   customerEmail: string
   customerPhone: string
+  items: ReservationItem[]
 }
+
+const buildPurposeFromItems = (items: ReservationItem[]): string =>
+  items.length === 0
+    ? "Uplata za rezervaciju"
+    : items.map((i) => `${i.dateTime} – ${i.title}`).join("; ")
+
+const row = (label: string, value: string, styles: typeof STYLES) => `
+  <tr>
+    <td style="padding: 10px 16px; font-family: ${FONT_FAMILY}; font-size: 12px; color: ${styles.textMuted}; width: 140px; vertical-align: top; border-bottom: 1px solid ${styles.border};">${label}</td>
+    <td style="padding: 10px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text}; vertical-align: top; border-bottom: 1px solid ${STYLES.border};">${value}</td>
+  </tr>
+`
 
 export const renderPaymentSlip = ({
   amount,
@@ -20,109 +35,41 @@ export const renderPaymentSlip = ({
   customerName,
   customerEmail,
   customerPhone,
+  items,
 }: PaymentSlipProps) => {
-  const address = getAddressByLocation(location)
+  const locationKey: LocationKey =
+    location === "BELGRADE" || location === "NOVI_SAD" ? location : "NOVI_SAD"
+  const recipientAddress = getAddressByLocation(locationKey)
+  const purpose = buildPurposeFromItems(items)
+
   return `
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
   <tr>
     <td style="padding: 24px;">
       <h2 style="margin: 0 0 16px 0; font-family: ${FONT_FAMILY}; font-size: 16px; font-weight: bold; color: ${STYLES.text};">
-        Dostava i plaćanje
+        Podaci za uplatu
       </h2>
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; border: 1px solid ${STYLES.border};">
         <tr>
-          <td colspan="2" style="padding: 16px; background-color: ${STYLES.bgLight}; font-family: ${FONT_FAMILY}; font-size: 14px; font-weight: bold; color: ${STYLES.text};">
+          <td colspan="2" style="padding: 12px 16px; background-color: ${STYLES.bgLight}; font-family: ${FONT_FAMILY}; font-size: 13px; font-weight: bold; color: ${STYLES.text};">
             Uplatnica – podaci za uplatu
           </td>
         </tr>
+        ${row("Banka", BANK_ACCOUNT.bank, STYLES)}
+        ${row("Primaoc", PAYMENT_SLIP.recipientLabel, STYLES)}
+        ${row("Adresa primaoca", recipientAddress, STYLES)}
+        ${row("Broj računa", BANK_ACCOUNT.accountNumber, STYLES)}
+        ${row("Iznos", formatPrice(amount, currency), STYLES)}
+        ${row("Model / Poziv na broj", `${BANK_ACCOUNT.model} / ${orderId || "—"}`, STYLES)}
+        ${row("Svrha uplate", purpose, STYLES)}
         <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted}; width: 180px;">
-            Banka
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-            ${BANK_ACCOUNT.bank}
+          <td colspan="2" style="padding: 12px 16px; background-color: ${STYLES.bgLight}; font-family: ${FONT_FAMILY}; font-size: 12px; font-weight: bold; color: ${STYLES.text}; border-top: 1px solid ${STYLES.border};">
+            Podaci o kupcu
           </td>
         </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted}; width: 180px;">
-            Primaoc
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-            ${BANK_ACCOUNT.recipient}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            PIB / MB
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-            ${BANK_ACCOUNT.pib} / ${BANK_ACCOUNT.mb}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            Adresa primaoca
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-            ${address}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            Broj računa
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text}; font-weight: bold;">
-            ${BANK_ACCOUNT.accountNumber}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            Iznos
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text}; font-weight: bold;">
-            ${formatPrice(amount, currency)}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            Model
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-            ${BANK_ACCOUNT.model}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            Poziv na broj
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text}; font-weight: bold;">
-            ${orderId}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.textMuted};">
-            Svrha uplate
-          </td>
-          <td style="padding: 12px 16px; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-            ${BANK_ACCOUNT.purpose}
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2" style="padding: 16px; border-top: 1px solid ${STYLES.border}; background-color: ${STYLES.bgLight};">
-            <p style="margin: 0 0 8px 0; font-family: ${FONT_FAMILY}; font-size: 13px; font-weight: bold; color: ${STYLES.text};">
-              Podaci o kupcu
-            </p>
-            <p style="margin: 0 0 4px 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: ${STYLES.text};">
-              Ime i prezime: ${customerName || "—"}
-            </p>
-            <p style="margin: 0 0 4px 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: ${STYLES.text};">
-              E-mail: ${customerEmail}
-            </p>
-            <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: ${STYLES.text};">
-              Broj telefona: ${customerPhone || "—"}
-            </p>
-          </td>
-        </tr>
+        ${row("Ime i prezime", customerName || "—", STYLES)}
+        ${row("E-mail", customerEmail, STYLES)}
+        ${row("Telefon", customerPhone || "—", STYLES)}
       </table>
     </td>
   </tr>

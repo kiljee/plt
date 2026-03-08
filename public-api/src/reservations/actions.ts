@@ -1,9 +1,24 @@
+import dayjs from "dayjs";
 import { HttpError } from "wasp/server";
 import { sendEmail } from "../lib/mailtrap";
+import {
+  buildReservationConfirmationHtml,
+  buildReservationConfirmationText,
+  formatOrderId,
+} from "../email/reservation-confirmation";
 import {
   type DeleteReservation,
   type ConfirmReservation,
 } from "wasp/server/operations";
+
+const formatOrderDate = (date: Date) =>
+  dayjs(date).format("DD.MM YYYY. - HH:mm");
+
+const formatEventDateTime = (date: Date, startTime: string) => {
+  const dateStr = dayjs(date).format("DD.MM.YYYY.");
+  const time = startTime || "—";
+  return `${dateStr} u ${time}`;
+};
 
 export const deleteReservation: DeleteReservation<{ id: string }> = async (
   { id },
@@ -46,17 +61,44 @@ export const confirmReservation: ConfirmReservation<{ id: string }> = async (
     data: { status: "CONFIRMED" },
   });
 
-  const amountToPay = reservation.event.price * (reservation.seats ?? 1);
-  const eventDate = reservation.event.date instanceof Date
-    ? reservation.event.date.toLocaleDateString("sr-RS")
-    : String(reservation.event.date);
+  const event = reservation.event;
+  const seats = reservation.seats ?? 1;
+  const total = event.price * seats;
+  const location: "BELGRADE" | "NOVI_SAD" =
+    event.location === "BELGRADE" || event.location === "NOVI_SAD"
+      ? event.location
+      : "NOVI_SAD";
 
+  const emailData = {
+    orderId: formatOrderId(reservation.id),
+    reservationId: reservation.id,
+    orderDate: formatOrderDate(reservation.createdAt),
+    location,
+    customerName: reservation.name ?? "",
+    customerEmail: reservation.email,
+    customerPhone: reservation.phone ?? "",
+    items: [
+      {
+        title: event.title,
+        dateTime: formatEventDateTime(event.date, event.startTime),
+        price: event.price,
+        currency: event.currency,
+        quantity: seats,
+        total,
+      },
+    ],
+    total,
+    currency: event.currency,
+    variant: "confirmed" as const,
+  };
+
+  const cityName = location === "BELGRADE" ? "Beograd" : "Novi Sad";
   await sendEmail({
     to: reservation.email,
-    subject: "Rezervacija potvrđena – Paleto Events",
-    text: `Poštovani,\n\nVaša rezervacija za radionicu "${reservation.event.title}" (${eventDate}) je uspešno potvrđena.\n\nBroj mesta: ${reservation.seats ?? 1}\nIznos za uplatu: ${amountToPay} ${reservation.event.currency}\n\nHvala za poverenje!`,
-    html: `<p>Poštovani,</p><p>Vaša rezervacija za radionicu <strong>${reservation.event.title}</strong> (${eventDate}) je uspešno potvrđena.</p><p><strong>Broj mesta:</strong> ${reservation.seats ?? 1}<br><strong>Iznos za uplatu:</strong> ${amountToPay} ${reservation.event.currency}</p><p>Hvala za poverenje!</p>`,
-  })
+    subject: `Rezervacija potvrđena – Paleto.rs · ${cityName}`,
+    text: buildReservationConfirmationText(emailData),
+    html: buildReservationConfirmationHtml(emailData),
+  });
 
   return updated;
 };

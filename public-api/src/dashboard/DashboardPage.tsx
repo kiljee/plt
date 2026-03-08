@@ -39,14 +39,24 @@ const STATUS_BADGE_CLASS: Record<EventStatus, string> = {
     "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300",
 };
 
+type StatusFilterValue = "all" | EventStatus;
+
+const STATUS_FILTER_OPTIONS: { value: StatusFilterValue; label: string }[] = [
+  { value: "all", label: "Sve" },
+  { value: EventStatus.ACTIVE, label: "Aktivne" },
+  { value: EventStatus.INACTIVE, label: "Neaktivne" },
+];
+
 export const DashboardPage = () => {
   const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const { open: openAddEventModal, onSuccessRef } = useAddEventModal();
 
   const { data, isLoading, refetch } = useQuery(getAdminEvents, {
     page,
     pageSize: PAGE_SIZE,
+    statusFilter: statusFilter === "all" ? undefined : statusFilter,
   });
 
   useEffect(() => {
@@ -55,6 +65,10 @@ export const DashboardPage = () => {
       onSuccessRef.current = null;
     };
   }, [refetch, onSuccessRef]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter]);
 
   const handleStatusChange = async (eventId: string, status: EventStatus) => {
     setUpdatingId(eventId);
@@ -82,14 +96,28 @@ export const DashboardPage = () => {
           <section className="order-1">
             <Card>
               <CardHeader className="border-b">
-                <CardTitle>
-                  Sve radionice
-                  {totalCount > 0 && (
-                    <span className="ml-2 text-muted-foreground">
-                      ({totalCount})
-                    </span>
-                  )}
-                </CardTitle>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <CardTitle>
+                    Sve radionice
+                    {totalCount > 0 && (
+                      <span className="ml-2 text-muted-foreground">
+                        ({totalCount})
+                      </span>
+                    )}
+                  </CardTitle>
+                  <div className="flex gap-2">
+                    {STATUS_FILTER_OPTIONS.map((opt) => (
+                      <Button
+                        key={opt.value}
+                        variant={statusFilter === opt.value ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setStatusFilter(opt.value)}
+                      >
+                        {opt.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="pt-6">
                 {isLoading && (

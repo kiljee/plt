@@ -5,8 +5,12 @@ export const CHECKOUT_FORM_STYLES = {
     "font-[var(--font-comfortaa)] font-bold text-lg leading-[22px] tracking-[0.5px] text-[var(--color-text-primary)]",
   input:
     "box-border flex flex-row items-center py-2 px-4 gap-2.5 w-full border border-[var(--color-border-default)] rounded focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] font-[var(--font-geist-sans)] text-xs leading-3 text-[var(--color-text-primary)]",
+  inputFocusWithin:
+    "focus-within:border-[var(--color-primary)] focus-within:outline-none focus-within:ring-1 focus-within:ring-[var(--color-primary)]",
   inputError:
     "border-[var(--color-error)] focus:border-[var(--color-error)] focus:ring-[var(--color-error)]",
+  inputErrorFocusWithin:
+    "focus-within:border-[var(--color-error)] focus-within:ring-[var(--color-error)]",
   label:
     "font-[var(--font-geist-sans)] text-[10px] leading-[10px] text-[var(--color-text-label)]",
   inputGroup: "flex flex-col gap-1.5",

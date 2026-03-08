@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/cart";
 import { HEADER } from "./Header.styles";
 
@@ -14,7 +14,14 @@ const NAV_MOBILE = [...NAV_LEFT, ...NAV_RIGHT];
 
 export const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const totalItems = useCartStore((s) => s.totalItems());
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const showCartBadge = mounted && totalItems > 0;
 
   return (
     <header className={HEADER.root}>
@@ -52,7 +59,7 @@ export const Header = () => {
               onClick={() => setMobileOpen(false)}
             >
               {label}
-              {href === "/korpa" && totalItems > 0 && (
+              {href === "/korpa" && showCartBadge && (
                 <span className="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white">
                   {totalItems > 99 ? "99+" : totalItems}
                 </span>
@@ -109,7 +116,7 @@ export const Header = () => {
               onClick={() => setMobileOpen(false)}
             >
               {label}
-              {href === "/korpa" && totalItems > 0 && (
+              {href === "/korpa" && showCartBadge && (
                 <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white">
                   {totalItems > 99 ? "99+" : totalItems}
                 </span>

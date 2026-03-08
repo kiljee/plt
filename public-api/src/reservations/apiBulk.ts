@@ -4,7 +4,10 @@ import {
   ActiveReservationStatuses,
   parseBulkRequestBody,
 } from "./types";
-import { sendReservationConfirmation } from "./sendReservationConfirmation";
+import {
+  sendReservationConfirmation,
+  sendReservationShortEmail,
+} from "./sendReservationConfirmation";
 
 const sendConfirmationWithRetry = async (
   params: Parameters<typeof sendReservationConfirmation>[0],
@@ -23,6 +26,25 @@ const sendConfirmationWithRetry = async (
     }
   }
   console.error("[createReservationsBulkPublic] email failed after retries", lastError);
+};
+
+const sendShortEmailWithRetry = async (
+  params: Parameters<typeof sendReservationShortEmail>[0],
+  retries = 2,
+): Promise<void> => {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      await sendReservationShortEmail(params);
+      return;
+    } catch (err) {
+      lastError = err;
+      if (process.env.NODE_ENV === "development") {
+        console.warn(`[apiBulk] short email attempt ${attempt + 1}/${retries} failed`, err);
+      }
+    }
+  }
+  console.error("[createReservationsBulkPublic] short email failed after retries", lastError);
 };
 
 export const createReservationsBulkPublic: CreateReservationsBulkPublic =
@@ -161,12 +183,23 @@ export const createReservationsBulkPublic: CreateReservationsBulkPublic =
         };
       });
 
-      await sendConfirmationWithRetry({
-        reservations: reservationsWithEvent,
-        customerEmail: normalizedEmail,
-        customerName: normalizedName ?? "",
-        customerPhone: normalizedPhone ?? "",
-      });
+      const isBlacklisted = await context.entities.EmailBlacklist
+        .findFirst({ where: { email: normalizedEmail } })
+        .then((row) => !!row);
+
+      if (isBlacklisted) {
+        await sendShortEmailWithRetry({
+          customerEmail: normalizedEmail,
+          customerName: normalizedName ?? undefined,
+        });
+      } else {
+        await sendConfirmationWithRetry({
+          reservations: reservationsWithEvent,
+          customerEmail: normalizedEmail,
+          customerName: normalizedName ?? "",
+          customerPhone: normalizedPhone ?? "",
+        });
+      }
 
       res.status(201).json({
         reservations: reservationsWithEvent.map((r) => ({

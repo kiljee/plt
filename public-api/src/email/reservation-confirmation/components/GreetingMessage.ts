@@ -2,9 +2,31 @@ import { STYLES, FONT_FAMILY } from "../styles"
 
 interface GreetingMessageProps {
   orderId: string
+  variant?: "order_received" | "confirmed"
 }
 
-export const renderGreetingMessage = ({ orderId }: GreetingMessageProps) => `
+export const renderGreetingMessage = ({ orderId, variant = "order_received" }: GreetingMessageProps) => {
+  const isConfirmed = variant === "confirmed"
+  if (isConfirmed) {
+    return `
+<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+  <tr>
+    <td style="padding: 0 24px 24px 24px;">
+      <p style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: ${STYLES.text}; line-height: 1.6;">
+        Poštovani,
+      </p>
+      <p style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: ${STYLES.text}; line-height: 1.6;">
+        Hvala vam što ste uplatili i rezervisali. Vidimo se na radionici!
+      </p>
+      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: ${STYLES.text}; line-height: 1.6;">
+        Ispod su podaci vaše rezervacije (broj porudžbine: <strong>${orderId}</strong>).
+      </p>
+    </td>
+  </tr>
+</table>
+`
+  }
+  return `
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
   <tr>
     <td style="padding: 0 24px 24px 24px;">
@@ -24,3 +46,4 @@ export const renderGreetingMessage = ({ orderId }: GreetingMessageProps) => `
   </tr>
 </table>
 `
+}

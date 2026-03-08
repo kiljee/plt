@@ -23,6 +23,7 @@ export const EVENT_CARD_STYLES = {
   },
   priceContainer: "flex w-full flex-row items-center gap-2",
   price: "flex flex-1 items-center text-sm leading-4 sm:text-base",
+  priceCity: "font-normal",
   button: {
     base: "box-border relative w-full min-h-[41px] border border-solid",
     available: "",

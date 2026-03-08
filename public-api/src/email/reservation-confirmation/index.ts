@@ -1,4 +1,6 @@
 export { buildReservationConfirmationHtml, type ReservationConfirmationData } from "./template"
 export { buildReservationConfirmationText } from "./text"
+export { buildReservationThankYouHtml, type ReservationThankYouData } from "./thankYouTemplate"
+export { buildReservationThankYouText } from "./thankYouText"
 export { formatOrderId, formatPrice } from "./utils"
 export type { ReservationItem } from "./components/ItemList"

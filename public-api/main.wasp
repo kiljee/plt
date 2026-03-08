@@ -122,6 +122,21 @@ action confirmReservation {
   entities: [Reservation, Event, User]
 }
 
+query getEmailBlacklist {
+  fn: import { getEmailBlacklist } from "@src/reservations/emailBlacklist",
+  entities: [User, EmailBlacklist]
+}
+
+action addEmailToBlacklist {
+  fn: import { addEmailToBlacklist } from "@src/reservations/emailBlacklist",
+  entities: [User, EmailBlacklist]
+}
+
+action removeEmailFromBlacklist {
+  fn: import { removeEmailFromBlacklist } from "@src/reservations/emailBlacklist",
+  entities: [User, EmailBlacklist]
+}
+
 route ReservationsRoute { path: "/rezervacije", to: ReservationsPage }
 page ReservationsPage {
   authRequired: true,
@@ -132,6 +147,12 @@ route ReservationDetailRoute { path: "/rezervacije/:id", to: ReservationDetailPa
 page ReservationDetailPage {
   authRequired: true,
   component: import { ReservationDetailPage } from "@src/reservations/ReservationDetailPage.tsx"
+}
+
+route EmailBlacklistRoute { path: "/rezervacije/blacklist", to: EmailBlacklistPage }
+page EmailBlacklistPage {
+  authRequired: true,
+  component: import { EmailBlacklistPage } from "@src/reservations/EmailBlacklistPage.tsx"
 }
 // #endregion Dashboard
 
@@ -183,14 +204,14 @@ api getEventBySlugPublic {
 
 api createReservationPublic {
   fn: import { createReservationPublic } from "@src/reservations/api",
-  entities: [Reservation, Event],
+  entities: [Reservation, Event, EmailBlacklist],
   auth: false,
   httpRoute: (POST, "/api/reservations")
 }
 
 api createReservationsBulkPublic {
   fn: import { createReservationsBulkPublic } from "@src/reservations/apiBulk",
-  entities: [Reservation, Event],
+  entities: [Reservation, Event, EmailBlacklist],
   auth: false,
   httpRoute: (POST, "/api/reservations/bulk")
 }

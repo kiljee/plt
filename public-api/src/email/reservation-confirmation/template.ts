@@ -1,13 +1,16 @@
 import { renderEmailHeader } from "./components/EmailHeader"
 import { renderOrderBanner } from "./components/OrderBanner"
-import { renderStatusTracker } from "./components/StatusTracker"
+import { renderStatusTracker, type ActiveStep } from "./components/StatusTracker"
 import { renderGreetingMessage } from "./components/GreetingMessage"
 import { renderOrderDetails } from "./components/OrderDetails"
 import { renderItemList, type ReservationItem } from "./components/ItemList"
 import { renderOrderSummary } from "./components/OrderSummary"
 import { renderPaymentSlip } from "./components/PaymentSlip"
+import { renderCancellationSection } from "./components/CancellationSection"
 import { renderEmailFooter } from "./components/EmailFooter"
 import { STYLES, FONT_FAMILY } from "./styles"
+
+export type EmailVariant = "order_received" | "confirmed"
 
 export interface ReservationConfirmationData {
   orderId: string
@@ -20,28 +23,42 @@ export interface ReservationConfirmationData {
   items: ReservationItem[]
   total: number
   currency: string
+  variant?: EmailVariant
 }
 
 export const buildReservationConfirmationHtml = (data: ReservationConfirmationData): string => {
+  const variant = data.variant ?? "order_received"
+  const isConfirmed = variant === "confirmed"
+  const activeStep: ActiveStep = isConfirmed ? 3 : 1
+
   const parts = [
     renderEmailHeader(),
-    renderOrderBanner({ customerName: data.customerName }),
-    renderStatusTracker(),
-    renderGreetingMessage({ orderId: data.orderId }),
-    renderOrderDetails({ orderId: data.orderId, reservationId: data.reservationId, orderDate: data.orderDate }),
+    renderOrderBanner({ customerName: data.customerName, variant }),
+    renderStatusTracker(activeStep),
+    renderGreetingMessage({ orderId: data.orderId, variant }),
+    renderOrderDetails({ orderId: data.orderId, orderDate: data.orderDate }),
     renderItemList(data.items),
     renderOrderSummary({ total: data.total, currency: data.currency }),
-    renderPaymentSlip({
-      amount: data.total,
-      currency: data.currency,
-      location: data.location,
-      orderId: data.orderId,
-      customerName: data.customerName,
-      customerEmail: data.customerEmail,
-      customerPhone: data.customerPhone,
-    }),
-    renderEmailFooter(),
   ]
+
+  if (!isConfirmed) {
+    parts.push(
+      renderPaymentSlip({
+        amount: data.total,
+        currency: data.currency,
+        location: data.location,
+        orderId: data.orderId,
+        customerName: data.customerName,
+        customerEmail: data.customerEmail,
+        customerPhone: data.customerPhone,
+        items: data.items,
+      }),
+    )
+  } else {
+    parts.push(renderCancellationSection())
+  }
+
+  parts.push(renderEmailFooter())
 
   return `
 <!DOCTYPE html>

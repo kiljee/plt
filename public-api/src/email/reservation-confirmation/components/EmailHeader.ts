@@ -10,10 +10,10 @@ export const renderEmailHeader = () => `
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
         <tr>
           <td>
-            <span style="font-family: ${FONT_FAMILY}; font-size: 24px; font-weight: bold; color: ${STYLES.primary};">paleto</span>
+            <span style="font-family: ${FONT_FAMILY}; font-size: 24px; font-weight: bold; color: ${STYLES.primary};">Paleto.rs</span>
           </td>
           <td align="right" style="font-family: ${FONT_FAMILY}; font-size: 11px; color: ${STYLES.textMuted};">
-            Ovo je generička poruka, molimo Vas da na nju ne odgovarate.
+            Za pitanja: rezervacije@paleto.rs
           </td>
         </tr>
       </table>

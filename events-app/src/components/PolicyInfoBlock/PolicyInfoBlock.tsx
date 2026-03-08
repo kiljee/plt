@@ -27,13 +27,13 @@ export const PolicyInfoBlock = ({ className = "" }: PolicyInfoBlockProps) => (
           className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive} mb-2`}
           style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
         >
-          <strong>INFOS:</strong>
+          <strong>INFO:</strong>
         </p>
         <p 
           className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive}`}
           style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
         >
-          Rezervacija važi 24 sata za uplatu. Za produženi rok za uplatu, kontaktirajte nas.
+          Rezervacija važi 48 sata za uplatu.
           Ako trebate produženi rok za uplatu, molimo kontaktirajte nas.
         </p>
       </div>

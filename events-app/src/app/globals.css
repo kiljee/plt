@@ -16,6 +16,17 @@
   --color-error: #DC0000;
 }
 
+/* Phone input: use design primary for focus instead of library default blue */
+:root {
+  --PhoneInput-color--focus: var(--color-primary);
+  --PhoneInputCountrySelectArrow-color--focus: var(--color-primary);
+  --PhoneInputCountryFlag-borderColor--focus: var(--color-primary);
+}
+
+.PhoneInput input:focus {
+  outline: none;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

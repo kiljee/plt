@@ -1,7 +1,7 @@
 export const COMPANY = {
-  name: "DANIJELA VIGNJEVIĆ PR PALETO",
+  name: "Paleto.rs",
   phone: "065/201-2727",
-  email: "vignjevic23@gmail.com",
+  email: "rezervacije@paleto.rs",
   pib: "114779948",
   mb: "67849272",
 } as const
@@ -51,4 +51,16 @@ export const BANK_ACCOUNT = {
   purpose: "Uplata za rezervaciju",
   pib: COMPANY.pib,
   mb: COMPANY.mb,
+} as const
+
+export const PAYMENT_SLIP = {
+  recipientLabel: "PR Paleto",
+  addressShort: (location: LocationKey): string => {
+    const a = ADDRESSES[location]
+    const streetFormatted = a.street
+      .split(" ")
+      .map((w) => w.charAt(0) + w.slice(1).toLowerCase())
+      .join(" ")
+    return `Ul. ${streetFormatted} ${a.number}, ${a.city}`
+  },
 } as const

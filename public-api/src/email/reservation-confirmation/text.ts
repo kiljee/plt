@@ -4,6 +4,9 @@ import { BANK_ACCOUNT, COMPANY, getAddressByLocation } from "./constants"
 
 export const buildReservationConfirmationText = (data: ReservationConfirmationData): string => {
   const customerName = data.customerName || "Korisniče"
+  const variant = data.variant ?? "order_received"
+  const isConfirmed = variant === "confirmed"
+
   const itemsText = data.items
     .map(
       (item) =>
@@ -11,48 +14,41 @@ export const buildReservationConfirmationText = (data: ReservationConfirmationDa
     )
     .join("\n\n")
 
-  return `paleto
-Ovo je generička poruka, molimo Vas da na nju ne odgovarate.
+  const headerTitle = isConfirmed ? "PORUDŽBINA JE POTVRĐENA I POSLATA" : "PORUDŽBINA PRIMLJENA"
+  const statusLine = isConfirmed
+    ? "Status: Porudžbina primljena → Porudžbina u obradi → Porudžbina je potvrđena i poslata ✓"
+    : "Status: Porudžbina primljena → Porudžbina u obradi → Porudžbina je potvrđena i poslata"
 
-================================================================================
-PORUDŽBINA PRIMLJENA
-================================================================================
+  const greetingBlock = isConfirmed
+    ? `Poštovani,
 
-${customerName}, hvala vam na porudžbini! Ispod su detalji vaše porudžbine:
+Hvala vam što ste uplatili i rezervisali. Vidimo se na radionici!
 
-Status: Porudžbina primljena → Porudžbina u obradi → Porudžbina je potvrđena i poslata
-
---------------------------------------------------------------------------------
-Poštovani,
+Ispod su podaci vaše rezervacije (broj porudžbine: ${data.orderId}).`
+    : `Poštovani,
 
 Sa zadovoljstvom Vas obaveštavamo da je vaša porudžbina ${data.orderId} primljena.
 
 Ukoliko poručeni artikli nisu dostupni ili ih nema u potrebnoj količini, pozvaćemo Vas na broj telefona koji ste ostavili prilikom poručivanja.
 
-Hvala na kupovini!
+Hvala na kupovini!`
 
+  const cancellationBlock = isConfirmed
+    ? `
 --------------------------------------------------------------------------------
-PODACI O PORUDŽBINI
---------------------------------------------------------------------------------
-
-Broj porudžbine: ${data.orderId}
-ID rezervacije: ${data.reservationId}
-Datum i vreme poručivanja: ${data.orderDate}
-
---------------------------------------------------------------------------------
-REZERVISANI ARTIKLI
+OTKAZIVANJE
 --------------------------------------------------------------------------------
 
-${itemsText}
+Za otkazivanje ili izmene javite nam se putem Instagrama ili na ${COMPANY.email}.
+Otkazivanje je moguće do 48 sati pre početka radionice.
 
 --------------------------------------------------------------------------------
-UKUPNA PORUDŽBINA
---------------------------------------------------------------------------------
+`
+    : ""
 
-Ukupno: ${formatPrice(data.total, data.currency)}
-Dostava: Besplatna
-Ukupno zaduženje: ${formatPrice(data.total, data.currency)}
-
+  const uplatnicaBlock = isConfirmed
+    ? ""
+    : `
 --------------------------------------------------------------------------------
 UPLATNICA – PODACI ZA UPLATU
 --------------------------------------------------------------------------------
@@ -74,6 +70,45 @@ E-mail: ${data.customerEmail}
 Broj telefona: ${data.customerPhone || "—"}
 
 --------------------------------------------------------------------------------
+`
+
+  return `Paleto.rs
+Za pitanja: rezervacije@paleto.rs
+
+================================================================================
+${headerTitle}
+================================================================================
+
+${customerName}, ${isConfirmed ? "hvala vam što ste uplatili i rezervisali!" : "hvala vam na porudžbini! Ispod su detalji vaše porudžbine:"}
+
+${statusLine}
+
+--------------------------------------------------------------------------------
+${greetingBlock}
+
+--------------------------------------------------------------------------------
+PODACI O PORUDŽBINI
+--------------------------------------------------------------------------------
+
+Broj porudžbine: ${data.orderId}
+ID rezervacije: ${data.orderId}
+Datum i vreme poručivanja: ${data.orderDate}
+
+--------------------------------------------------------------------------------
+REZERVISANI ARTIKLI
+--------------------------------------------------------------------------------
+
+${itemsText}
+
+--------------------------------------------------------------------------------
+UKUPNA PORUDŽBINA
+--------------------------------------------------------------------------------
+
+Ukupno: ${formatPrice(data.total, data.currency)}
+Dostava: Besplatna
+Ukupno zaduženje: ${formatPrice(data.total, data.currency)}
+${cancellationBlock}
+${uplatnicaBlock}
 
 Ukoliko ovi podaci nisu ispravni, molimo Vas da nas pozovete na broj telefona ${COMPANY.phone}.
 `

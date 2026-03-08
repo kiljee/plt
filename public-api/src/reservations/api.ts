@@ -6,6 +6,7 @@ import {
   buildReservationConfirmationText,
   formatOrderId,
 } from "../email/reservation-confirmation";
+import { sendReservationShortEmail } from "./sendReservationConfirmation";
 
 const formatOrderDate = (date: Date) =>
   dayjs(date).format("DD.MM YYYY. - HH:mm")
@@ -37,7 +38,7 @@ export const createReservationPublic: CreateReservationPublic = async (
         })
       : {};
   const eventId = body.eventId;
-  const email = typeof body?.email === "string" ? body.email.trim() : "";
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
   const name =
     typeof body?.name === "string" ? body.name.trim() || undefined : undefined;
   const phone =
@@ -110,15 +111,27 @@ export const createReservationPublic: CreateReservationPublic = async (
     currency: event.currency,
   }
 
+  const cityName = location === "BELGRADE" ? "Beograd" : "Novi Sad";
+  const isBlacklisted = await context.entities.EmailBlacklist
+    .findFirst({ where: { email } })
+    .then((row) => !!row);
+
   try {
-    await sendEmail({
-      to: email,
-      subject: "Porudžbina primljena – Paleto Events",
-      text: buildReservationConfirmationText(emailData),
-      html: buildReservationConfirmationHtml(emailData),
-    })
+    if (isBlacklisted) {
+      await sendReservationShortEmail({
+        customerEmail: email,
+        customerName: name ?? undefined,
+      });
+    } else {
+      await sendEmail({
+        to: email,
+        subject: `Porudžbina primljena – Paleto.rs · ${cityName}`,
+        text: buildReservationConfirmationText(emailData),
+        html: buildReservationConfirmationHtml(emailData),
+      });
+    }
   } catch (err) {
-    console.error("Failed to send reservation confirmation email:", err)
+    console.error("Failed to send reservation confirmation email:", err);
   }
 
   res.status(201).json({
