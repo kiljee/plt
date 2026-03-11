@@ -1,6 +1,9 @@
-import dayjs from "dayjs";
 import { HttpError } from "wasp/server";
 import { sendEmail } from "../lib/mailtrap";
+import {
+  formatOrderDate,
+  formatEventDateTime,
+} from "../lib/date";
 import {
   buildReservationConfirmationHtml,
   buildReservationConfirmationText,
@@ -10,15 +13,6 @@ import {
   type DeleteReservation,
   type ConfirmReservation,
 } from "wasp/server/operations";
-
-const formatOrderDate = (date: Date) =>
-  dayjs(date).format("DD.MM YYYY. - HH:mm");
-
-const formatEventDateTime = (date: Date, startTime: string) => {
-  const dateStr = dayjs(date).format("DD.MM.YYYY.");
-  const time = startTime || "—";
-  return `${dateStr} u ${time}`;
-};
 
 export const deleteReservation: DeleteReservation<{ id: string }> = async (
   { id },

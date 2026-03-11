@@ -1,28 +1,11 @@
 import type { GetEventBySlugPublic } from "wasp/server/api";
 import { EventStatus } from "./constants";
+import { eventToSlug } from "../lib/slug";
 
 type LocationSlug = "BELGRADE" | "NOVI_SAD";
 const CITY_TO_LOCATION: Record<string, LocationSlug> = {
   beograd: "BELGRADE",
   "novi-sad": "NOVI_SAD",
-};
-
-const slugify = (s: string): string =>
-  s
-    .toLowerCase()
-    .trim()
-    .replace(/[^\p{L}\p{N}\s-]/gu, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-
-const eventToSlug = (title: string, date: Date): string => {
-  const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  const base = slugify(title);
-  return `${base}-${day}-${month}-${year}`;
 };
 
 export const getEventBySlugPublic: GetEventBySlugPublic = async (

@@ -1,13 +1,16 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import type { EventItem } from "@/types/event";
 import { EVENT_LIST } from "./EventList.styles";
+
+dayjs.extend(utc);
 
 interface EventListProps {
   events: EventItem[];
   error: string | null;
 }
 
-const formatDate = (iso: string) => dayjs(iso).format("DD.MM.YYYY");
+const formatDate = (iso: string) => dayjs.utc(iso).format("DD.MM.YYYY");
 
 export const EventList = ({ events, error }: EventListProps) => {
   return (

@@ -1,21 +1,15 @@
-import dayjs from "dayjs";
 import type { CreateReservationPublic } from "wasp/server/api";
 import { sendEmail } from "../lib/mailtrap";
+import {
+  formatOrderDate,
+  formatEventDateTime,
+} from "../lib/date";
 import {
   buildReservationConfirmationHtml,
   buildReservationConfirmationText,
   formatOrderId,
 } from "../email/reservation-confirmation";
 import { sendReservationShortEmail } from "./sendReservationConfirmation";
-
-const formatOrderDate = (date: Date) =>
-  dayjs(date).format("DD.MM YYYY. - HH:mm")
-
-const formatEventDateTime = (date: Date, startTime: string) => {
-  const dateStr = dayjs(date).format("DD.MM.YYYY.")
-  const time = startTime || "—"
-  return `${dateStr} u ${time}`
-}
 
 export const createReservationPublic: CreateReservationPublic = async (
   req,

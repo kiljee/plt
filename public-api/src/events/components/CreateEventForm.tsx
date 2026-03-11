@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { useCallback, useState } from "react";
+
+dayjs.extend(utc);
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type Event } from "wasp/entities";
@@ -102,7 +105,7 @@ export const mapEventToFormValues = (event: Event): EventFormValues => ({
     event.location === "NOVI_SAD" || event.location === "BELGRADE"
       ? event.location
       : "BELGRADE",
-  date: dayjs(event.date).format("YYYY-MM-DD"),
+  date: dayjs.utc(event.date).format("YYYY-MM-DD"),
   startTime: event.startTime || DEFAULT_START_TIME,
   endTime: event.endTime || DEFAULT_END_TIME,
   ageCategory: event.ageCategory || DEFAULT_AGE_CATEGORY,
@@ -193,7 +196,7 @@ export const CreateEventForm = ({
       title: data.title.trim(),
       description: (data.description ?? "").trim(),
       location: data.location,
-      date: dayjs(data.date).toISOString(),
+      date: dayjs.utc(data.date).toISOString(),
       startTime: data.startTime,
       endTime: data.endTime,
       ageCategory: data.ageCategory,

@@ -64,12 +64,21 @@ const getValidLocation = (location: string) =>
 const getImageUrlsJson = (imageUrls: string[]) =>
   JSON.stringify(Array.isArray(imageUrls) ? imageUrls.slice(0, MAX_IMAGES) : []);
 
-const getEventDate = (dateValue: string) => {
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) {
+const getEventDate = (dateValue: string): Date => {
+  const d = new Date(dateValue);
+  if (Number.isNaN(d.getTime())) {
     throw new HttpError(400, "Neispravan datum.");
   }
-  return date;
+  const utcMidnight = new Date(Date.UTC(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    0,
+    0,
+    0,
+    0,
+  ));
+  return utcMidnight;
 };
 
 export const createEvent: CreateEvent<CreateEventArgs, Event> = async (

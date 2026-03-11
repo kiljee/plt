@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import type { CartItem as CartItemType } from "@/types/cart";
 import { LOCATION_LABELS } from "@/types/event";
 import { COLORS } from "@/lib/colors";
@@ -26,6 +27,8 @@ const parseImageUrls = (json: string): string[] => {
   }
 };
 
+dayjs.extend(utc);
+
 interface CartItemProps {
   item: CartItemType;
   maxSeats?: number;
@@ -42,8 +45,8 @@ export const CartItem = ({
   const mainImage = images.length > 0 ? images[0] : PLACEHOLDER;
   const citySlug = locationToCitySlug(item.event.location);
   const eventUrl = `/${citySlug}/${item.event.slug}`;
-  const formattedDate = dayjs(item.event.date).isValid()
-    ? dayjs(item.event.date).format("DD.MM.YYYY.")
+  const formattedDate = dayjs.utc(item.event.date).isValid()
+    ? dayjs.utc(item.event.date).format("DD.MM.YYYY.")
     : "—";
   const timeStr = item.event.startTime ? `${item.event.startTime}` : "";
 

@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { useEffect, useState } from "react";
+
+dayjs.extend(utc);
 import { Link } from "react-router-dom";
 import {
   getAdminEvents,
@@ -158,7 +161,7 @@ export const DashboardPage = () => {
                         </thead>
                         <tbody className="divide-y">
                           {events.map((event) => {
-                            const dateLabel = dayjs(event.date).format(
+                            const dateLabel = dayjs.utc(event.date).format(
                               "DD.MM.YYYY",
                             );
                             const timeLabel = event.startTime

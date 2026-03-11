@@ -1,4 +1,7 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export const slugify = (s: string): string =>
   s
@@ -10,7 +13,7 @@ export const slugify = (s: string): string =>
     .replace(/^-|-$/g, "");
 
 export const eventToSlug = (title: string, date: string): string => {
-  const d = dayjs(date);
+  const d = dayjs.utc(date);
   const formatted = d.format("DD-MM-YYYY");
   const base = slugify(title);
   return `${base}-${formatted}`;

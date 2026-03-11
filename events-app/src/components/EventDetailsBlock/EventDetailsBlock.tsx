@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import "dayjs/locale/sr";
 import { EventLocation, LOCATION_LABELS } from "@/types/event";
 import { EVENT_DETAILS_STYLES } from "./EventDetailsBlock.styles";
 
+dayjs.extend(utc);
 dayjs.locale("sr");
 
 interface EventDetailsBlockProps {
@@ -31,8 +33,8 @@ export const EventDetailsBlock = ({
     location in LOCATION_LABELS
       ? LOCATION_LABELS[location as EventLocation]
       : location;
-  const d = dayjs(date);
-  const dayName = d.format("dddd");
+  const d = dayjs.utc(date);
+  const dayName = d.locale("sr").format("dddd");
   const dateFormatted = d.format("DD.MM.YYYY");
 
   const timeDisplay =

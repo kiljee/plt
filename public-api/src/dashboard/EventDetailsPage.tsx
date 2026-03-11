@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { Link, useParams } from "react-router-dom";
+
+dayjs.extend(utc);
 import { toast } from "sonner";
 import {
   getAdminEventById,
@@ -107,7 +110,7 @@ export const EventDetailsPage = () => {
                 <div>
                   <span className="text-muted-foreground">Datum</span>
                   <div className="font-medium">
-                    {dayjs(event.date).format("DD.MM.YYYY")}
+                    {dayjs.utc(event.date).format("DD.MM.YYYY")}
                   </div>
                 </div>
                 <div>

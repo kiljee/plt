@@ -1,5 +1,8 @@
-import dayjs from "dayjs";
 import { sendEmail } from "../lib/mailtrap";
+import {
+  formatOrderDate,
+  formatEventDateTime,
+} from "../lib/date";
 import {
   buildReservationConfirmationHtml,
   buildReservationConfirmationText,
@@ -14,15 +17,6 @@ const locationToCityName = (location: EventLocationType): string =>
 
 const getEmailSubject = (location: EventLocationType): string =>
   `Porudžbina primljena – Paleto.rs · ${locationToCityName(location)}`;
-
-const formatOrderDate = (date: Date) =>
-  dayjs(date).format("DD.MM YYYY. - HH:mm");
-
-const formatEventDateTime = (date: Date, startTime: string) => {
-  const dateStr = dayjs(date).format("DD.MM.YYYY.");
-  const time = startTime || "—";
-  return `${dateStr} u ${time}`;
-};
 
 export interface ReservationWithEvent {
   id: string;

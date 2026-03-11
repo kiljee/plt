@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { Link } from "react-router-dom";
+
+dayjs.extend(utc);
 import { toast } from "sonner";
 import { type Event } from "wasp/entities";
 import {
@@ -31,7 +34,7 @@ export const EventCard = ({ event }: EventCardProps) => {
     }
   };
 
-  const dateFormatted = dayjs(event.date).format("DD.MM.YYYY");
+  const dateFormatted = dayjs.utc(event.date).format("DD.MM.YYYY");
   const imageUrls: string[] = (() => {
     try {
       return typeof event.imageUrls === "string"

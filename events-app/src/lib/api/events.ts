@@ -36,26 +36,38 @@ export const getEvents = cache(async (
   pageSize = DEFAULT_PAGE_SIZE,
 ): Promise<GetEventsResult> => {
   const url = buildEventsUrl(location, page, pageSize);
-  const res = await fetch(url, {
-    next: { revalidate: EVENTS_REVALIDATE_SECONDS, tags: ["events"] },
-    headers: { Accept: "application/json" },
-  });
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: EVENTS_REVALIDATE_SECONDS, tags: ["events"] },
+      headers: { Accept: "application/json" },
+    });
 
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const msg = (body as { error?: string })?.error ?? res.statusText;
-    throw new Error(msg);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const msg = (body as { error?: string })?.error ?? res.statusText;
+      throw new Error(msg);
+    }
+
+    const data = (await res.json()) as { events?: unknown[]; totalCount?: number };
+    if (!Array.isArray(data?.events) || typeof data?.totalCount !== "number") {
+      throw new Error("Invalid response");
+    }
+
+    const events = (data.events as Record<string, unknown>[]).map((item) =>
+      normalizeEventItem(item),
+    );
+    return { events, totalCount: data.totalCount };
+  } catch (err) {
+    const cause = err instanceof Error ? err.cause : undefined;
+    const code = cause && typeof cause === "object" && "code" in cause ? (cause as { code?: string }).code : undefined;
+    const isNetworkError =
+      err instanceof TypeError && (code === "ECONNREFUSED" || (err.message ?? "").includes("fetch failed"));
+    if (isNetworkError) {
+      console.warn("Backend unreachable (is Wasp running?). Returning empty events.");
+      return { events: [], totalCount: 0 };
+    }
+    throw err;
   }
-
-  const data = (await res.json()) as { events?: unknown[]; totalCount?: number };
-  if (!Array.isArray(data?.events) || typeof data?.totalCount !== "number") {
-    throw new Error("Invalid response");
-  }
-
-  const events = (data.events as Record<string, unknown>[]).map((item) =>
-    normalizeEventItem(item),
-  );
-  return { events, totalCount: data.totalCount };
 });
 
 export const getEventBySlug = cache(async (
@@ -64,20 +76,32 @@ export const getEventBySlug = cache(async (
 ): Promise<EventDetailItem | null> => {
   const base = WASP_API_BASE_URL.replace(/\/$/, "");
   const url = `${base}${EVENTS_BY_SLUG_ENDPOINT}?city=${encodeURIComponent(city)}&slug=${encodeURIComponent(slug)}`;
-  const res = await fetch(url, {
-    next: { revalidate: EVENTS_REVALIDATE_SECONDS, tags: ["events"] },
-    headers: { Accept: "application/json" },
-  });
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: EVENTS_REVALIDATE_SECONDS, tags: ["events"] },
+      headers: { Accept: "application/json" },
+    });
 
-  if (res.status === 404) return null;
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    const msg = (body as { error?: string })?.error ?? res.statusText;
-    throw new Error(msg);
+    if (res.status === 404) return null;
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      const msg = (body as { error?: string })?.error ?? res.statusText;
+      throw new Error(msg);
+    }
+
+    const data = await res.json();
+    return normalizeEventDetailItem(data as Record<string, unknown>);
+  } catch (err) {
+    const cause = err instanceof Error ? err.cause : undefined;
+    const code = cause && typeof cause === "object" && "code" in cause ? (cause as { code?: string }).code : undefined;
+    const isNetworkError =
+      err instanceof TypeError && (code === "ECONNREFUSED" || (err.message ?? "").includes("fetch failed"));
+    if (isNetworkError) {
+      console.warn("Backend unreachable (is Wasp running?). Returning null.");
+      return null;
+    }
+    throw err;
   }
-
-  const data = await res.json();
-  return normalizeEventDetailItem(data as Record<string, unknown>);
 });
 
 export const loadEventPageData = cache(
