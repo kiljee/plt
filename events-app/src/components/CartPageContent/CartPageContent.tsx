@@ -49,16 +49,13 @@ export const CartPageContent = () => {
     setLoading(true);
 
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-      const url = `${base.replace(/\/$/, "")}/api/reservations/bulk`;
-
       const payload: BulkReservationRequest = {
         items: items.map((i) => ({ eventId: i.eventId, seats: i.seats })),
         email: formData.email.trim(),
         name: [formData.firstName, formData.lastName].filter(Boolean).join(" ") || undefined,
         phone: formData.phone.trim() || undefined,
       };
-      const res = await fetch(url, {
+      const res = await fetch("/api/reservations/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
