@@ -60,13 +60,39 @@ export const Header = () => {
             >
               {label}
               {href === "/korpa" && showCartBadge && (
-                <span className="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white">
+                <span className={HEADER.cartBadge}>
                   {totalItems > 99 ? "99+" : totalItems}
                 </span>
               )}
             </Link>
           ))}
         </nav>
+        <Link
+          href="/korpa"
+          className={HEADER.mobileCartLink}
+          aria-label={`Korpa${showCartBadge ? `, ${totalItems} stavki` : ""}`}
+          onClick={() => setMobileOpen(false)}
+        >
+          <svg
+            className={HEADER.mobileCartIcon}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+            />
+          </svg>
+          {showCartBadge && (
+            <span className={HEADER.mobileCartBadge}>
+              {totalItems > 99 ? "99+" : totalItems}
+            </span>
+          )}
+        </Link>
         <button
           type="button"
           className={HEADER.mobileMenuButton}
@@ -117,7 +143,7 @@ export const Header = () => {
             >
               {label}
               {href === "/korpa" && showCartBadge && (
-                <span className="ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white">
+                <span className={HEADER.cartBadgeMobile}>
                   {totalItems > 99 ? "99+" : totalItems}
                 </span>
               )}

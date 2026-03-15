@@ -31,7 +31,7 @@ export const EVENT_CARD_STYLES = {
   },
   buttonText: {
     base:
-      "absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center text-center text-[10px] leading-[18px] tracking-[5px] uppercase font-normal",
+      "absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center text-center text-[9px] leading-[18px] tracking-[2px] uppercase font-normal sm:text-[10px] sm:tracking-[3px]",
     available: "",
     soldOut: "",
   },

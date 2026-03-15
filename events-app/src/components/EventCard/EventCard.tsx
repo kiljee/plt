@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "motion/react";
 import type { EventItem } from "@/types/event";
 import { LOCATION_LABELS } from "@/types/event";
 import { eventToSlug, locationToCitySlug } from "@/lib/slug";
@@ -105,39 +106,45 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
 
           {/* Button - always clickable to see details */}
           {soldOut ? (
-            <Link
-              href={eventUrl}
-              className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.soldOut} block`}
-              style={{ borderColor: EVENT_CARD_CSS.colors.primaryBorder }}
-            >
-              <span
-                className={`${EVENT_CARD_STYLES.buttonText.base} ${EVENT_CARD_STYLES.buttonText.soldOut}`}
-                style={{
-                  fontFamily: "var(--font-geist-sans), 'Neue Haas Unica', sans-serif",
-                  color: EVENT_CARD_CSS.colors.primary,
-                }}
+            <Link href={eventUrl} className="block">
+              <motion.span
+                className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.soldOut} block cursor-pointer`}
+                style={{ borderColor: EVENT_CARD_CSS.colors.primaryBorder }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Sold out
-              </span>
+                <span
+                  className={`${EVENT_CARD_STYLES.buttonText.base} ${EVENT_CARD_STYLES.buttonText.soldOut}`}
+                  style={{
+                    fontFamily: "var(--font-geist-sans), 'Neue Haas Unica', sans-serif",
+                    color: EVENT_CARD_CSS.colors.primary,
+                  }}
+                >
+                  Rasprodato
+                </span>
+              </motion.span>
             </Link>
           ) : (
-            <Link
-              href={eventUrl}
-              className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.available} block`}
-              style={{
-                backgroundColor: EVENT_CARD_CSS.colors.primary,
-                borderColor: EVENT_CARD_CSS.colors.primaryBorder,
-              }}
-            >
-              <span
-                className={`${EVENT_CARD_STYLES.buttonText.base} ${EVENT_CARD_STYLES.buttonText.available}`}
+            <Link href={eventUrl} className="block">
+              <motion.span
+                className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.available} block cursor-pointer`}
                 style={{
-                  fontFamily: "var(--font-geist-sans), 'Neue Haas Unica', sans-serif",
-                  color: EVENT_CARD_CSS.colors.textWhite,
+                  backgroundColor: EVENT_CARD_CSS.colors.primary,
+                  borderColor: EVENT_CARD_CSS.colors.primaryBorder,
                 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Book Now
-              </span>
+                <span
+                  className={`${EVENT_CARD_STYLES.buttonText.base} ${EVENT_CARD_STYLES.buttonText.available}`}
+                  style={{
+                    fontFamily: "var(--font-geist-sans), 'Neue Haas Unica', sans-serif",
+                    color: EVENT_CARD_CSS.colors.textWhite,
+                  }}
+                >
+                  REZERVIŠITE
+                </span>
+              </motion.span>
             </Link>
           )}
         </div>

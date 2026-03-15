@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { EventDetailItem } from "@/types/event";
 import { eventToSlug } from "@/lib/slug";
 import { useCartStore } from "@/store/cart";
@@ -26,27 +26,36 @@ const parseImageUrls = (json: string): string[] => {
 };
 
 
+const ADDED_DURATION_MS = 1600;
+
 export const EventDetailContent = ({ event }: EventDetailContentProps) => {
   const addToCart = useCartStore((s) => s.addItem);
   const [quantity, setQuantity] = useState(1);
-
+  const [showAddedSuccess, setShowAddedSuccess] = useState(false);
+  const [showCappedEffect, setShowCappedEffect] = useState(false);
 
   const images = parseImageUrls(event.imageUrls);
   const placesLeft = event.placesLeft ?? 0;
   const canOrder = placesLeft > 0 && quantity > 0 && quantity <= placesLeft;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     const slug = eventToSlug(event.title, event.date);
-    addToCart(
+    const result = addToCart(
       {
-       ...event,
+        ...event,
         slug,
       },
       quantity,
     );
-  };
+    if (result.capped) {
+      setShowCappedEffect(true);
+      setTimeout(() => setShowCappedEffect(false), 600);
+      return;
+    }
+    setShowAddedSuccess(true);
+    setTimeout(() => setShowAddedSuccess(false), ADDED_DURATION_MS);
+  }, [event, quantity, addToCart]);
 
- 
   return (
     <section className={EVENT_DETAIL_STYLES.section}>
       {/* Decorative element */}
@@ -132,8 +141,9 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
               loading={false}
               soldOut={placesLeft <= 0}
               label="Dodaj u korpu"
+              success={showAddedSuccess}
+              capped={showCappedEffect}
             />
-          
           </div>
 
           {/* Event Details */}

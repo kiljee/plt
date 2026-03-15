@@ -11,19 +11,19 @@ export const EVENT_DETAIL_STYLES = {
   contentSection: "flex w-full flex-col gap-6 lg:w-[640px]",
   
   title: {
-    wrapper: "flex justify-center px-4",
-    text: "text-center text-2xl font-normal leading-tight text-[#000914] sm:text-3xl lg:text-5xl lg:leading-[48px]",
-    font: "font-sans", // Will be overridden by inline style
+    wrapper: "flex justify-start px-4",
+    text: "text-left text-2xl font-normal leading-tight text-[#000914] sm:text-3xl lg:text-5xl lg:leading-[48px]",
+    font: "font-sans",
   },
-  
+
   price: {
     wrapper: "px-4",
     text: "text-xl font-bold tracking-wide text-[#5CA2BC] sm:text-2xl lg:text-3xl lg:leading-[33px]",
     font: "font-serif", // Will be overridden by inline style
   },
-  
+
   description: {
-    wrapper: "px-4",
+    wrapper: "px-4 mt-2",
     text: "text-xs font-normal uppercase tracking-widest text-[#212529] lg:text-[10px] lg:leading-[10px]",
   },
   

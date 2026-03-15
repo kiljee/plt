@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "motion/react";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import type { CartItem as CartItemType } from "@/types/cart";
@@ -51,7 +52,12 @@ export const CartItem = ({
   const timeStr = item.event.startTime ? `${item.event.startTime}` : "";
 
   return (
-    <div className={CART_ITEM_STYLES.root}>
+    <motion.div
+      className={CART_ITEM_STYLES.root}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+    >
       <Link href={eventUrl} className={CART_ITEM_STYLES.imageWrapper}>
         <Image
           src={mainImage}
@@ -96,17 +102,19 @@ export const CartItem = ({
             showLabel={false}
           />
         </div>
-        <button
+        <motion.button
           type="button"
           onClick={(e) => {
             e.preventDefault();
             onRemove();
           }}
           className={CART_ITEM_STYLES.removeButton}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
           Ukloni
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };

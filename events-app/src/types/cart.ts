@@ -10,6 +10,7 @@ export interface CartEvent {
   startTime?: string;
   location: EventLocation;
   slug: string;
+  placesLeft?: number;
 }
 
 export interface CartItem {

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import type { CartItem as CartItemType } from "@/types/cart";
 import { CartItem } from "@/components/CartItem/CartItem";
 import { CartSummary } from "@/components/CartSummary/CartSummary";
@@ -43,14 +44,19 @@ export const CartReceipt = ({
       <h2 className={CART_RECEIPT_STYLES.title}>Detalji događaja</h2>
       <div className={CART_RECEIPT_STYLES.itemsList}>
         {items.map((item, index) => (
-          <div key={item.eventId}>
+          <motion.div
+            key={item.eventId}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: index * 0.06 }}
+          >
             {index > 0 && <div className={CART_RECEIPT_STYLES.divider} />}
             <CartItem
               item={item}
-              maxSeats={99}
+              maxSeats={item.event.placesLeft ?? 99}
               onRemove={() => onRemove(item.eventId)}
             />
-          </div>
+          </motion.div>
         ))}
       </div>
       <CartSummary

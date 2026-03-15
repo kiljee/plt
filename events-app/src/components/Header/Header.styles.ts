@@ -12,7 +12,15 @@ export const HEADER = {
   logoText: "text-lg font-semibold tracking-tight sm:text-xl md:text-2xl",
   logoPale: "text-[#2D9CDB]",
   logoTo: "text-[#C77DBB]",
-  right: "flex items-center justify-end",
+  right: "flex items-center justify-end gap-1",
+  cartBadge:
+    "absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white",
+  cartBadgeMobile: "ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white",
+  mobileCartLink:
+    "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[#5BA4B8] hover:bg-[#F6F2F4] focus:outline-none focus:ring-2 focus:ring-[#5BA4B8]/30 md:hidden",
+  mobileCartIcon: "h-5 w-5",
+  mobileCartBadge:
+    "absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white",
   mobileMenuButton:
     "flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[#5BA4B8] hover:bg-[#F6F2F4] focus:outline-none focus:ring-2 focus:ring-[#5BA4B8]/30 md:hidden",
   mobileMenuIcon: "h-5 w-5",
