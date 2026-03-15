@@ -1,4 +1,5 @@
 import { STYLES, FONT_FAMILY } from "../styles"
+import { renderEmailLogo } from "../../shared/logo"
 
 export const renderEmailHeader = () => `
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
@@ -10,7 +11,7 @@ export const renderEmailHeader = () => `
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
         <tr>
           <td>
-            <span style="font-family: ${FONT_FAMILY}; font-size: 24px; font-weight: bold; color: ${STYLES.primary};">Paleto.rs</span>
+            ${renderEmailLogo()}
           </td>
           <td align="right" style="font-family: ${FONT_FAMILY}; font-size: 11px; color: ${STYLES.textMuted};">
             Za pitanja: rezervacije@paleto.rs

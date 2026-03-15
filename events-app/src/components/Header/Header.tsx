@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/cart";
 import { HEADER } from "./Header.styles";
+
+const LOGO_SRC = "/Paleto logo 2.png";
 
 const NAV_LEFT = [{ href: "/", label: "Calendar" }] as const;
 const NAV_RIGHT = [
@@ -45,8 +48,15 @@ export const Header = () => {
         aria-label="Paleto – početna"
         onClick={() => setMobileOpen(false)}
       >
-        <span className={`${HEADER.logoText} ${HEADER.logoPale}`}>pale</span>
-        <span className={`${HEADER.logoText} ${HEADER.logoTo}`}>to</span>
+        <Image
+          src={LOGO_SRC}
+          alt="Paleto"
+          width={240}
+          height={80}
+          className="h-8 w-auto sm:h-9 md:h-10 object-contain"
+          style={{ imageRendering: "-webkit-optimize-contrast" } as React.CSSProperties}
+          priority
+        />
       </Link>
 
       <div className={HEADER.right}>

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import {
   getReservationById,
   confirmReservation,
+  rejectReservation,
   deleteReservation,
   useQuery,
   useAction,
@@ -29,8 +30,10 @@ export const ReservationDetailPage = () => {
   );
   const navigate = useNavigate();
   const confirmAction = useAction(confirmReservation);
+  const rejectAction = useAction(rejectReservation);
   const deleteAction = useAction(deleteReservation);
   const [confirming, setConfirming] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const handleConfirm = async () => {
@@ -43,6 +46,20 @@ export const ReservationDetailPage = () => {
       toast.error(`Greška: ${String(err)}`);
     } finally {
       setConfirming(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!window.confirm("Odbij rezervaciju? Korisniku će biti poslat email. Mesta će biti oslobođena.")) return;
+    setRejecting(true);
+    try {
+      await rejectAction({ id: reservationId });
+      toast.success("Rezervacija je odbijena. Email je poslat korisniku.");
+      refetch();
+    } catch (err: unknown) {
+      toast.error(`Greška: ${String(err)}`);
+    } finally {
+      setRejecting(false);
     }
   };
 
@@ -167,14 +184,23 @@ export const ReservationDetailPage = () => {
 
               <div className="mt-6 flex flex-wrap gap-3">
                 {reservation.status === "PENDING" && (
-                  <Button
-                    onClick={handleConfirm}
-                    disabled={confirming}
-                  >
-                    {confirming
-                      ? "Obrada…"
-                      : "Potvrdi rezervaciju (pošalji email)"}
-                  </Button>
+                  <>
+                    <Button
+                      onClick={handleConfirm}
+                      disabled={confirming || rejecting}
+                    >
+                      {confirming
+                        ? "Obrada…"
+                        : "Potvrdi rezervaciju (pošalji email)"}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={handleReject}
+                      disabled={rejecting || confirming}
+                    >
+                      {rejecting ? "Obrada…" : "Odbij rezervaciju (pošalji email)"}
+                    </Button>
+                  </>
                 )}
                 <Button
                   variant="destructive"

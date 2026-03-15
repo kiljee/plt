@@ -29,6 +29,7 @@ export const checkoutSchema = yup.object({
   phone: yup
     .string()
     .required("Unesite broj telefona za kontakt")
+    .default("+3816")
     .test("valid-phone", "Unesite ispravan broj telefona", isValidPhoneNumber),
   address: yup.string().optional().default(""),
   postalCode: yup.string().optional().default(""),
@@ -43,10 +44,10 @@ export const checkoutDefaultValues: CheckoutFormData = {
   firstName: "",
   lastName: "",
   email: "",
-  phone: "",
+  phone: "+3816",
   address: "",
   postalCode: "",
   city: "",
-  country: "Serbia",
+  country: "Srbija",
   agreeTerms: false,
 }

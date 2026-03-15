@@ -12,7 +12,13 @@ import {
 import {
   type DeleteReservation,
   type ConfirmReservation,
+  type RejectReservation,
 } from "wasp/server/operations";
+import { eventToSlug } from "../lib/slug";
+import {
+  buildReservationRejectionHtml,
+  buildReservationRejectionText,
+} from "../email/reservation-rejection";
 
 export const deleteReservation: DeleteReservation<{ id: string }> = async (
   { id },
@@ -93,6 +99,62 @@ export const confirmReservation: ConfirmReservation<{ id: string }> = async (
     text: buildReservationConfirmationText(emailData),
     html: buildReservationConfirmationHtml(emailData),
   });
+
+  return updated;
+};
+
+export const rejectReservation: RejectReservation<{ id: string }> = async (
+  { id },
+  context,
+) => {
+  if (!context.user) throw new HttpError(401);
+  const user = await context.entities.User.findUnique({
+    where: { id: context.user.id },
+    select: { isAdmin: true },
+  });
+  if (!user?.isAdmin) throw new HttpError(403, "Samo admin može izvršiti ovu akciju.");
+
+  const reservation = await context.entities.Reservation.findUnique({
+    where: { id },
+    include: { event: true },
+  });
+
+  if (!reservation) throw new HttpError(404, "Rezervacija nije pronađena.");
+  if (reservation.status === "CANCELLED") {
+    return reservation;
+  }
+
+  const updated = await context.entities.Reservation.update({
+    where: { id },
+    data: { status: "CANCELLED" },
+  });
+
+  const event = reservation.event;
+  const location =
+    event.location === "BELGRADE" || event.location === "NOVI_SAD"
+      ? event.location
+      : "NOVI_SAD";
+  const eventSlug = eventToSlug(event.title, event.date);
+
+  const rejectionData = {
+    orderId: formatOrderId(reservation.id),
+    customerName: reservation.name ?? "",
+    customerEmail: reservation.email,
+    eventTitle: event.title,
+    eventSlug,
+    location,
+  };
+
+  try {
+    await sendEmail({
+      to: reservation.email,
+      subject: "Rezervacija odbijena – Paleto.rs",
+      text: buildReservationRejectionText(rejectionData),
+      html: buildReservationRejectionHtml(rejectionData),
+    });
+  } catch (err) {
+    console.error("Failed to send reservation rejection email:", err);
+  }
 
   return updated;
 };

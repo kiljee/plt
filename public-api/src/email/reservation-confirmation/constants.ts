@@ -6,6 +6,9 @@ export const COMPANY = {
   mb: "67849272",
 } as const
 
+const DEFAULT_LOGO_BASE = "https://www.paleto.rs"
+export const LOGO_URL = process.env.LOGO_URL ?? `${DEFAULT_LOGO_BASE}/Paleto%20logo%202.png`
+
 export type LocationKey = "BELGRADE" | "NOVI_SAD"
 
 export const ADDRESSES: Record<LocationKey, { street: string; number: number; apartment: string; floor: string; city: string; postalCode: string }> = {
