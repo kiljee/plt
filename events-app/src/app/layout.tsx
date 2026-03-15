@@ -22,6 +22,9 @@ const comfortaa = Comfortaa({
 export const metadata: Metadata = {
   title: "Događaji",
   description: "Lista događaja",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
