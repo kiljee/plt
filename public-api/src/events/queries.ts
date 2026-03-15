@@ -2,6 +2,8 @@ import { type Event } from "wasp/entities";
 import { type _Event, type _User, type AuthenticatedQueryDefinition } from "wasp/server/_types";
 import { type GetMe, type GetAdminEvents } from "wasp/server/operations";
 import { HttpError } from "wasp/server";
+import { EventStatus } from "./constants";
+import type { EventLocationType } from "../reservations/types";
 
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
@@ -9,7 +11,8 @@ const MAX_PAGE_SIZE = 50;
 export type GetAdminEventsInput = {
   page?: number;
   pageSize?: number;
-  statusFilter?: "ACTIVE" | "INACTIVE";
+  statusFilter?: EventStatus;
+  locationFilter?: EventLocationType;
 };
 
 export type GetAdminEventsResult = {
@@ -44,18 +47,20 @@ export const getAdminEvents: GetAdminEvents<
     Math.max(1, args?.pageSize ?? DEFAULT_PAGE_SIZE),
   );
   const skip = (page - 1) * pageSize;
-  const where = args?.statusFilter
-    ? { status: args.statusFilter }
-    : undefined;
+  const where: { status?: string; location?: string } = {};
+  if (args?.statusFilter) where.status = args.statusFilter;
+  if (args?.locationFilter) where.location = args.locationFilter;
+  const hasFilters = Object.keys(where).length > 0;
+  const finalWhere = hasFilters ? where : undefined;
 
   const [events, totalCount] = await Promise.all([
     context.entities.Event.findMany({
-      where,
+      where: finalWhere,
       orderBy: { createdAt: "desc" },
       skip,
       take: pageSize,
     }),
-    context.entities.Event.count({ where }),
+    context.entities.Event.count({ where: finalWhere }),
   ]);
 
   const eventIds = events.map((e) => e.id);

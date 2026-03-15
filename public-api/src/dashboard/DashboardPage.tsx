@@ -28,6 +28,10 @@ import {
 import { useRequireAdmin } from "../hooks/useRequireAdmin";
 import { useAddEventModal } from "../shared/context/AddEventModalContext";
 import { EventStatus } from "../events/constants";
+import {
+  EventLocation,
+  type EventLocationType,
+} from "../reservations/types";
 
 const PAGE_SIZE = 10;
 
@@ -43,7 +47,13 @@ const STATUS_BADGE_CLASS: Record<EventStatus, string> = {
     "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300",
 };
 
+const LOCATION_LABELS: Record<EventLocationType, string> = {
+  [EventLocation.BELGRADE]: "Beograd",
+  [EventLocation.NOVI_SAD]: "Novi Sad",
+};
+
 type StatusFilterValue = "all" | EventStatus;
+type LocationFilterValue = "all" | EventLocationType;
 
 const STATUS_FILTER_OPTIONS: { value: StatusFilterValue; label: string }[] = [
   { value: "all", label: "Sve" },
@@ -51,10 +61,21 @@ const STATUS_FILTER_OPTIONS: { value: StatusFilterValue; label: string }[] = [
   { value: EventStatus.INACTIVE, label: "Neaktivne" },
 ];
 
+const LOCATION_FILTER_OPTIONS: {
+  value: LocationFilterValue;
+  label: string;
+}[] = [
+  { value: "all", label: "Sve" },
+  { value: EventLocation.NOVI_SAD, label: LOCATION_LABELS[EventLocation.NOVI_SAD] },
+  { value: EventLocation.BELGRADE, label: LOCATION_LABELS[EventLocation.BELGRADE] },
+];
+
 export const DashboardPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
+  const [locationFilter, setLocationFilter] =
+    useState<LocationFilterValue>("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const { open: openAddEventModal, onSuccessRef } = useAddEventModal();
 
@@ -62,6 +83,8 @@ export const DashboardPage = () => {
     page,
     pageSize: PAGE_SIZE,
     statusFilter: statusFilter === "all" ? undefined : statusFilter,
+    locationFilter:
+      locationFilter === "all" ? undefined : locationFilter,
   });
 
   useEffect(() => {
@@ -73,7 +96,7 @@ export const DashboardPage = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [statusFilter]);
+  }, [statusFilter, locationFilter]);
 
   const handleStatusChange = async (eventId: string, status: EventStatus) => {
     setUpdatingId(eventId);
@@ -112,17 +135,35 @@ export const DashboardPage = () => {
                       </span>
                     )}
                   </CardTitle>
-                  <div className="flex gap-2">
-                    {STATUS_FILTER_OPTIONS.map((opt) => (
-                      <Button
-                        key={opt.value}
-                        variant={statusFilter === opt.value ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setStatusFilter(opt.value)}
-                      >
-                        {opt.label}
-                      </Button>
-                    ))}
+                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                    <div className="flex gap-2">
+                      {STATUS_FILTER_OPTIONS.map((opt) => (
+                        <Button
+                          key={opt.value}
+                          variant={
+                            statusFilter === opt.value ? "default" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => setStatusFilter(opt.value)}
+                        >
+                          {opt.label}
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="flex gap-2 border-l border-border pl-3">
+                      {LOCATION_FILTER_OPTIONS.map((opt) => (
+                        <Button
+                          key={opt.value}
+                          variant={
+                            locationFilter === opt.value ? "default" : "outline"
+                          }
+                          size="sm"
+                          onClick={() => setLocationFilter(opt.value)}
+                        >
+                          {opt.label}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </CardHeader>
@@ -168,9 +209,9 @@ export const DashboardPage = () => {
                               ? `${event.startTime}–${event.endTime}`
                               : "";
                             const locationLabel =
-                              event.location === "NOVI_SAD"
-                                ? "Novi Sad"
-                                : "Beograd";
+                              event.location === EventLocation.NOVI_SAD
+                                ? LOCATION_LABELS[EventLocation.NOVI_SAD]
+                                : LOCATION_LABELS[EventLocation.BELGRADE];
                             const status = (event as { status?: EventStatus })
                               .status ?? EventStatus.ACTIVE;
 
