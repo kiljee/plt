@@ -1,7 +1,11 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import "dayjs/locale/sr";
-import { EventLocation, LOCATION_LABELS } from "@/types/event";
+import {
+  EventLocation,
+  LOCATION_LABELS,
+  getAgeCategoryLabel,
+} from "@/types/event";
 import { EVENT_DETAILS_STYLES } from "./EventDetailsBlock.styles";
 
 dayjs.extend(utc);
@@ -45,7 +49,7 @@ export const EventDetailsBlock = ({
   const values = {
     day: d.isValid() ? `${dayName} ${dateFormatted}` : "—",
     time: timeDisplay,
-    age: ageCategory || "—",
+    age: ageCategory ? getAgeCategoryLabel(ageCategory) : "—",
     location: locationLabel,
   };
 

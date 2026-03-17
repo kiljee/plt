@@ -11,29 +11,24 @@ export const getEventsPublic: GetEventsPublic = async (req, res, context) => {
     location && LOCATIONS.includes(location as (typeof LOCATIONS)[number])
       ? { location }
       : {};
-  const where = { status: EventStatus.ACTIVE, ...locationFilter };
+  const today = dayjs().startOf("day").toDate();
+  const where = {
+    status: EventStatus.ACTIVE,
+    ...locationFilter,
+    date: { gte: today },
+  };
   const { pageSize, skip } = parsePaginationParams(
     req.query as Record<string, string | string[] | undefined>,
   );
 
-  const today = dayjs().startOf("day").toDate();
+  const upcoming = (await context.entities.Event.findMany({
+    where,
+    orderBy: { date: "asc" as const },
+    select: EVENT_PUBLIC_SELECT,
+  })) as EventPublicRow[];
 
-  const [past, upcoming] = await Promise.all([
-    context.entities.Event.findMany({
-      where: { ...where, date: { lt: today } },
-      orderBy: { date: "desc" as const },
-      select: EVENT_PUBLIC_SELECT,
-    }),
-    context.entities.Event.findMany({
-      where: { ...where, date: { gte: today } },
-      orderBy: { date: "asc" as const },
-      select: EVENT_PUBLIC_SELECT,
-    }),
-  ]);
-
-  const all = [...past, ...upcoming] as EventPublicRow[];
-  const totalCount = all.length;
-  const page = all.slice(skip, skip + pageSize);
+  const totalCount = upcoming.length;
+  const page = upcoming.slice(skip, skip + pageSize);
 
   const eventIds = page.map((e) => e.id);
   const reservations = eventIds.length > 0

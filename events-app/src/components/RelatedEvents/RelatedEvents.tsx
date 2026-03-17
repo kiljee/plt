@@ -13,7 +13,7 @@ export const RelatedEvents = ({ events, excludeId }: RelatedEventsProps) => {
   if (related.length === 0) return null;
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <section className="bg-white mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <h2 className="mb-6 text-2xl font-bold text-zinc-900">
         Slični događaji
       </h2>

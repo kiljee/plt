@@ -1,14 +1,14 @@
 export const HEADER = {
   root:
-    "relative w-full border-b border-[#F6F2F4] bg-white",
+    "sticky top-0 z-10 w-full border-b border-[#F6F2F4] bg-white",
   inner:
     "mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:py-4 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-2.5 md:px-6 md:pl-[60px] md:pr-[25px] md:py-5",
   navLeft: "hidden items-center gap-2.5 md:flex",
-  navRight: "hidden items-center justify-end gap-2.5 md:flex",
+  navRight: "hidden items-center justify-end gap-5 md:flex",
   navLink:
     "text-sm font-medium uppercase tracking-wide text-[#5BA4B8] transition-colors hover:text-[#4a8a9a] focus:outline-none focus:ring-2 focus:ring-[#5BA4B8]/30 focus:ring-offset-2",
   logoLink:
-    "flex shrink-0 focus:outline-none focus:ring-2 focus:ring-[#5BA4B8]/30 focus:ring-offset-2 rounded",
+    "flex shrink-0 rounded transition-transform duration-200 ease-out hover:scale-105 focus:outline-none",
   logoText: "text-lg font-semibold tracking-tight sm:text-xl md:text-2xl",
   logoPale: "text-[#2D9CDB]",
   logoTo: "text-[#C77DBB]",

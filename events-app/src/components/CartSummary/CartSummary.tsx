@@ -54,7 +54,7 @@ export const CartSummary = ({
     <div className={CART_SUMMARY_STYLES.divider} />
     <div className={CART_SUMMARY_STYLES.row}>
       <span className={CART_SUMMARY_STYLES.label}>
-        Međuzbir · {totalItems} {totalItems === 1 ? "stavka" : "stavki"}
+        Ukupno {totalItems} {totalItems === 1 ? "stavka" : "stavki"}
       </span>
       <span className={CART_SUMMARY_STYLES.value}>
         {formatPrice(subtotal, currency)}
@@ -68,7 +68,7 @@ export const CartSummary = ({
       <span className={CART_SUMMARY_STYLES.value}>Uključeno</span>
     </div>
     <div className={CART_SUMMARY_STYLES.totalRow}>
-      <span className={CART_SUMMARY_STYLES.totalLabel}>Ukupno</span>
+      <span className={CART_SUMMARY_STYLES.totalLabel}>Cena</span>
       <span className={CART_SUMMARY_STYLES.totalValue}>
         {formatPrice(total, currency)}
       </span>

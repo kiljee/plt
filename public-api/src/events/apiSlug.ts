@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import type { GetEventBySlugPublic } from "wasp/server/api";
 import { EventStatus } from "./constants";
 import { eventToSlug } from "../lib/slug";
@@ -27,8 +28,13 @@ export const getEventBySlugPublic: GetEventBySlugPublic = async (
     return;
   }
 
+  const today = dayjs().startOf("day").toDate();
   const events = await context.entities.Event.findMany({
-    where: { location, status: EventStatus.ACTIVE },
+    where: {
+      location,
+      status: EventStatus.ACTIVE,
+      date: { gte: today },
+    },
     select: {
       id: true,
       title: true,

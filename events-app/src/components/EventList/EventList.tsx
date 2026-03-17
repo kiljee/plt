@@ -13,6 +13,7 @@ interface EventListProps {
 const formatDate = (iso: string) => dayjs.utc(iso).format("DD.MM.YYYY");
 
 export const EventList = ({ events, error }: EventListProps) => {
+  console.log(events);
   return (
     <div className={EVENT_LIST.root}>
       <main className={EVENT_LIST.main}>

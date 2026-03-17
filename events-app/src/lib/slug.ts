@@ -3,11 +3,27 @@ import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
+const SERBIAN_TO_LATIN: Record<string, string> = {
+  ć: "c",
+  Ć: "c",
+  č: "c",
+  Č: "c",
+  š: "s",
+  Š: "s",
+  ž: "z",
+  Ž: "z",
+  đ: "d",
+  Đ: "d",
+};
+
+const toPlainLatin = (s: string): string =>
+  Array.from(s, (c) => SERBIAN_TO_LATIN[c] ?? c).join("");
+
 export const slugify = (s: string): string =>
-  s
+  toPlainLatin(s)
     .toLowerCase()
     .trim()
-    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");

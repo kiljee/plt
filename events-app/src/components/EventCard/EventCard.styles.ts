@@ -19,7 +19,7 @@ export const EVENT_CARD_STYLES = {
     base: "w-full min-w-0 line-clamp-2",
     available: "font-semibold",
     soldOut: "font-normal",
-    text: "text-base leading-tight tracking-[0.5px] sm:text-xl sm:leading-[22px]",
+    text: "text-base leading-tight tracking-[0.5px] sm:text-xl sm:leading-[30px]",
   },
   priceContainer: "flex w-full flex-row items-center gap-2",
   price: "flex flex-1 items-center text-sm leading-4 sm:text-base",

@@ -8,6 +8,15 @@ export const LOCATION_LABELS: Record<EventLocation, string> = {
   [EventLocation.NOVI_SAD]: "Novi Sad",
 };
 
+export const AGE_CATEGORY_LABELS: Record<string, string> = {
+  Adults: "Odrasli",
+  Kids: "Deca",
+  All: "Svi",
+};
+
+export const getAgeCategoryLabel = (ageCategory: string): string =>
+  AGE_CATEGORY_LABELS[ageCategory] ?? ageCategory;
+
 export interface EventItem {
   id: string;
   title: string;

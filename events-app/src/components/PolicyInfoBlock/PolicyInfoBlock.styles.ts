@@ -1,5 +1,5 @@
 export const POLICY_INFO_STYLES = {
-  container: "flex flex-col gap-5 px-4",
+  container: "flex flex-col gap-5",
   responsive: "w-full lg:w-[640px]",
   height: "lg:h-[320px]",
   

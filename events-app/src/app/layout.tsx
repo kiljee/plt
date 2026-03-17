@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Comfortaa } from "next/font/google";
 import { Header } from "@/components/Header/Header";
+import { Footer } from "@/components/Footer/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,7 +40,10 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <Header />
-        {children}
+        <main className="min-h-screen flex flex-col">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );

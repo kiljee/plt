@@ -92,10 +92,9 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
               >
                 {formatPrice(event.price, event.currency)}
                 <span
-                  className={EVENT_CARD_STYLES.priceCity}
+                  className={`${EVENT_CARD_STYLES.priceCity} ml-1.5`}
                   style={{ color: COLORS.text.label }}
                 >
-                  {" · "}
                   {event.location in LOCATION_LABELS
                     ? LOCATION_LABELS[event.location as keyof typeof LOCATION_LABELS]
                     : event.location}

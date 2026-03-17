@@ -19,7 +19,7 @@ export const PolicyInfoBlock = ({ className = "" }: PolicyInfoBlockProps) => (
         className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive}`}
         style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
       >
-        <strong>Ne šalje se poseban ulaznica.</strong>
+        <strong>Ne šalje se posebna ulaznica.</strong>
       </p>
       
       <div>
