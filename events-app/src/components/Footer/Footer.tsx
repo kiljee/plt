@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useWorkshopLinks } from "@/hooks/useWorkshopLinks";
 import PaletoLogo from "@/assets/paleto-logo.svg";
 import { FOOTER, FOOTER_COLORS } from "./Footer.styles";
 import { FooterSection } from "./FooterSection/FooterSection";
@@ -30,7 +29,6 @@ const INSTAGRAM_ICON = (
 );
 
 export const Footer = () => {
-  const workshopLinks = useWorkshopLinks();
 
   return (
     <footer
@@ -57,30 +55,8 @@ export const Footer = () => {
             </nav>
           </div>
 
-          <div className={FOOTER.centerCol}>
-            <FooterSection title="Radionice">
-              <nav className={FOOTER.workshopLinks} aria-label="Radionice">
-                {workshopLinks.length > 0 ? (
-                  workshopLinks.map(({ href, label }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      className={FOOTER.workshopLink}
-                      style={{ color: FOOTER_COLORS.link }}
-                    >
-                      {label}
-                    </Link>
-                  ))
-                ) : (
-                  <span className={FOOTER.workshopLink} style={{ color: FOOTER_COLORS.text }}>
-                    Nema predstojećih radionica
-                  </span>
-                )}
-              </nav>
-            </FooterSection>
-          </div>
-
-          <FooterSection title="Kontakt" className="sm:justify-self-end">
+         
+          <FooterSection title="Kontakt" className="sm:col-start-3 sm:justify-self-end">
             <div className={FOOTER.contactList}>
               <FooterContactItem label="Email">
                 <a

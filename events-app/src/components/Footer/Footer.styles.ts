@@ -11,7 +11,7 @@ export const FOOTER_COLORS = {
 export const FOOTER = {
   root: "w-full overflow-x-hidden",
   inner:
-    "mx-auto w-full max-w-[90rem] flex flex-col gap-2 px-3 py-4 sm:px-5 sm:gap-3 sm:py-5 lg:px-8 lg:py-6 lg:gap-4",
+    "mx-auto w-full max-w-6xl flex flex-col gap-2 px-4 py-4 sm:px-6 sm:gap-3 sm:py-5 lg:px-8 lg:py-6 lg:gap-4",
 
   top: "grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4 sm:items-start lg:gap-6",
   brand: "flex flex-col gap-1.5 max-w-[14rem] sm:max-w-[16rem]",
@@ -25,7 +25,6 @@ export const FOOTER = {
   socialIcon: "size-5 shrink-0 sm:size-6",
 
   block: "flex flex-col gap-1.5 min-w-0",
-  workshopLinks: "flex flex-col gap-0.5",
   workshopLink: "text-xs hover:underline sm:text-sm",
   heading:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] text-base font-normal leading-none sm:text-lg lg:text-xl",
