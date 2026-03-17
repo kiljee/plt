@@ -22,7 +22,11 @@ const fetchEvents = async (
   const res = await fetch(url, { headers: { Accept: "application/json" } });
   if (!res.ok) return [];
   const data = (await res.json()) as { events?: { title?: string; date?: string; location?: string }[] };
-  return Array.isArray(data.events) ? data.events : [];
+  const raw = Array.isArray(data.events) ? data.events : [];
+  return raw.filter(
+    (e): e is { title: string; date: string; location: string } =>
+      typeof e.title === "string" && typeof e.date === "string" && typeof e.location === "string",
+  );
 };
 
 export const useWorkshopLinks = (): WorkshopLink[] => {
