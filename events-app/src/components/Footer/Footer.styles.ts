@@ -36,6 +36,7 @@ export const FOOTER = {
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] text-xs leading-[1.5rem] sm:text-[0.8125rem] sm:leading-[1.6875rem]",
   addressLines:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] text-xs leading-[1.5rem] sm:text-[0.8125rem] sm:leading-[1.6875rem]",
+  addressLinesWrapper: "flex flex-col sm:flex-row sm:flex-wrap sm:gap-x-1",
 
   bottom: "flex flex-col items-center justify-center gap-1 border-t pt-3 pb-1",
   legal: "flex flex-row flex-wrap items-center justify-center gap-1.5",

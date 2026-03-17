@@ -78,7 +78,11 @@ export const Footer = () => {
               </FooterContactItem>
               {ADDRESSES.map(({ city, lines }) => (
                 <FooterContactItem key={city} label={city} asAddress>
-                  {lines.join(" ")}
+                  <div className={FOOTER.addressLinesWrapper}>
+                    {lines.map((line) => (
+                      <span key={line}>{line}</span>
+                    ))}
+                  </div>
                 </FooterContactItem>
               ))}
             </div>
