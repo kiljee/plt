@@ -42,16 +42,13 @@ export const PolicyInfoBlock = ({ className = "" }: PolicyInfoBlockProps) => (
         className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive}`}
         style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
       >
-        Pitanja o rezervacijama, otkazivanju ili drugim detaljima? Pogledajte{" "}
-        <Link href="/faq" className={POLICY_INFO_STYLES.link}>
-          FAQ
-        </Link>
+        Pitanja o rezervacijama, otkazivanju ili drugim detaljima? 
         ,{" "}
-        <Link href="/privacy" className={POLICY_INFO_STYLES.link}>
+        <Link href="/uslovi-koriscenja" className={POLICY_INFO_STYLES.link}>
           Politiku privatnosti
         </Link>{" "}
         i{" "}
-        <Link href="/terms" className={POLICY_INFO_STYLES.link}>
+        <Link href="/uslovi-koriscenja" className={POLICY_INFO_STYLES.link}>
           Uslove korišćenja
         </Link>
         .

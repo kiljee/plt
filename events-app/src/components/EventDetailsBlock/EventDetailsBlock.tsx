@@ -55,28 +55,28 @@ export const EventDetailsBlock = ({
 
   return (
     <div className={`${EVENT_DETAILS_STYLES.container} ${EVENT_DETAILS_STYLES.responsive}`}>
-      {DETAIL_ITEMS.map(({ label, key }, index) => {
+      {DETAIL_ITEMS.map(({ label, key }) => {
         const isLocation = key === "location";
         return (
-          <div 
+          <div
             key={key}
             className={`
-              ${EVENT_DETAILS_STYLES.item.wrapper} 
+              ${EVENT_DETAILS_STYLES.item.wrapper}
               ${EVENT_DETAILS_STYLES.item.responsive}
               ${isLocation ? EVENT_DETAILS_STYLES.item.widthLocation : EVENT_DETAILS_STYLES.item.width}
               ${EVENT_DETAILS_STYLES.item.height}
             `}
           >
-            <h3 
+            <span
               className={`
-                ${EVENT_DETAILS_STYLES.label} 
+                ${EVENT_DETAILS_STYLES.label}
                 ${EVENT_DETAILS_STYLES.labelResponsive}
                 ${isLocation ? EVENT_DETAILS_STYLES.labelWidthLocation : EVENT_DETAILS_STYLES.labelWidth}
               `}
               style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
             >
               {label}: {values[key]}
-            </h3>
+            </span>
           </div>
         );
       })}

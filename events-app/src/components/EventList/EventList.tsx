@@ -12,29 +12,26 @@ interface EventListProps {
 
 const formatDate = (iso: string) => dayjs.utc(iso).format("DD.MM.YYYY");
 
-export const EventList = ({ events, error }: EventListProps) => {
-  console.log(events);
-  return (
-    <div className={EVENT_LIST.root}>
-      <main className={EVENT_LIST.main}>
-        <h1 className={EVENT_LIST.title}>Događaji</h1>
-        {error && <p className={EVENT_LIST.error}>{error}</p>}
-        {!error && events.length === 0 && (
-          <p className={EVENT_LIST.empty}>Nema događaja.</p>
-        )}
-        {!error && events.length > 0 && (
-          <ul className={EVENT_LIST.list}>
-            {events.map((event) => (
-              <li key={event.id} className={EVENT_LIST.item}>
-                <span className={EVENT_LIST.itemTitle}>{event.title}</span>
-                <span className={EVENT_LIST.itemDate}>
-                  {formatDate(event.date)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </main>
-    </div>
-  );
-};
+export const EventList = ({ events, error }: EventListProps) => (
+  <div className={EVENT_LIST.root}>
+    <main className={EVENT_LIST.main}>
+      <h1 className={EVENT_LIST.title}>Događaji</h1>
+      {error && <p className={EVENT_LIST.error}>{error}</p>}
+      {!error && events.length === 0 && (
+        <p className={EVENT_LIST.empty}>Nema događaja.</p>
+      )}
+      {!error && events.length > 0 && (
+        <ul className={EVENT_LIST.list}>
+          {events.map((event) => (
+            <li key={event.id} className={EVENT_LIST.item}>
+              <span className={EVENT_LIST.itemTitle}>{event.title}</span>
+              <span className={EVENT_LIST.itemDate}>
+                {formatDate(event.date)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
+  </div>
+)

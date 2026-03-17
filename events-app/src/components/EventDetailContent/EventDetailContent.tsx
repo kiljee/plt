@@ -81,12 +81,12 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
 
           {/* Price */}
           <div className={EVENT_DETAIL_STYLES.price.wrapper}>
-            <h2 
+            <p
               className={`${EVENT_DETAIL_STYLES.price.text} ${EVENT_DETAIL_STYLES.price.font}`}
               style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
             >
               {formatTotalPrice(event.price, event.currency, quantity)}
-            </h2>
+            </p>
           </div>
 
           {/* Description */}

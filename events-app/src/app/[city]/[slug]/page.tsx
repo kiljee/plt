@@ -25,14 +25,18 @@ export const generateMetadata = async ({
 
   const cityName = LOCATION_LABELS[location];
 
+  const title = `${event.title} | ${cityName}`
+  const description =
+    event.description?.slice(0, 160) || `${event.title} - radionica u ${cityName}. Rezervišite mesto na Paleto događajima.`
+
   return {
-    title: `${event.title} | ${cityName}`,
-    description: event.description || `${event.title} - ${cityName}`,
+    title,
+    description,
     openGraph: {
-      title: `${event.title} | ${cityName}`,
-      description: event.description || event.title,
+      title,
+      description,
     },
-  };
+  }
 };
 
 export default async function EventDetailPage({ params }: PageProps) {

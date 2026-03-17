@@ -13,8 +13,9 @@ import { COLORS } from "@/lib/colors";
 import { EVENT_CARD_STYLES, EVENT_CARD_CSS } from "./EventCard.styles";
 
 interface EventCardProps {
-  event: EventItem;
-  soldOut?: boolean;
+  event: EventItem
+  soldOut?: boolean
+  headingLevel?: 2 | 3
 }
 
 const parseImageUrls = (json: string): string[] => {
@@ -33,7 +34,11 @@ dayjs.extend(utc);
 const formatEventDate = (date: string) =>
   dayjs.utc(date).isValid() ? dayjs.utc(date).format("DD.MM.YYYY") : "—";
 
-export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
+export const EventCard = ({
+  event,
+  soldOut = false,
+  headingLevel = 2,
+}: EventCardProps) => {
   const images = parseImageUrls(event.imageUrls);
   const mainImage = images.length > 0 ? images[0] : PLACEHOLDER;
   const eventSlug = eventToSlug(event.title, event.date);
@@ -67,19 +72,35 @@ export const EventCard = ({ event, soldOut = false }: EventCardProps) => {
         >
           <div className={EVENT_CARD_STYLES.content.inner}>
             {/* Title */}
-            <h3 
-              className={`
-                ${EVENT_CARD_STYLES.title.base} 
-                ${EVENT_CARD_STYLES.title.text}
-                ${soldOut ? EVENT_CARD_STYLES.title.soldOut : EVENT_CARD_STYLES.title.available}
-              `}
-              style={{ 
-                fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif",
-                color: EVENT_CARD_CSS.colors.textPrimary
-              }}
-            >
-               {formattedDate} - {event.title}
-            </h3>
+            {headingLevel === 2 ? (
+              <h2
+                className={`
+                  ${EVENT_CARD_STYLES.title.base}
+                  ${EVENT_CARD_STYLES.title.text}
+                  ${soldOut ? EVENT_CARD_STYLES.title.soldOut : EVENT_CARD_STYLES.title.available}
+                `}
+                style={{
+                  fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif",
+                  color: EVENT_CARD_CSS.colors.textPrimary,
+                }}
+              >
+                {formattedDate} - {event.title}
+              </h2>
+            ) : (
+              <h3
+                className={`
+                  ${EVENT_CARD_STYLES.title.base}
+                  ${EVENT_CARD_STYLES.title.text}
+                  ${soldOut ? EVENT_CARD_STYLES.title.soldOut : EVENT_CARD_STYLES.title.available}
+                `}
+                style={{
+                  fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif",
+                  color: EVENT_CARD_CSS.colors.textPrimary,
+                }}
+              >
+                {formattedDate} - {event.title}
+              </h3>
+            )}
 
             {/* Price · Grad */}
             <div className={EVENT_CARD_STYLES.priceContainer}>

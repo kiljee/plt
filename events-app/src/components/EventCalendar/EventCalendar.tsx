@@ -40,7 +40,7 @@ export const EventCalendar = ({
     <div className={EVENT_CALENDAR.root}>
       <main className={EVENT_CALENDAR.main}>
         <header className={EVENT_CALENDAR.header}>
-          <h1 className={EVENT_CALENDAR.title}>Kalendar događaja</h1>
+          <h1 className={EVENT_CALENDAR.title}>Događaji</h1>
           <p className={EVENT_CALENDAR.intro}>{INTRO_TEXT}</p>
         </header>
 

@@ -20,9 +20,24 @@ const comfortaa = Comfortaa({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+const SITE_NAME = "Paleto"
+const DEFAULT_TITLE = `${SITE_NAME} | Događaji i radionice - Beograd i Novi Sad`
+const DEFAULT_DESCRIPTION =
+  "Pridružite se Paleto radionicama u Beogradu i Novom Sadu. Slikarske radionice, kreativni događaji i jedinstvena umetnička iskustva za sve uzraste."
+
 export const metadata: Metadata = {
-  title: "Događaji",
-  description: "Lista događaja",
+  title: {
+    default: DEFAULT_TITLE,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
+  openGraph: {
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
+    url: "https://paleto.rs",
+    siteName: SITE_NAME,
+    locale: "sr_RS",
+  },
   icons: {
     icon: "/favicon.ico",
   },

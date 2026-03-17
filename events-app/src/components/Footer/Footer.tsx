@@ -45,7 +45,7 @@ export const Footer = () => {
               className={FOOTER.tagline}
               style={{ color: FOOTER_COLORS.text }}
             >
-              Unique art experiences, based in Novi Sad.
+              Unique art experiences, based in Novi Sad and Belgrade.
             </p>
             <nav className={FOOTER.social} aria-label="Instagram">
               <FooterSocialLink
@@ -58,10 +58,10 @@ export const Footer = () => {
           </div>
 
           <div className={FOOTER.centerCol}>
-            {workshopLinks.length > 0 && (
-              <FooterSection title="Radionice">
-                <nav className={FOOTER.workshopLinks} aria-label="Radionice">
-                  {workshopLinks.map(({ href, label }) => (
+            <FooterSection title="Radionice">
+              <nav className={FOOTER.workshopLinks} aria-label="Radionice">
+                {workshopLinks.length > 0 ? (
+                  workshopLinks.map(({ href, label }) => (
                     <Link
                       key={href}
                       href={href}
@@ -70,10 +70,14 @@ export const Footer = () => {
                     >
                       {label}
                     </Link>
-                  ))}
-                </nav>
-              </FooterSection>
-            )}
+                  ))
+                ) : (
+                  <span className={FOOTER.workshopLink} style={{ color: FOOTER_COLORS.text }}>
+                    Nema predstojećih radionica
+                  </span>
+                )}
+              </nav>
+            </FooterSection>
           </div>
 
           <FooterSection title="Kontakt" className="sm:justify-self-end">

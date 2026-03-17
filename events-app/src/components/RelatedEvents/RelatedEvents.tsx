@@ -21,10 +21,11 @@ export const RelatedEvents = ({ events, excludeId }: RelatedEventsProps) => {
         {related.map((event) => {
           const soldOut = (event.placesLeft ?? event.capacity) <= 0;
           return (
-            <EventCard 
-              key={event.id} 
-              event={event} 
+            <EventCard
+              key={event.id}
+              event={event}
               soldOut={soldOut}
+              headingLevel={3}
             />
           );
         })}
