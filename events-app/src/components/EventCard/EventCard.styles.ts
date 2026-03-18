@@ -12,20 +12,20 @@ export const EVENT_CARD_STYLES = {
   },
   content: {
     container:
-      "flex min-h-[152px] flex-1 flex-col justify-between border-0 border-r border-b border-l border-solid p-3 sm:p-4",
-    inner: "flex w-full flex-col items-start gap-2 min-w-0",
+      "flex min-h-[152px] flex-1 flex-col border-0 border-r border-b border-l border-solid p-3 sm:p-4",
+    inner: "flex w-full flex-1 flex-col items-start min-w-0",
   },
   title: {
-    base: "w-full min-w-0 line-clamp-2",
+    base: "w-full min-w-0 line-clamp-2 mb-2",
     available: "font-semibold",
     soldOut: "font-normal",
     text: "text-base leading-tight tracking-[0.5px] sm:text-xl sm:leading-[30px]",
   },
-  priceContainer: "flex w-full flex-row items-center gap-2",
+  priceContainer: "flex w-full flex-row items-center gap-2 mt-auto mb-2 shrink-0",
   price: "flex flex-1 items-center text-sm leading-4 sm:text-base",
   priceCity: "font-normal",
   button: {
-    base: "box-border relative w-full min-h-[41px] border border-solid",
+    base: "box-border relative w-full min-h-[41px] shrink-0 border border-solid",
     available: "",
     soldOut: "bg-transparent",
   },
