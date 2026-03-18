@@ -6,5 +6,5 @@ export const ABOUT_HERO = {
   title:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] font-normal text-3xl leading-tight sm:text-4xl sm:leading-[2.5rem] lg:text-5xl lg:leading-[1.2] text-white",
   accent:
-    "font-[family-name:var(--font-caveat),'Caveat',cursive] font-semibold not-italic",
+    "font-[family-name:var(--font-caveat),'Caveat',cursive] font-semibold not-italic text-[1.35em]",
 } as const

@@ -64,7 +64,7 @@ export const renderPaymentSlip = ({
         ${row("Svrha uplate", purpose, STYLES)}
         <tr>
           <td colspan="2" style="padding: 12px 16px; background-color: ${STYLES.bgLight}; font-family: ${FONT_FAMILY}; font-size: 12px; font-weight: bold; color: ${STYLES.text}; border-top: 1px solid ${STYLES.border};">
-            Podaci o kupcu
+            Podaci o rezervaciji
           </td>
         </tr>
         ${row("Ime i prezime", customerName || "—", STYLES)}

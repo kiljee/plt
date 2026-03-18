@@ -10,16 +10,13 @@ export const renderOrderDetails = ({ orderId, orderDate }: OrderDetailsProps) =>
   <tr>
     <td style="padding: 24px 24px 16px 24px;">
       <h2 style="margin: 0 0 16px 0; font-family: ${FONT_FAMILY}; font-size: 16px; font-weight: bold; color: ${STYLES.text};">
-        Podaci o porudžbini
+        Podaci o rezervaciji
       </h2>
       <p style="margin: 0 0 4px 0; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-        Broj porudžbine: <strong>${orderId}</strong>
-      </p>
-      <p style="margin: 0 0 4px 0; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-        ID rezervacije: <strong>${orderId}</strong>
+        Broj rezervacije: <strong>${orderId}</strong>
       </p>
       <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 13px; color: ${STYLES.text};">
-        Datum i vreme poručivanja: ${orderDate}
+        Datum prijave: ${orderDate}
       </p>
     </td>
   </tr>

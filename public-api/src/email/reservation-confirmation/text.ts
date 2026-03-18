@@ -10,28 +10,44 @@ export const buildReservationConfirmationText = (data: ReservationConfirmationDa
   const itemsText = data.items
     .map(
       (item) =>
-        `- ${item.title}\n  Datum i vreme: ${item.dateTime}\n  Cena: ${formatPrice(item.price, item.currency)}\n  Količina: ${item.quantity} Komad\n  Ukupno: ${formatPrice(item.total, item.currency)}`,
+        `- ${item.title}\n  Datum i vreme: ${item.dateTime}\n  Cena: ${formatPrice(item.price, item.currency)}\n  Količina: ${item.quantity} mesto\n  Ukupno: ${formatPrice(item.total, item.currency)}`,
     )
     .join("\n\n")
 
-  const headerTitle = isConfirmed ? "PORUDŽBINA JE POTVRĐENA I POSLATA" : "PORUDŽBINA PRIMLJENA"
+  const headerTitle = isConfirmed ? "REZERVACIJA POTVRĐENA" : "REZERVACIJA PRIMLJENA"
   const statusLine = isConfirmed
-    ? "Status: Porudžbina primljena → Porudžbina u obradi → Porudžbina je potvrđena i poslata ✓"
-    : "Status: Porudžbina primljena → Porudžbina u obradi → Porudžbina je potvrđena i poslata"
+    ? "Status: Rezervacija primljena → Rezervacija potvrđena ✓"
+    : "Status: Rezervacija primljena → Rezervacija potvrđena"
 
   const greetingBlock = isConfirmed
     ? `Poštovani,
 
-Hvala vam što ste uplatili i rezervisali. Vidimo se na radionici!
+Obaveštavamo Vas da je uplata uspešno evidentirana i da je Vaša rezervacija zvanično potvrđena. 🎨✨
 
-Ispod su podaci vaše rezervacije (broj porudžbine: ${data.orderId}).`
-    : `Poštovani,
+Sve što je potrebno jeste da dođete 5 minuta ranije i prepustite se procesu. Sav materijal Vas čeka kod nas, neograničena pića, kao i opuštena i kreativna atmosfera. 💛
 
-Sa zadovoljstvom Vas obaveštavamo da je vaša porudžbina ${data.orderId} primljena.
+Ukoliko imate bilo kakva pitanja u međuvremenu, slobodno nam pišite.
 
-Ukoliko poručeni artikli nisu dostupni ili ih nema u potrebnoj količini, pozvaćemo Vas na broj telefona koji ste ostavili prilikom poručivanja.
+Radujemo se Vašem dolasku!
 
-Hvala na kupovini!`
+Srdačno,
+Paleto tim 🎨`
+    : `Zdravo!
+
+Sa zadovoljstvom Vas obaveštavamo da je Vaša rezervacija uspešno primljena.
+Broj rezervacije: ${data.orderId}
+
+Kako bi Vaše mesto bilo potvrđeno, potrebno je da uplatu izvršite u roku od 48h.
+
+Ukoliko dođe do bilo kakvih izmena ili nedostupnosti, kontaktiraćemo Vas na broj telefona koji ste ostavili prilikom prijave.
+
+U narednom mejlu dobićete sve detalje vezane za potvrdu i dolazak.
+
+Nakon evidentirane uplate, Vaša rezervacija postaje važeća. Ukoliko imate bilo kakva pitanja ili Vam je potreban duži rok za uplatu, slobodno nam se obratite na broj ${COMPANY.phone}.
+
+Hvala Vam na poverenju i radujemo se zajedničkom stvaranju! 💛
+
+Paleto tim 🎨`
 
   const cancellationBlock = isConfirmed
     ? `
@@ -64,7 +80,7 @@ Model: ${BANK_ACCOUNT.model}
 Poziv na broj: ${data.orderId}
 Svrha uplate: ${BANK_ACCOUNT.purpose}
 
-Podaci o kupcu:
+Podaci o rezervaciji:
 Ime i prezime: ${data.customerName || "—"}
 E-mail: ${data.customerEmail}
 Broj telefona: ${data.customerPhone || "—"}
@@ -73,13 +89,13 @@ Broj telefona: ${data.customerPhone || "—"}
 `
 
   return `Paleto.rs
-Za pitanja: rezervacije@paleto.rs
+Za pitanja: ${COMPANY.email}
 
 ================================================================================
 ${headerTitle}
 ================================================================================
 
-${customerName}, ${isConfirmed ? "hvala vam što ste uplatili i rezervisali!" : "hvala vam na porudžbini! Ispod su detalji vaše porudžbine:"}
+${customerName}, ${isConfirmed ? "Vaša rezervacija je potvrđena. Radujemo se Vašem dolasku!" : "hvala vam na prijavi! Ispod su detalji vaše rezervacije:"}
 
 ${statusLine}
 
@@ -87,29 +103,34 @@ ${statusLine}
 ${greetingBlock}
 
 --------------------------------------------------------------------------------
-PODACI O PORUDŽBINI
+PODACI O REZERVACIJI
 --------------------------------------------------------------------------------
 
-Broj porudžbine: ${data.orderId}
-ID rezervacije: ${data.orderId}
-Datum i vreme poručivanja: ${data.orderDate}
+Broj rezervacije: ${data.orderId}
+Datum prijave: ${data.orderDate}
 
 --------------------------------------------------------------------------------
-REZERVISANI ARTIKLI
+REZERVISANE RADIONICE
 --------------------------------------------------------------------------------
 
 ${itemsText}
 
 --------------------------------------------------------------------------------
-UKUPNA PORUDŽBINA
+UKUPNO ZA UPLATU
 --------------------------------------------------------------------------------
 
-Ukupno: ${formatPrice(data.total, data.currency)}
-Dostava: Besplatna
-Ukupno zaduženje: ${formatPrice(data.total, data.currency)}
+Iznos: ${formatPrice(data.total, data.currency)}
 ${cancellationBlock}
 ${uplatnicaBlock}
 
-Ukoliko ovi podaci nisu ispravni, molimo Vas da nas pozovete na broj telefona ${COMPANY.phone}.
+${isConfirmed
+  ? `Ovim putem potvrđujemo da je Vaša rezervacija uspešno realizovana.
+
+Na sve rezervacije primenjuju se naši Uslovi korišćenja i Politika privatnosti.`
+  : `Ovaj e-mail predstavlja potvrdu prijema Vaše rezervacije, ali ne i njeno konačno prihvatanje. Rezervacija postaje obavezujuća nakon evidentirane uplate.
+
+Ugovorni odnos između Vas i „Paleto PR“ smatra se zaključenim u trenutku potvrde rezervacije od strane Palete.
+
+Vaša rezervacija podleže našim Uslovima korišćenja i Politici privatnosti.`}
 `
 }

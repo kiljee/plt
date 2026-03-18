@@ -29,7 +29,7 @@ export interface ReservationConfirmationData {
 export const buildReservationConfirmationHtml = (data: ReservationConfirmationData): string => {
   const variant = data.variant ?? "order_received"
   const isConfirmed = variant === "confirmed"
-  const activeStep: ActiveStep = isConfirmed ? 3 : 1
+  const activeStep: ActiveStep = isConfirmed ? 2 : 1
 
   const parts = [
     renderEmailHeader(),
@@ -58,7 +58,7 @@ export const buildReservationConfirmationHtml = (data: ReservationConfirmationDa
     parts.push(renderCancellationSection())
   }
 
-  parts.push(renderEmailFooter())
+  parts.push(renderEmailFooter(variant))
 
   return `
 <!DOCTYPE html>
@@ -66,7 +66,7 @@ export const buildReservationConfirmationHtml = (data: ReservationConfirmationDa
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Porudžbina primljena</title>
+  <title>Rezervacija primljena</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: ${STYLES.text}; background-color: ${STYLES.bgLight};">
   <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; max-width: 600px; margin: 0 auto; background-color: ${STYLES.white};">

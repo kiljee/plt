@@ -40,7 +40,7 @@ const FEATURES = [
     desc: "Timski building radionice koje stvaraju zajedništvo.",
   },
   {
-    title: "Istražite različite tehnike",
+    title: "Radionice",
     desc: "Slikarstvo, crtanje i kreativne tehnike za sve nivoe.",
   },
   {

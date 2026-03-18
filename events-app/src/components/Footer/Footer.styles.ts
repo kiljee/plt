@@ -14,9 +14,9 @@ export const FOOTER = {
     "mx-auto w-full max-w-6xl flex flex-col gap-2 px-4 py-4 sm:px-6 sm:gap-3 sm:py-5 lg:px-8 lg:py-6 lg:gap-4",
 
   top: "grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4 sm:items-start lg:gap-6",
-  brand: "flex flex-col gap-1.5 max-w-[14rem] sm:max-w-[16rem]",
+  brand: "flex flex-col gap-1.5 max-w-[14rem] sm:max-w-[16rem] sm:justify-self-start",
   centerCol: "flex sm:justify-center",
-  logo: "h-8 w-auto sm:h-9 lg:h-10 scale-200",
+  logo: "h-8 w-auto sm:h-9 lg:h-10 scale-200 block -ml-1",
   tagline:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] text-xs leading-[1.25rem] sm:text-[0.8125rem] sm:leading-[1.375rem]",
   devLink: "hover:underline",

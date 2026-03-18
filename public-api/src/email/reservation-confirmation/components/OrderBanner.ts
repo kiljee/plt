@@ -8,10 +8,10 @@ interface OrderBannerProps {
 export const renderOrderBanner = ({ customerName, variant = "order_received" }: OrderBannerProps) => {
   const displayName = customerName || "Korisniče"
   const isConfirmed = variant === "confirmed"
-  const title = isConfirmed ? "Porudžbina je potvrđena i poslata" : "Porudžbina primljena"
+  const title = isConfirmed ? "Rezervacija potvrđena" : "Rezervacija primljena"
   const subtext = isConfirmed
-    ? `${displayName}, hvala vam što ste uplatili i rezervisali. Vidimo se na radionici!`
-    : `${displayName}, hvala vam na porudžbini! Ispod su detalji vaše porudžbine:`
+    ? `${displayName}, Vaša rezervacija je potvrđena. Radujemo se Vašem dolasku!`
+    : `${displayName}, hvala vam na prijavi! Ispod su detalji vaše rezervacije:`
   return `
 <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
   <tr>
