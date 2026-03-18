@@ -1,9 +1,9 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import { useCallback, useState } from "react";
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react"
 
-dayjs.extend(utc);
-import { Controller, useForm } from "react-hook-form";
+dayjs.extend(utc)
+import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner";
 import { type Event } from "wasp/entities";
 import { createEvent, uploadEventImage, useAction } from "wasp/client/operations";
@@ -114,34 +114,51 @@ export const mapEventToFormValues = (event: Event): EventFormValues => ({
   price: String(event.price ?? DEFAULT_PRICE),
   currency: event.currency || DEFAULT_CURRENCY,
   status: event.status === EventStatus.INACTIVE ? EventStatus.INACTIVE : EventStatus.ACTIVE,
-});
+})
 
-interface CreateEventFormProps {
-  onSuccess?: () => void;
-  initialValues?: Partial<EventFormValues>;
-  onSubmit?: (payload: EventFormSubmitPayload) => Promise<void>;
-  submitLabel?: string;
-  title?: string;
-  resetOnSuccess?: boolean;
-  formClassName?: string;
+export const mapEventToFormValuesForDuplicate = (event: Event): EventFormValues =>
+  mapEventToFormValues({ ...event, date: dayjs().toDate() })
+
+export interface CreateEventFormRef {
+  resetWithEvent: (event: Event) => void
 }
 
-export const CreateEventForm = ({
-  onSuccess,
-  initialValues,
-  onSubmit,
-  submitLabel,
-  title,
-  resetOnSuccess = true,
-  formClassName,
-}: CreateEventFormProps) => {
-  const defaultValues = getEventFormDefaults(initialValues);
+interface CreateEventFormProps {
+  onSuccess?: () => void
+  initialValues?: Partial<EventFormValues>
+  onSubmit?: (payload: EventFormSubmitPayload) => Promise<void>
+  submitLabel?: string
+  title?: string
+  resetOnSuccess?: boolean
+  formClassName?: string
+}
+
+export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormProps>(
+  (
+    {
+      onSuccess,
+      initialValues,
+      onSubmit,
+      submitLabel,
+      title,
+      resetOnSuccess = true,
+      formClassName,
+    },
+    ref,
+  ) => {
+  const defaultValues = getEventFormDefaults(initialValues)
   const { handleSubmit, control, reset, setError, setValue, formState } =
     useForm<EventFormValues>({
       defaultValues,
       mode: "onTouched",
-    });
-  const uploadAction = useAction(uploadEventImage);
+    })
+  const uploadAction = useAction(uploadEventImage)
+
+  useImperativeHandle(ref, () => ({
+    resetWithEvent: (event: Event) => {
+      reset(mapEventToFormValuesForDuplicate(event))
+    },
+  }))
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
   const handleFileSelect = useCallback(
@@ -594,5 +611,7 @@ export const CreateEventForm = ({
         </Button>
       </div>
     </form>
-  );
-};
+  )
+})
+
+CreateEventForm.displayName = "CreateEventForm"

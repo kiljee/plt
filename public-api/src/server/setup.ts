@@ -1,6 +1,12 @@
-import type { ServerSetupFn } from 'wasp/server'
+import express from "express"
+import type { ServerSetupFn } from "wasp/server"
 
-const DEFAULT_CORS_ORIGIN = 'http://localhost:3000'
+const DEFAULT_CORS_ORIGIN = "http://localhost:3000"
+
+export const serverMiddlewareFn = (middlewareConfig: Map<string, express.RequestHandler>) => {
+  middlewareConfig.set("express.json", express.json({ limit: "10mb" }))
+  return middlewareConfig
+}
 
 const getAllowedOrigins = (): string[] => {
   const raw = process.env.CORS_ORIGINS ?? process.env.CORS_ORIGIN ?? ''
