@@ -14,11 +14,11 @@ const POSITIVE_TECH_URL = "https://positivetechit.com";
 const ADDRESSES = [
   {
     city: "Novi Sad",
-    lines: ["Braće Ribnikar 7", "21 000 Novi Sad", "Srbija"],
+    lines: ["Braće Ribnikar 7", "21 000 Novi Sad"],
   },
   {
     city: "Beograd",
-    lines: ["Braće Ribnikar 39", "11 000 Beograd", "Srbija"],
+    lines: ["Braće Ribnikar 39", "11 000 Beograd"],
   },
 ] as const;
 

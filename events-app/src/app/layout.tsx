@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Comfortaa } from "next/font/google";
+import type { Metadata } from "next"
+import { Geist, Geist_Mono, Comfortaa, Caveat } from "next/font/google"
 import { Header } from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
 import "./globals.css";
@@ -18,7 +18,13 @@ const comfortaa = Comfortaa({
   variable: "--font-comfortaa",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-});
+})
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+})
 
 const SITE_NAME = "Paleto"
 const DEFAULT_TITLE = `${SITE_NAME} | Događaji i radionice - Beograd i Novi Sad`
@@ -51,7 +57,7 @@ export default function RootLayout({
   return (
     <html lang="sr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${comfortaa.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${comfortaa.variable} ${caveat.variable} antialiased`}
         suppressHydrationWarning
       >
         <Header />

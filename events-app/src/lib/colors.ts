@@ -23,6 +23,18 @@ export const COLORS = {
   background: {
     white: "#FFFFFF",
     section: "#F8F9FA",
+    aboutHero: "#FDFBF8",
+    aboutFeatures: "#F6F9FB",
+    aboutAlt: "#F8F6F4",
+    aboutTeam: "#EBF1F2",
+    heroGradient:
+      "linear-gradient(135deg, #4a8fa3 0%, #5CA2BC 50%, #6eb5ce 100%)",
+  },
+
+  icon: {
+    primary: "rgba(92, 162, 188, 0.6)",
+    muted: "rgba(92, 162, 188, 0.35)",
+    placeholder: "rgba(0, 9, 20, 0.12)",
   },
 
   fonts: {
