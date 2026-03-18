@@ -15,7 +15,7 @@ export const HEADER = {
   right: "flex items-center justify-end gap-1",
   cartBadge:
     "absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white",
-  cartBadgeMobile: "ml-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#5CA2BC] px-1 text-[10px] font-medium text-white",
+  cartBadgeMobile: "ml-1 inline-flex  h-4 min-w-4 mb-0.5 items-center justify-center rounded-full bg-[#5CA2BC]  text-[10px] font-medium text-white",
   mobileCartLink:
     "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[#5BA4B8] hover:bg-[#F6F2F4] focus:outline-none focus:ring-2 focus:ring-[#5BA4B8]/30 md:hidden",
   mobileCartIcon: "h-5 w-5",
@@ -27,5 +27,5 @@ export const HEADER = {
   mobileNav:
     "absolute left-0 right-0 top-full z-50 flex flex-col border-b border-[#F6F2F4] bg-white py-2 shadow-lg md:hidden",
   mobileNavLink:
-    "px-4 py-3 text-sm font-medium uppercase tracking-wide text-[#5BA4B8] hover:bg-[#F6F2F4]",
+    "flex items-center px-4 py-3 text-sm font-medium uppercase tracking-wide text-[#5BA4B8] hover:bg-[#F6F2F4]",
 } as const;
