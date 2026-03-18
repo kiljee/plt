@@ -4,6 +4,7 @@ import { forwardRef, useCallback, useImperativeHandle, useState } from "react"
 
 dayjs.extend(utc)
 import { Controller, useForm } from "react-hook-form"
+import { ImageGalleryModal } from "./ImageGalleryModal"
 import { toast } from "sonner";
 import { type Event } from "wasp/entities";
 import { createEvent, uploadEventImage, useAction } from "wasp/client/operations";
@@ -159,7 +160,8 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
       reset(mapEventToFormValuesForDuplicate(event))
     },
   }))
-  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null)
+  const [galleryOpenForIndex, setGalleryOpenForIndex] = useState<number | null>(null)
 
   const handleFileSelect = useCallback(
     async (index: number, file: File | null) => {
@@ -570,28 +572,46 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
                       alt={`Slika ${i + 1}`}
                       className="h-16 w-16 rounded object-cover"
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleRemoveImage(i)}
-                    >
-                      Ukloni
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setGalleryOpenForIndex(i)}
+                      >
+                        Iz galerije
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleRemoveImage(i)}
+                      >
+                        Ukloni
+                      </Button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="file"
                       accept="image/*"
                       className="w-full max-w-xs text-sm text-zinc-600 file:mr-2 file:rounded file:border-0 file:bg-primary-100 file:px-3 file:py-1.5 file:text-primary-700"
                       disabled={uploadingIndex !== null}
                       onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) void handleFileSelect(i, f);
-                        e.target.value = "";
+                        const f = e.target.files?.[0]
+                        if (f) void handleFileSelect(i, f)
+                        e.target.value = ""
                       }}
                     />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setGalleryOpenForIndex(i)}
+                    >
+                      Iz galerije
+                    </Button>
                     {uploadingIndex === i && (
                       <span className="text-sm text-zinc-500">Otpremanje…</span>
                     )}
@@ -601,6 +621,16 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
             )}
           />
         ))}
+        <ImageGalleryModal
+          open={galleryOpenForIndex !== null}
+          onOpenChange={(open) => !open && setGalleryOpenForIndex(null)}
+          onSelect={(url) => {
+            if (galleryOpenForIndex !== null) {
+              setValue(`imageUrls.${galleryOpenForIndex}`, url)
+              setGalleryOpenForIndex(null)
+            }
+          }}
+        />
       </div>
 
       <div className="flex justify-end gap-2 pt-2">

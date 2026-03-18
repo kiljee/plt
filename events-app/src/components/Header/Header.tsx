@@ -6,7 +6,7 @@ import { useCartStore } from "@/store/cart";
 import PaletoLogo from "@/assets/paleto-logo.svg";
 import { HEADER } from "./Header.styles";
 
-const NAV_LEFT = [{ href: "/", label: "Calendar" }] as const;
+const NAV_LEFT = [{ href: "/", label: "Kalendar" }] as const;
 const NAV_RIGHT = [
   { href: "/korpa", label: "Korpa" },
   { href: "/about", label: "O nama" },

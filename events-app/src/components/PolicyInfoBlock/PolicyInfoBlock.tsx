@@ -44,7 +44,7 @@ export const PolicyInfoBlock = ({ className = "" }: PolicyInfoBlockProps) => (
       >
         Pitanja o rezervacijama, otkazivanju ili drugim detaljima? 
         ,{" "}
-        <Link href="/uslovi-koriscenja" className={POLICY_INFO_STYLES.link}>
+        <Link href="/politika-privatnosti" className={POLICY_INFO_STYLES.link}>
           Politiku privatnosti
         </Link>{" "}
         i{" "}

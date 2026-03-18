@@ -75,7 +75,7 @@ export const EventDetailsBlock = ({
               `}
               style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
             >
-              {label}: {values[key]}
+              <span className="font-bold">{label}</span>: {values[key]}
             </span>
           </div>
         );

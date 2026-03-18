@@ -99,6 +99,11 @@ query getAdminEvents {
   entities: [Event, Reservation]
 }
 
+query getUploadedImages {
+  fn: import { getUploadedImages } from "@src/events/queries",
+  entities: [Event, User]
+}
+
 query getAdminEventById {
   fn: import { getAdminEventById } from "@src/events/queries",
   entities: [Event, User]

@@ -1,7 +1,7 @@
-import { type Event } from "wasp/entities";
-import { type _Event, type _User, type AuthenticatedQueryDefinition } from "wasp/server/_types";
-import { type GetMe, type GetAdminEvents } from "wasp/server/operations";
-import { HttpError } from "wasp/server";
+import { type Event } from "wasp/entities"
+import { type _Event, type _User, type AuthenticatedQueryDefinition } from "wasp/server/_types"
+import { type GetMe, type GetAdminEvents } from "wasp/server/operations"
+import { HttpError } from "wasp/server"
 import { EventStatus } from "./constants";
 import type { EventLocationType } from "../reservations/types";
 
@@ -84,6 +84,61 @@ export const getAdminEvents: GetAdminEvents<
 
   return { events: eventsWithReserved, totalCount };
 };
+
+const parseImageUrlsFromEvent = (raw: Event["imageUrls"]): string[] => {
+  if (!raw) return []
+  if (Array.isArray(raw)) return raw.filter((u): u is string => typeof u === "string")
+  if (typeof raw !== "string") return []
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed.filter((u): u is string => typeof u === "string") : []
+  } catch {
+    return []
+  }
+}
+
+const IMAGES_PAGE_SIZE = 20
+
+export type GetUploadedImagesInput = {
+  page?: number
+  pageSize?: number
+}
+
+export type GetUploadedImagesResult = {
+  images: { url: string }[]
+  totalCount: number
+}
+
+type GetUploadedImagesFn = AuthenticatedQueryDefinition<
+  [_Event, _User],
+  GetUploadedImagesInput,
+  GetUploadedImagesResult
+>
+
+export const getUploadedImages: GetUploadedImagesFn = async (args, context) => {
+  if (!context.user) throw new HttpError(401)
+  const user = await context.entities.User.findUnique({
+    where: { id: context.user.id },
+    select: { isAdmin: true },
+  })
+  if (!user?.isAdmin) throw new HttpError(403, "Samo admin može videti galeriju.")
+  const page = Math.max(1, args?.page ?? 1)
+  const pageSize = Math.min(50, Math.max(1, args?.pageSize ?? IMAGES_PAGE_SIZE))
+  const events = await context.entities.Event.findMany({
+    select: { imageUrls: true },
+  })
+  const urlSet = new Set<string>()
+  for (const e of events) {
+    for (const url of parseImageUrlsFromEvent(e.imageUrls)) {
+      if (url?.trim()) urlSet.add(url.trim())
+    }
+  }
+  const allUrls = Array.from(urlSet)
+  const totalCount = allUrls.length
+  const skip = (page - 1) * pageSize
+  const images = allUrls.slice(skip, skip + pageSize).map((url) => ({ url }))
+  return { images, totalCount }
+}
 
 export const getAdminEventById: AdminEventById = async ({ id }, context) => {
   if (!context.user) throw new HttpError(401);
