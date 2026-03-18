@@ -1,6 +1,6 @@
 import type { EventItem } from "@/types/event";
 import { EventCard } from "@/components/EventCard/EventCard";
-import { EVENT_CALENDAR } from "@/components/EventCalendar/EventCalendar.styles";
+import { RELATED_EVENTS_STYLES } from "./RelatedEvents.styles";
 
 interface RelatedEventsProps {
   events: EventItem[];
@@ -13,24 +13,27 @@ export const RelatedEvents = ({ events, excludeId }: RelatedEventsProps) => {
   if (related.length === 0) return null;
 
   return (
-    <section className="bg-white mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-      <h2
-        className="mb-6 font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] text-2xl font-bold text-[#000914]"
-      >
-        Slični događaji
-      </h2>
-      <div className={EVENT_CALENDAR.grid}>
-        {related.map((event) => {
-          const soldOut = (event.placesLeft ?? event.capacity) <= 0;
-          return (
-            <EventCard
-              key={event.id}
-              event={event}
-              soldOut={soldOut}
-              headingLevel={3}
-            />
-          );
-        })}
+    <section className={RELATED_EVENTS_STYLES.section}>
+      <div className={RELATED_EVENTS_STYLES.container}>
+        <h2
+          className={RELATED_EVENTS_STYLES.title}
+          style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
+        >
+          Slični događaji
+        </h2>
+        <div className={RELATED_EVENTS_STYLES.grid}>
+          {related.map((event) => {
+            const soldOut = (event.placesLeft ?? event.capacity) <= 0;
+            return (
+              <EventCard
+                key={event.id}
+                event={event}
+                soldOut={soldOut}
+                headingLevel={3}
+              />
+            );
+          })}
+        </div>
       </div>
     </section>
   );

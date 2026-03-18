@@ -1,11 +1,12 @@
-"use client";
+"use client"
 
-import { useFormContext } from "react-hook-form";
-import { FormInput } from "@/components/FormInput/FormInput";
-import { PhoneInput } from "@/components/PhoneInput/PhoneInput";
-import { EventLocation, LOCATION_LABELS } from "@/types/event";
-import { CHECKOUT_FORM_STYLES } from "./CheckoutForm.styles";
-import type { CheckoutFormData } from "./checkoutSchema";
+import Link from "next/link"
+import { useFormContext } from "react-hook-form"
+import { FormInput } from "@/components/FormInput/FormInput"
+import { PhoneInput } from "@/components/PhoneInput/PhoneInput"
+import { EventLocation, LOCATION_LABELS } from "@/types/event"
+import { CHECKOUT_FORM_STYLES } from "./CheckoutForm.styles"
+import type { CheckoutFormData } from "./checkoutSchema"
 
 export type { CheckoutFormData } from "./checkoutSchema";
 
@@ -121,7 +122,28 @@ export const CheckoutFormFields = ({ loading = false }: CheckoutFormFieldsProps)
             </div>
           </div>
         </div>
+        <div className={CHECKOUT_FORM_STYLES.reservationInfo}>
+          <p className={CHECKOUT_FORM_STYLES.reservationInfoText}>
+            Nakon što izvršite rezervaciju, dobićete potvrdu o prijavi i automatski ćete biti dodati na listu gostiju. Posebna ulaznica neće biti poslata.
+          </p>
+          <p className={CHECKOUT_FORM_STYLES.reservationInfoText}>
+            Rezervacija važi 48 sati. Ukoliko uplata ne bude izvršena u roku od 48 sati od trenutka rezervacije, mesto će biti oslobođeno za druge učesnike. Ukoliko Vam je potreban produžen rok za uplatu, slobodno nas kontaktirajte.
+          </p>
+          <p className={CHECKOUT_FORM_STYLES.reservationInfoText}>
+            Kada uplata bude evidentirana, dobićete e-mail potvrde.
+          </p>
+          <p className={CHECKOUT_FORM_STYLES.reservationInfoText}>
+            Imate pitanja u vezi sa rezervacijama, pravilima otkazivanja ili drugim detaljima? Za dodatne informacije pogledajte{" "}
+            <Link href="/politika-privatnosti" className={CHECKOUT_FORM_STYLES.reservationInfoLink}>
+              Politiku privatnosti
+            </Link>{" "}
+            i{" "}
+            <Link href="/uslovi-koriscenja" className={CHECKOUT_FORM_STYLES.reservationInfoLink}>
+              Uslove korišćenja
+            </Link>.
+          </p>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}

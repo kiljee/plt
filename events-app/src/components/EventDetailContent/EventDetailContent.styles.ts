@@ -3,12 +3,12 @@ export const EVENT_DETAIL_STYLES = {
   
   decorativeElement: "absolute -right-32 -top-16 opacity-30 rotate-[-135deg] w-72 h-72 bg-slate-100 rounded-3xl hidden lg:block",
   
-  container: "relative mx-auto flex flex-col gap-8 px-4 py-8 sm:px-6 lg:flex-row lg:gap-20 lg:px-8 lg:py-10",
+  container: "relative mx-auto flex flex-col gap-8 px-4 py-8 sm:px-6 lg:flex-row lg:justify-center lg:gap-20 lg:px-8 lg:py-10",
   containerInner: "max-w-7xl",
   
-  imageSection: "w-full lg:w-[446px] lg:flex-none",
+  imageSection: "w-full lg:w-[446px] lg:flex-none lg:shrink-0",
   
-  contentSection: "flex w-full flex-col gap-6 lg:w-[640px]",
+  contentSection: "flex w-full flex-col gap-1.5 lg:w-[640px] lg:shrink-0",
   
   title: {
     wrapper: "flex justify-start px-4",

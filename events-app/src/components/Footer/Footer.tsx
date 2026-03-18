@@ -11,14 +11,24 @@ const COMPANY_EMAIL = "rezervacije@paleto.rs";
 const COMPANY_PHONE = "065/201-2727";
 const POSITIVE_TECH_URL = "https://positivetechit.com";
 
+const WORKSHOPS = [
+  "Slikanje",
+  "Vajanje",
+  "Dečije radionice",
+  "Ručni vez",
+  "Kaligrafija",
+  "Kursevi",
+  "Proslave",
+] as const;
+
 const ADDRESSES = [
   {
     city: "Novi Sad",
-    lines: ["Braće Ribnikar 7", "21 000 Novi Sad"],
+    lines: ["Braće Ribnikar 7", "Novi Sad"],
   },
   {
     city: "Beograd",
-    lines: ["Braće Ribnikar 39", "11 000 Beograd"],
+    lines: ["Braće Ribnikar 39", " Beograd"],
   },
 ] as const;
 
@@ -55,8 +65,21 @@ export const Footer = () => {
             </nav>
           </div>
 
-         
-          <FooterSection title="Kontakt" className="sm:col-start-3 sm:justify-self-end">
+          <FooterSection title="Radionice" className="sm:col-start-3">
+            <ul className="flex flex-col gap-1">
+              {WORKSHOPS.map((item) => (
+                <li
+                  key={item}
+                  className={FOOTER.contactValue}
+                  style={{ color: FOOTER_COLORS.text }}
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </FooterSection>
+
+          <FooterSection title="Kontakt" className="sm:col-start-4 sm:justify-self-end">
             <div className={FOOTER.contactList}>
               <FooterContactItem label="Email">
                 <a
@@ -79,8 +102,8 @@ export const Footer = () => {
               {ADDRESSES.map(({ city, lines }) => (
                 <FooterContactItem key={city} label={city} asAddress>
                   <div className={FOOTER.addressLinesWrapper}>
-                    {lines.map((line) => (
-                      <span key={line}>{line}</span>
+                    {lines.map((line, i ) => (
+                      <span key={line}>{line}{i===0 ? ", " : ""}</span>
                     ))}
                   </div>
                 </FooterContactItem>

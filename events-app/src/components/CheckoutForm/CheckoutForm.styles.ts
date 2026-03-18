@@ -33,4 +33,8 @@ export const CHECKOUT_FORM_STYLES = {
   paymentTextMuted: "text-[var(--color-text-muted)]",
   paymentInactiveBorder: "border-[var(--color-border-light)]",
   paymentInactiveText: "text-[var(--color-text-disabled)]",
-} as const;
+  reservationInfo: "mt-4 flex flex-col gap-3 p-4 rounded border border-[var(--color-border-light)] bg-[var(--color-primary-light)]",
+  reservationInfoText:
+    "font-[var(--font-geist-sans)] text-xs leading-[1.5] text-[var(--color-text-primary)]",
+  reservationInfoLink: "underline text-[var(--color-primary)] hover:opacity-80",
+} as const

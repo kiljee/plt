@@ -2,9 +2,11 @@
 
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
+import { CalendarDays, MapPin, Palette } from "lucide-react";
 import type { EventItem } from "@/types/event";
 import { LOCATION_LABELS } from "@/types/event";
 import { eventToSlug, locationToCitySlug } from "@/lib/slug";
@@ -31,8 +33,19 @@ const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
 
 dayjs.extend(utc);
 
-const formatEventDate = (date: string) =>
-  dayjs.utc(date).isValid() ? dayjs.utc(date).format("DD.MM.YYYY") : "—";
+const formatBadgeDate = (date: string) => {
+  const d = dayjs.utc(date);
+  if (!d.isValid()) return "—";
+  return d.format("DD.MM.");
+};
+
+const formatDateTimeLine = (date: string, startTime: string) => {
+  const d = dayjs.utc(date);
+  if (!d.isValid()) return "—";
+  const dateStr = d.format("DD.MM.YYYY.");
+  const timeStr = startTime ? startTime.slice(0, 5) + "h" : "";
+  return timeStr ? `${dateStr} | ${timeStr}` : dateStr;
+};
 
 export const EventCard = ({
   event,
@@ -44,17 +57,29 @@ export const EventCard = ({
   const eventSlug = eventToSlug(event.title, event.date);
   const citySlug = locationToCitySlug(event.location);
   const eventUrl = `/${citySlug}/${eventSlug}`;
-  const formattedDate = formatEventDate(event.date);
-
+  const router = useRouter();
+  const badgeDate = formatBadgeDate(event.date);
+  const dateTimeLine = formatDateTimeLine(event.date, event.startTime);
+  const locationLabel =
+    event.location in LOCATION_LABELS
+      ? LOCATION_LABELS[event.location as keyof typeof LOCATION_LABELS]
+      : event.location;
 
   return (
     <article 
       className={EVENT_CARD_STYLES.card.container}
       style={{ backgroundColor: EVENT_CARD_CSS.colors.background }}
     >
-      <div className={EVENT_CARD_STYLES.card.wrapper}>
-        {/* Image */}
+      <div className={EVENT_CARD_STYLES.card.wrapper} onClick={() => router.push(eventUrl)}>
         <div className={`relative w-full overflow-hidden ${EVENT_CARD_STYLES.image.container}`}>
+          <div className={EVENT_CARD_STYLES.dateBadge.wrapper}>
+            <span
+              className={EVENT_CARD_STYLES.dateBadge.text}
+              style={{ color: EVENT_CARD_CSS.colors.textPrimary }}
+            >
+              {badgeDate}
+            </span>
+          </div>
           <Image
             src={mainImage}
             alt={event.title}
@@ -65,13 +90,11 @@ export const EventCard = ({
           />
         </div>
 
-        {/* Content */}
         <div 
           className={EVENT_CARD_STYLES.content.container}
           style={{ borderColor: EVENT_CARD_CSS.colors.primaryBorder }}
         >
           <div className={EVENT_CARD_STYLES.content.inner}>
-            {/* Title */}
             {headingLevel === 2 ? (
               <h2
                 className={`
@@ -84,7 +107,7 @@ export const EventCard = ({
                   color: EVENT_CARD_CSS.colors.textPrimary,
                 }}
               >
-                {formattedDate} - {event.title}
+                {event.title}
               </h2>
             ) : (
               <h3
@@ -98,33 +121,26 @@ export const EventCard = ({
                   color: EVENT_CARD_CSS.colors.textPrimary,
                 }}
               >
-                {formattedDate} - {event.title}
+                {event.title}
               </h3>
             )}
 
-            {/* Price · Grad */}
-            <div className={EVENT_CARD_STYLES.priceContainer}>
-              <span 
-                className={EVENT_CARD_STYLES.price}
-                style={{ 
-                  fontFamily: "var(--font-geist-sans), 'Neue Haas Unica', sans-serif",
-                  color: EVENT_CARD_CSS.colors.textPrimary
-                }}
-              >
-                {formatPrice(event.price, event.currency)}
-                <span
-                  className={`${EVENT_CARD_STYLES.priceCity} ml-1.5`}
-                  style={{ color: COLORS.text.label }}
-                >
-                  {event.location in LOCATION_LABELS
-                    ? LOCATION_LABELS[event.location as keyof typeof LOCATION_LABELS]
-                    : event.location}
-                </span>
-              </span>
+            <div className={EVENT_CARD_STYLES.infoRow} style={{ color: COLORS.text.secondary }}>
+              <CalendarDays className={EVENT_CARD_STYLES.infoIcon} style={{ color: COLORS.primary }} />
+              <span>{dateTimeLine}</span>
+            </div>
+
+            <div className={EVENT_CARD_STYLES.infoRow} style={{ color: COLORS.text.secondary }}>
+              <MapPin className={EVENT_CARD_STYLES.infoIcon} style={{ color: COLORS.primary }} />
+              <span>{locationLabel}</span>
+            </div>
+
+            <div className={EVENT_CARD_STYLES.infoRow} style={{ color: COLORS.text.secondary }}>
+              <Palette className={EVENT_CARD_STYLES.infoIcon} style={{ color: COLORS.primary }} />
+              <span>{formatPrice(event.price, event.currency)}</span>
             </div>
           </div>
 
-          {/* Button - always clickable to see details */}
           {soldOut ? (
             <Link href={eventUrl} className="block">
               <motion.span
