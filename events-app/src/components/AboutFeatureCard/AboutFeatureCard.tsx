@@ -26,8 +26,8 @@ export const AboutFeatureCard = ({
     initial={{ opacity: 0, y: 24 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, margin: "-40px" }}
-    transition={{ duration: 0.4, delay: index * 0.08 }}
-    whileHover={{ y: -4 }}
+    transition={{ duration: 0.45, delay: index * 0.06 }}
+    whileHover={{ y: -6, transition: { duration: 0.2 } }}
   >
     <div className={ABOUT_FEATURE_CARD.iconWrapper}>{icon ?? PLACEHOLDER_ICON}</div>
     <h3 className={ABOUT_FEATURE_CARD.title}>{title}</h3>

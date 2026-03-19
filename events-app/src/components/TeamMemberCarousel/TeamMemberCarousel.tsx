@@ -1,3 +1,6 @@
+"use client"
+
+import { motion } from "motion/react"
 import { TeamMemberCard } from "@/components/TeamMemberCard/TeamMemberCard"
 import { TEAM_MEMBER_CAROUSEL } from "./TeamMemberCarousel.styles"
 
@@ -35,22 +38,52 @@ export const TeamMemberCarousel = ({
   }
 
   return (
-    <div id="team-members" className={TEAM_MEMBER_CAROUSEL.root}>
-      <h2 id={headingId} className={TEAM_MEMBER_CAROUSEL.title}>
+    <motion.div
+      id="team-members"
+      className={TEAM_MEMBER_CAROUSEL.root}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.h2
+        id={headingId}
+        className={TEAM_MEMBER_CAROUSEL.title}
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+      >
         {renderTitle()}
-      </h2>
-      <p className={TEAM_MEMBER_CAROUSEL.subheading}>{subheading}</p>
+      </motion.h2>
+      <motion.p
+        className={TEAM_MEMBER_CAROUSEL.subheading}
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: 0.08 }}
+      >
+        {subheading}
+      </motion.p>
       <div className={TEAM_MEMBER_CAROUSEL.grid}>
         {members.map((member, i) => (
-          <TeamMemberCard
+          <motion.div
             key={i}
-            name={member.name}
-            role={member.role}
-            imageSrc={member.imageSrc}
-            imageAlt={member.imageAlt}
-          />
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
+            whileHover={{ y: -4 }}
+          >
+            <TeamMemberCard
+              name={member.name}
+              role={member.role}
+              imageSrc={member.imageSrc}
+              imageAlt={member.imageAlt}
+            />
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   )
 }

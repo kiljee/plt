@@ -1,4 +1,7 @@
+"use client"
+
 import Image from "next/image"
+import { motion } from "motion/react"
 import { ABOUT_TEAM_HERO } from "./AboutTeamHero.styles"
 
 interface AboutTeamHeroProps {
@@ -18,8 +21,20 @@ export const AboutTeamHero = ({
   decorativeSvgSrc,
   headingId = "team-hero-heading",
 }: AboutTeamHeroProps) => (
-  <article className={ABOUT_TEAM_HERO.root}>
-    <figure className={ABOUT_TEAM_HERO.imageWrapper}>
+  <motion.article
+    className={ABOUT_TEAM_HERO.root}
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    viewport={{ once: true, margin: "-60px" }}
+    transition={{ duration: 0.5 }}
+  >
+    <motion.figure
+      className={ABOUT_TEAM_HERO.imageWrapper}
+      initial={{ opacity: 0, x: -24 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, delay: 0.1 }}
+    >
       <Image
         src={imageSrc}
         alt={imageAlt}
@@ -29,9 +44,15 @@ export const AboutTeamHero = ({
         loading="lazy"
         sizes="(max-width: 1024px) 100vw, 467px"
       />
-    </figure>
+    </motion.figure>
 
-    <div className={ABOUT_TEAM_HERO.content}>
+    <motion.div
+      className={ABOUT_TEAM_HERO.content}
+      initial={{ opacity: 0, x: 24 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, delay: 0.15 }}
+    >
       {decorativeSvgSrc && (
         <Image
           src={decorativeSvgSrc}
@@ -47,6 +68,6 @@ export const AboutTeamHero = ({
         {title}
       </h2>
       <p className={ABOUT_TEAM_HERO.body}>{body}</p>
-    </div>
-  </article>
+    </motion.div>
+  </motion.article>
 )
