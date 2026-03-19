@@ -1,6 +1,6 @@
 export const HEADER = {
   root:
-    "sticky top-0 z-10 w-full border-b border-[#F6F2F4] bg-white",
+    "sticky top-0 z-10 w-full border-b border-[#F6F2F4] bg-white z-11",
   inner:
     "mx-auto flex w-full max-w-[1440px] items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:py-4 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-2.5 md:px-6 md:pl-[60px] md:pr-[25px] md:py-5",
   navLeft: "hidden items-center gap-2.5 md:flex",

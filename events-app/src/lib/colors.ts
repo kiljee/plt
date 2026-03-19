@@ -26,7 +26,7 @@ export const COLORS = {
     aboutHero: "#FDFBF8",
     aboutFeatures: "#F6F9FB",
     aboutAlt: "#F8F6F4",
-    aboutTeam: "#EBF1F2",
+    aboutTeam: "#E5EEEF",
     heroGradient:
       "linear-gradient(135deg, #4a8fa3 0%, #5CA2BC 50%, #6eb5ce 100%)",
   },

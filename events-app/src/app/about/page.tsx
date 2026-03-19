@@ -3,6 +3,7 @@ import { AboutSection } from "@/components/AboutSection/AboutSection"
 import { AboutHero } from "@/components/AboutHero/AboutHero"
 import { AboutFeatureCard } from "@/components/AboutFeatureCard/AboutFeatureCard"
 import { AboutTeamHero } from "@/components/AboutTeamHero/AboutTeamHero"
+import { AboutTeamInfo } from "@/components/AboutTeamInfo/AboutTeamInfo"
 import { TeamMemberCarousel } from "@/components/TeamMemberCarousel/TeamMemberCarousel"
 import { COLORS } from "@/lib/colors"
 import { FEATURE_ICONS } from "./featureIcons"
@@ -58,30 +59,39 @@ const FEATURES = [
 ] as const
 
 const TEAM_HERO = {
-  title: "Tim Koji Pokreće Magiju",
+  title: "Mesto za radionice i proslave u Novom Sadu i Beogradu",
   body:
-    "Naš tim je grupa strastvenih umetnika i instruktora posvećenih tome da svako radionice učini zabavnim i inspirišućim iskustvom. Zajedno stvaramo prostor gde kreativnost cveta.",
-  imageSrc: "/team-hero.jpg",
-  imageAlt: "Paleto tim u ateljeu",
+    "Paleto je kreativni atelje i prostor za radionice, proslave i posebne događaje, u kome se ljudi okupljaju da stvaraju, eksperimentišu i provedu vreme na drugačiji način. Kod nas možete doći na radionicu slikanja, napraviti svoju šolju od keramike, organizovati rođendan, devojačko veče ili team building, a sve uz opuštenu atmosferu, kreativni proces i druženje.",
+  imageSrc: "/druga.png",
+  imageAlt: "Paleto atelje",
+  decorativeSvgSrc: "/treca.svg",
+} as const
+
+const TEAM_INFO = {
+  title: "Tim koji pokreće magiju",
+  body:
+    "Tim strastvenih umetnika, iskusnih instruktora i kreativnih ljudi, posvećenih tome da svaka radionica bude zabavno i inspirativno iskustvo. Verujemo da kreativnost pripada svima, zato smo stvorili prijatan prostor u kome možete da istražujete, učite i slobodno se izražavate. Bilo da prvi put uzimate četkicu u ruke ili usavršavate svoju tehniku, tu smo da vas podržimo i vodimo na svakom koraku!",
+  imageSrc: "/cetvrta.png",
+  imageAlt: "Paleto radionica",
 } as const
 
 const TEAM_MEMBERS = [
   {
     name: "Lia Mojsilovic",
     role: "Instruktor",
-    imageSrc: "/team-lia.jpg",
+    imageSrc: "/lia.png",
     imageAlt: "Lia Mojsilovic",
   },
   {
     name: "Danijela Vignjevic",
     role: "Osnivač Paleta",
-    imageSrc: "/team-danijela.jpg",
+    imageSrc: "/daca.png",
     imageAlt: "Danijela Vignjevic",
   },
   {
     name: "Tanja Tomic",
     role: "Akademski slikar",
-    imageSrc: "/team-tanja.jpg",
+    imageSrc: "/jana.png",
     imageAlt: "Tanja Tomic",
   },
 ] as const
@@ -146,7 +156,7 @@ export default function AboutPage() {
         <AboutHero
           title="Iza Umetnosti: Ko smo mi?"
           accentWord="Umetnosti"
-          imageSrc="/about-hero.jpg"
+          imageSrc="/prva.png"
           headingId="hero-heading"
         />
       </AboutSection>
@@ -172,7 +182,7 @@ export default function AboutPage() {
       </AboutSection>
 
       <AboutSection
-        backgroundColor={COLORS.background.aboutTeam}
+        backgroundColor={COLORS.background.aboutHero}
         ariaLabelledBy="team-hero-heading"
       >
         <AboutTeamHero
@@ -180,7 +190,21 @@ export default function AboutPage() {
           body={TEAM_HERO.body}
           imageSrc={TEAM_HERO.imageSrc}
           imageAlt={TEAM_HERO.imageAlt}
+          decorativeSvgSrc={TEAM_HERO.decorativeSvgSrc}
           headingId="team-hero-heading"
+        />
+      </AboutSection>
+
+      <AboutSection
+        backgroundColor={COLORS.background.aboutTeam}
+        ariaLabelledBy="team-info-heading"
+      >
+        <AboutTeamInfo
+          title={TEAM_INFO.title}
+          body={TEAM_INFO.body}
+          imageSrc={TEAM_INFO.imageSrc}
+          imageAlt={TEAM_INFO.imageAlt}
+          headingId="team-info-heading"
         />
       </AboutSection>
 
