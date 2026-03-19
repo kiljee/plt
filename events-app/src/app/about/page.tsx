@@ -10,6 +10,7 @@ import { FEATURE_ICONS } from "./featureIcons"
 import { ABOUT } from "./AboutPage.styles"
 
 const SITE_URL = "https://paleto.rs"
+const ABOUT_URL = `${SITE_URL}/about`
 
 export const metadata: Metadata = {
   title: "O nama | Paleto – Kreativni atelje Beograd i Novi Sad",
@@ -23,15 +24,39 @@ export const metadata: Metadata = {
     "tim building",
     "kreativni atelje",
     "ilustracije venčanja",
+    "radionice Novi Sad",
+    "radionice slikanja",
+    "keramičke radionice",
   ],
+  alternates: {
+    canonical: ABOUT_URL,
+  },
   openGraph: {
     title: "O nama | Paleto – Kreativni atelje Beograd i Novi Sad",
     description:
-      "Upoznajte Paleto tim. Radionice slikarstva, keramike i tim building u Beogradu i Novom Sadu.",
-    url: `${SITE_URL}/about`,
+      "Upoznajte Paleto tim. Radionice slikarstva, keramike i tim building u Beogradu i Novom Sadu. Ilustracije na venčanjima, kursevi i privatne proslave.",
+    url: ABOUT_URL,
     siteName: "Paleto",
     locale: "sr_RS",
     type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/prva.png`,
+        width: 1200,
+        height: 630,
+        alt: "Paleto kreativni atelje – radionice i događaji",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "O nama | Paleto – Kreativni atelje Beograd i Novi Sad",
+    description:
+      "Upoznajte Paleto tim. Radionice slikarstva, keramike i tim building u Beogradu i Novom Sadu.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 
@@ -63,7 +88,7 @@ const TEAM_HERO = {
   body:
     "Paleto je kreativni atelje i prostor za radionice, proslave i posebne događaje, u kome se ljudi okupljaju da stvaraju, eksperimentišu i provedu vreme na drugačiji način. Kod nas možete doći na radionicu slikanja, napraviti svoju šolju od keramike, organizovati rođendan, devojačko veče ili team building, a sve uz opuštenu atmosferu, kreativni proces i druženje.",
   imageSrc: "/druga.png",
-  imageAlt: "Paleto atelje",
+  imageAlt: "Paleto kreativni atelje – prostor za radionice slikanja i keramike u Novom Sadu i Beogradu",
   decorativeSvgSrc: "/treca.svg",
 } as const
 
@@ -72,7 +97,7 @@ const TEAM_INFO = {
   body:
     "Tim strastvenih umetnika, iskusnih instruktora i kreativnih ljudi, posvećenih tome da svaka radionica bude zabavno i inspirativno iskustvo. Verujemo da kreativnost pripada svima, zato smo stvorili prijatan prostor u kome možete da istražujete, učite i slobodno se izražavate. Bilo da prvi put uzimate četkicu u ruke ili usavršavate svoju tehniku, tu smo da vas podržimo i vodimo na svakom koraku!",
   imageSrc: "/cetvrta.png",
-  imageAlt: "Paleto radionica",
+  imageAlt: "Paleto radionica slikanja – učesnici na kreativnom radu",
 } as const
 
 const TEAM_MEMBERS = [
@@ -106,9 +131,34 @@ const ORGANIZATION_JSON_LD = {
   sameAs: [],
 }
 
+const WEBPAGE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "O nama | Paleto – Kreativni atelje Beograd i Novi Sad",
+  description:
+    "Upoznajte Paleto tim. Radionice slikarstva, keramike i tim building u Beogradu i Novom Sadu.",
+  url: ABOUT_URL,
+  isPartOf: {
+    "@type": "WebSite",
+    name: "Paleto",
+    url: SITE_URL,
+  },
+}
+
+const BREADCRUMB_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Početna", item: SITE_URL },
+    { "@type": "ListItem", position: 2, name: "O nama", item: ABOUT_URL },
+  ],
+}
+
 const TEAM_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "ItemList",
+  name: "Paleto tim",
+  description: "Članovi Paleto tima – instruktori i kreativci",
   itemListElement: [
     {
       "@type": "ListItem",
@@ -117,6 +167,7 @@ const TEAM_JSON_LD = {
         "@type": "Person",
         name: "Lia Mojsilovic",
         jobTitle: "Instruktor",
+        image: `${SITE_URL}/lia.png`,
       },
     },
     {
@@ -126,6 +177,7 @@ const TEAM_JSON_LD = {
         "@type": "Person",
         name: "Danijela Vignjevic",
         jobTitle: "Osnivač Paleta",
+        image: `${SITE_URL}/daca.png`,
       },
     },
     {
@@ -135,6 +187,7 @@ const TEAM_JSON_LD = {
         "@type": "Person",
         name: "Tanja Tomic",
         jobTitle: "Akademski slikar",
+        image: `${SITE_URL}/jana.png`,
       },
     },
   ],
@@ -142,10 +195,18 @@ const TEAM_JSON_LD = {
 
 export default function AboutPage() {
   return (
-    <main className="relative w-full min-h-screen flex flex-col" role="main">
+    <div className="relative w-full min-h-screen flex flex-col">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBPAGE_JSON_LD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_JSON_LD) }}
       />
       <script
         type="application/ld+json"
@@ -220,6 +281,6 @@ export default function AboutPage() {
           headingId="team-members-heading"
         />
       </AboutSection>
-    </main>
+    </div>
   )
 }
