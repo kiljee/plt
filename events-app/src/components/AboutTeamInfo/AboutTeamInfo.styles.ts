@@ -1,7 +1,7 @@
 export const ABOUT_TEAM_INFO = {
   root: "relative w-full overflow-hidden",
   inner:
-    "relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 sm:px-8 sm:py-16 lg:flex-row lg:items-center lg:gap-12 lg:px-[100px] lg:py-[70px]",
+    "relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 pb-16 sm:px-8 sm:py-16 sm:pb-24 lg:flex-row lg:items-center lg:gap-12 lg:px-[100px] lg:pt-[70px] lg:pb-[140px]",
   innerIsRight: "lg:flex-row-reverse",
   content:
     "relative flex flex-1 flex-col items-start gap-6 min-w-0 max-w-[557px] z-10",

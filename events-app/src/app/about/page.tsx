@@ -5,6 +5,8 @@ import { AboutFeatureCard } from "@/components/AboutFeatureCard/AboutFeatureCard
 import { AboutTeamHero } from "@/components/AboutTeamHero/AboutTeamHero"
 import { AboutTeamInfo } from "@/components/AboutTeamInfo/AboutTeamInfo"
 import { TeamMemberCarousel } from "@/components/TeamMemberCarousel/TeamMemberCarousel"
+import { AboutOverlapSection } from "@/components/AboutOverlapSection/AboutOverlapSection"
+import { AboutCtaBanner } from "@/components/AboutCtaBanner/AboutCtaBanner"
 import { COLORS } from "@/lib/colors"
 import { FEATURE_ICONS } from "./featureIcons"
 import { ABOUT } from "./AboutPage.styles"
@@ -118,6 +120,15 @@ const WORKSHOPS_ORIGIN = {
     "Paleto radionice – učesnici na kreativnom radu i deljenju procesa stvaranja",
 } as const
 
+const CELEBRATIONS = {
+  title: "Proslave i Posebni događaji",
+  accentWord: "Posebni",
+  body:
+    "U našem prostoru organizuju se rođendani, devojačke večeri, team building događaji i različite privatne proslave, koje kombinuju druženje sa kreativnom aktivnošću.Svaka proslava je malo drugačija: nekada je to radionica slikanja, nekada izrada keramike, a nekada veče ručnog veza, čaja i druženja. Ideja je ista: da ljudi provedu vreme zajedno i naprave nešto što će im ostati kao uspomena.",
+  imageSrc: "/sesta.png",
+  imageAlt: "Paleto proslave – kreativni događaji i privatne proslave",
+} as const
+
 const TEAM_MEMBERS = [
   {
     name: "Lia Mojsilovic",
@@ -132,8 +143,8 @@ const TEAM_MEMBERS = [
     imageAlt: "Danijela Vignjevic",
   },
   {
-    name: "Tanja Tomic",
-    role: "Akademski slikar",
+    name: "Anastasija Milivojevic",
+    role: "Intruktor",
     imageSrc: "/jana.png",
     imageAlt: "Tanja Tomic",
   },
@@ -324,6 +335,33 @@ export default function AboutPage() {
           imageSrc={WORKSHOPS_ORIGIN.imageSrc}
           imageAlt={WORKSHOPS_ORIGIN.imageAlt}
           headingId="workshops-origin-heading"
+        />
+      </AboutSection>
+
+      <AboutSection
+        backgroundColor={COLORS.background.aboutHero}
+        className="z-10"
+        ariaLabelledBy="celebrations-heading"
+      >
+        <AboutOverlapSection
+          title={CELEBRATIONS.title}
+          accentWord={CELEBRATIONS.accentWord}
+          body={CELEBRATIONS.body}
+          imageSrc={CELEBRATIONS.imageSrc}
+          imageAlt={CELEBRATIONS.imageAlt}
+          headingId="celebrations-heading"
+        />
+      </AboutSection>
+
+      <AboutSection ariaLabelledBy="cta-banner-heading">
+        <AboutCtaBanner
+          title="Dođite da stvarate zajedno sa nama"
+          body="Odaberite radionicu i pridružite nam se u ateljeu na nekoliko sati stvaranja i opuštanja. Upoznaćete naš tim, osetiti energiju prostora i videti zašto se ljudi rado vraćaju."
+          backgroundSrc="/osma.png"
+          backgroundAlt="Paleto atelje – unutrašnjost prostora"
+          ctaLabel="Rezervišite"
+          ctaHref="/"
+          headingId="cta-banner-heading"
         />
       </AboutSection>
     </div>
