@@ -3,7 +3,7 @@ export const TEAM_MEMBER_CAROUSEL = {
   title:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] font-bold text-2xl sm:text-3xl text-[#000914] text-center mb-2",
   accent:
-    "font-[family-name:var(--font-caveat),'Caveat',cursive] font-semibold text-[1.35em]",
+    "font-[family-name:var(--font-caveat),'Caveat',cursive] font-semibold text-[1.6em]",
   subheading:
     "font-[family-name:var(--font-geist-sans),'Neue Haas Unica',sans-serif] font-normal text-sm sm:text-base text-[rgba(0,9,20,0.6)] text-center max-w-2xl mb-8",
   grid:

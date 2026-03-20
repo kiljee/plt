@@ -92,12 +92,30 @@ const TEAM_HERO = {
   decorativeSvgSrc: "/treca.svg",
 } as const
 
+const ORIGIN_STORY = {
+  title: "Kako je Paleto nastao?",
+  body:
+    "Pre radionica i ateljea postojao je samo jedan proizvod: ručno napravljen planer. Svaki planer bio je pravljen od početka do kraja ručno, od pažljivo biranog papira i materijala, sa ručnim vezom koji krasi korice. Nastajali su kao potpuno unikatne porudžbine. Tokom tog perioda nastale su desetine planera i svaki je imao svoju priču. I danas se često setimo ko ga je poručio, za koga je bio poklon i kojom prilikom je nastao. Nema dva ista, i to je od početka bila ideja Paleta.",
+  imageSrc: "/daca1.png",
+  imageAlt: "Danijela Vignjevic, osnivač Paleta",
+  decorativeSvgSrc: "/deco.svg",
+} as const
+
 const TEAM_INFO = {
   title: "Tim koji pokreće magiju",
   body:
     "Tim strastvenih umetnika, iskusnih instruktora i kreativnih ljudi, posvećenih tome da svaka radionica bude zabavno i inspirativno iskustvo. Verujemo da kreativnost pripada svima, zato smo stvorili prijatan prostor u kome možete da istražujete, učite i slobodno se izražavate. Bilo da prvi put uzimate četkicu u ruke ili usavršavate svoju tehniku, tu smo da vas podržimo i vodimo na svakom koraku!",
   imageSrc: "/cetvrta.png",
   imageAlt: "Paleto radionica slikanja – učesnici na kreativnom radu",
+} as const
+
+const WORKSHOPS_ORIGIN = {
+  title: "Od proizvoda do radionica",
+  body:
+    "Kako je zajednica oko brenda rasla, pojavila se želja da se proces stvaranja podeli sa drugima. Tako su nastale prve radionice: pažljivo organizovani kreativni susreti na kojima ljudi mogu da probaju novu tehniku, nauče nešto novo i naprave nešto svojim rukama. Tokom tih sati, učesnici potpuno zaboravljaju na telefone i uživaju u pravom, neposrednom iskustvu stvaranja.",
+  imageSrc: "/peta.png",
+  imageAlt:
+    "Paleto radionice – učesnici na kreativnom radu i deljenju procesa stvaranja",
 } as const
 
 const TEAM_MEMBERS = [
@@ -215,7 +233,7 @@ export default function AboutPage() {
 
       <AboutSection ariaLabelledBy="hero-heading">
         <AboutHero
-          title="Iza Umetnosti: Ko smo mi?"
+          title="Iza Umetnosti : Ko smo mi?"
           accentWord="Umetnosti"
           imageSrc="/prva.png"
           headingId="hero-heading"
@@ -279,6 +297,33 @@ export default function AboutPage() {
           subheading="Meet Our Instructors – Discover the talented individuals behind our workshops, each bringing their unique expertise and passion to guide you on your creative journey."
           members={[...TEAM_MEMBERS]}
           headingId="team-members-heading"
+        />
+      </AboutSection>
+
+      <AboutSection
+        backgroundColor={COLORS.background.aboutHero}
+        ariaLabelledBy="origin-story-heading"
+      >
+        <AboutTeamHero
+          title={ORIGIN_STORY.title}
+          body={ORIGIN_STORY.body}
+          imageSrc={ORIGIN_STORY.imageSrc}
+          imageAlt={ORIGIN_STORY.imageAlt}
+          decorativeSvgSrc={ORIGIN_STORY.decorativeSvgSrc}
+          headingId="origin-story-heading"
+        />
+      </AboutSection>
+
+      <AboutSection
+        backgroundColor={COLORS.background.aboutTeam}
+        ariaLabelledBy="workshops-origin-heading"
+      >
+        <AboutTeamInfo
+          title={WORKSHOPS_ORIGIN.title}
+          body={WORKSHOPS_ORIGIN.body}
+          imageSrc={WORKSHOPS_ORIGIN.imageSrc}
+          imageAlt={WORKSHOPS_ORIGIN.imageAlt}
+          headingId="workshops-origin-heading"
         />
       </AboutSection>
     </div>

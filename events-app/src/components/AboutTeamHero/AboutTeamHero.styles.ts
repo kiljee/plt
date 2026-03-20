@@ -11,5 +11,5 @@ export const ABOUT_TEAM_HERO = {
   title:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] font-normal z-10 text-3xl sm:text-4xl lg:text-[48px] leading-[1.1] text-[#000914]",
   body:
-    "font-[family-name:var(--font-geist-sans),'Neue Haas Unica',sans-serif] z-10 font-normal text-base leading-[29px] text-[#000914] max-w-[490px]",
+    "font-[family-name:var(--font-geist-sans),'Neue Haas Unica',sans-serif] z-10 font-normal text-base leading-[29px] text-[#000914] max-w-[490px] whitespace-pre-line",
 } as const

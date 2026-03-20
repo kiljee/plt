@@ -2,6 +2,7 @@ export const ABOUT_TEAM_INFO = {
   root: "relative w-full overflow-hidden",
   inner:
     "relative mx-auto flex max-w-7xl flex-col gap-10 px-4 py-12 sm:px-8 sm:py-16 lg:flex-row lg:items-center lg:gap-12 lg:px-[100px] lg:py-[70px]",
+  innerIsRight: "lg:flex-row-reverse",
   content:
     "relative flex flex-1 flex-col items-start gap-6 min-w-0 max-w-[557px] z-10",
   decorativeSvg:
@@ -9,7 +10,7 @@ export const ABOUT_TEAM_INFO = {
   title:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] font-normal text-3xl sm:text-4xl lg:text-[48px] leading-[1.1] text-[#000914]",
   body:
-    "font-[family-name:var(--font-geist-sans),'Neue Haas Unica',sans-serif] font-normal text-base leading-[29px] text-[#000914] max-w-[490px]",
+    "font-[family-name:var(--font-geist-sans),'Neue Haas Unica',sans-serif] font-normal text-base leading-[29px] text-[#000914] max-w-[490px] whitespace-pre-line",
   linkWrap: "flex flex-col items-start",
   link:
     "font-[family-name:var(--font-geist-sans),'Neue Haas Unica',sans-serif] text-xs leading-[18px] tracking-[5px] uppercase text-[#5CA2BC] hover:opacity-80 transition-opacity",

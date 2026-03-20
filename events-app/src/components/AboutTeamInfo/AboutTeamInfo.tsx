@@ -9,8 +9,8 @@ interface AboutTeamInfoProps {
   body: string
   imageSrc: string
   imageAlt: string
-
   headingId?: string
+  isRight?: boolean
 }
 
 export const AboutTeamInfo = ({
@@ -19,6 +19,7 @@ export const AboutTeamInfo = ({
   imageSrc,
   imageAlt,
   headingId = "team-info-heading",
+  isRight = false,
 }: AboutTeamInfoProps) => (
   <motion.div
     className={ABOUT_TEAM_INFO.root}
@@ -27,10 +28,12 @@ export const AboutTeamInfo = ({
     viewport={{ once: true, margin: "-60px" }}
     transition={{ duration: 0.5 }}
   >
-    <div className={ABOUT_TEAM_INFO.inner}>
+    <div
+      className={`${ABOUT_TEAM_INFO.inner} ${isRight ? ABOUT_TEAM_INFO.innerIsRight : ""}`}
+    >
       <motion.div
         className={ABOUT_TEAM_INFO.content}
-        initial={{ opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: isRight ? 20 : -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.45, delay: 0.1 }}
@@ -43,7 +46,7 @@ export const AboutTeamInfo = ({
 
       <motion.figure
         className={ABOUT_TEAM_INFO.imageWrapper}
-        initial={{ opacity: 0, x: 20 }}
+        initial={{ opacity: 0, x: isRight ? -20 : 20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.45, delay: 0.15 }}
