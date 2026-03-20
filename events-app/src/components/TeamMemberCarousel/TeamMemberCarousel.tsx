@@ -1,5 +1,4 @@
 "use client"
-
 import { motion } from "motion/react"
 import { TeamMemberCard } from "@/components/TeamMemberCard/TeamMemberCard"
 import { TEAM_MEMBER_CAROUSEL } from "./TeamMemberCarousel.styles"
@@ -65,24 +64,29 @@ export const TeamMemberCarousel = ({
       >
         {subheading}
       </motion.p>
-      <div className={TEAM_MEMBER_CAROUSEL.grid}>
-        {members.map((member, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-30px" }}
-            transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
-            whileHover={{ y: -4 }}
-          >
-            <TeamMemberCard
-              name={member.name}
-              role={member.role}
-              imageSrc={member.imageSrc}
-              imageAlt={member.imageAlt}
-            />
-          </motion.div>
-        ))}
+
+      <div className={TEAM_MEMBER_CAROUSEL.carouselWrapper}>
+        
+        <div className={TEAM_MEMBER_CAROUSEL.track}>
+          {members.map((member, i) => (
+            <motion.div
+              key={i}
+              className="shrink-0"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
+              whileHover={{ y: -4 }}
+            >
+              <TeamMemberCard
+                name={member.name}
+                role={member.role}
+                imageSrc={member.imageSrc}
+                imageAlt={member.imageAlt}
+              />
+            </motion.div>
+          ))}
+        </div>
       </div>
     </motion.div>
   )

@@ -6,6 +6,7 @@ import { ABOUT_TEAM_HERO } from "./AboutTeamHero.styles"
 
 interface AboutTeamHeroProps {
   title: string
+  accentWord?: string
   body: string
   imageSrc: string
   imageAlt: string
@@ -13,8 +14,21 @@ interface AboutTeamHeroProps {
   headingId?: string
 }
 
+const renderTitle = (title: string, accentWord?: string) => {
+  if (!accentWord || !title.includes(accentWord)) return title
+  const parts = title.split(accentWord)
+  return (
+    <>
+      {parts[0]}
+      <span className={ABOUT_TEAM_HERO.accent}>{accentWord}</span>
+      {parts[1]}
+    </>
+  )
+}
+
 export const AboutTeamHero = ({
   title,
+  accentWord,
   body,
   imageSrc,
   imageAlt,
@@ -65,7 +79,7 @@ export const AboutTeamHero = ({
         />
       )}
       <h2 id={headingId} className={ABOUT_TEAM_HERO.title}>
-        {title}
+        {renderTitle(title, accentWord)}
       </h2>
       <p className={ABOUT_TEAM_HERO.body}>{body}</p>
     </motion.div>

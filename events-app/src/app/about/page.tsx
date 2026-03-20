@@ -64,29 +64,30 @@ export const metadata: Metadata = {
 
 const FEATURES = [
   {
-    title: "Povežite svoj tim kroz umetnost",
-    desc: "Timski building radionice koje stvaraju zajedništvo.",
+    title: "Team building",
+    desc: "Timske radionice koje stvaraju zajedništvo."
   },
   {
-    title: "Radionice",
-    desc: "Slikarstvo, crtanje i kreativne tehnike za sve nivoe.",
+    title: "Radionice za sve uzraste",
+    desc: "Kreativno iskustvo za apsolutne početnike",
   },
   {
     title: "Ilustracije gostiju uživo na venčanjima",
     desc: "Jedinstvena usluga ilustrovanja vašeg posebnog dana.",
   },
   {
-    title: "Različite tehnike, zajednička inspiracija",
-    desc: "Od akvarela do akrila – svako pronalazi svoj izraz.",
+    title: "Kursevi",
+    desc: "Programi koji omogućavaju istraživanje, usavršavanje i stvaranje u raznim umetničkim disciplinama.",
   },
   {
-    title: "Proslavite svoj poseban dan sa nama",
-    desc: "Radionice prilagođene vašim proslavama i događajima.",
+    title: "Privatne proslave",
+    desc: "Proslavite svoj poseban dan sa nama.",
   },
 ] as const
 
 const TEAM_HERO = {
   title: "Mesto za radionice i proslave u Novom Sadu i Beogradu",
+  accentWord: "radionice",
   body:
     "Paleto je kreativni atelje i prostor za radionice, proslave i posebne događaje, u kome se ljudi okupljaju da stvaraju, eksperimentišu i provedu vreme na drugačiji način. Kod nas možete doći na radionicu slikanja, napraviti svoju šolju od keramike, organizovati rođendan, devojačko veče ili team building, a sve uz opuštenu atmosferu, kreativni proces i druženje.",
   imageSrc: "/druga.png",
@@ -96,6 +97,7 @@ const TEAM_HERO = {
 
 const ORIGIN_STORY = {
   title: "Kako je Paleto nastao?",
+  accentWord: "Paleto",
   body:
     "Pre radionica i ateljea postojao je samo jedan proizvod: ručno napravljen planer. Svaki planer bio je pravljen od početka do kraja ručno, od pažljivo biranog papira i materijala, sa ručnim vezom koji krasi korice. Nastajali su kao potpuno unikatne porudžbine. Tokom tog perioda nastale su desetine planera i svaki je imao svoju priču. I danas se često setimo ko ga je poručio, za koga je bio poklon i kojom prilikom je nastao. Nema dva ista, i to je od početka bila ideja Paleta.",
   imageSrc: "/daca1.png",
@@ -137,16 +139,28 @@ const TEAM_MEMBERS = [
     imageAlt: "Lia Mojsilovic",
   },
   {
+    name: "Anastasija Milivojevic",
+    role: "Instruktor",
+    imageSrc: "/jana.png",
+    imageAlt: "Anastasija Milivojevic",
+  },
+  {
     name: "Danijela Vignjevic",
     role: "Osnivač Paleta",
     imageSrc: "/daca.png",
     imageAlt: "Danijela Vignjevic",
   },
   {
-    name: "Anastasija Milivojevic",
-    role: "Intruktor",
-    imageSrc: "/jana.png",
+    name: "Tanja Tomic",
+    role: "Akademski slikar",
+    imageSrc: "/IMG_2266.jpeg",
     imageAlt: "Tanja Tomic",
+  },
+  {
+    name: "Jana Savić",
+    role: "Instruktor",
+    imageSrc: "/a645c1cb-6f92-473e-8cd7-886e9d4f81fb.jpeg",
+    imageAlt: "Jana Savić",
   },
 ] as const
 
@@ -214,8 +228,8 @@ const TEAM_JSON_LD = {
       position: 3,
       item: {
         "@type": "Person",
-        name: "Tanja Tomic",
-        jobTitle: "Akademski slikar",
+        name: "Anastasija Milivojevic",
+        jobTitle: "Instruktor",
         image: `${SITE_URL}/jana.png`,
       },
     },
@@ -224,7 +238,7 @@ const TEAM_JSON_LD = {
 
 export default function AboutPage() {
   return (
-    <div className="relative w-full min-h-screen flex flex-col">
+    <div className="relative w-full min-h-screen flex flex-col overflow-x-hidden">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
@@ -244,7 +258,7 @@ export default function AboutPage() {
 
       <AboutSection ariaLabelledBy="hero-heading">
         <AboutHero
-          title="Iza Umetnosti : Ko smo mi?"
+          title="Više od Umetnosti : Naša priča"
           accentWord="Umetnosti"
           imageSrc="/prva.png"
           headingId="hero-heading"
@@ -277,6 +291,7 @@ export default function AboutPage() {
       >
         <AboutTeamHero
           title={TEAM_HERO.title}
+          accentWord={TEAM_HERO.accentWord}
           body={TEAM_HERO.body}
           imageSrc={TEAM_HERO.imageSrc}
           imageAlt={TEAM_HERO.imageAlt}
@@ -305,7 +320,7 @@ export default function AboutPage() {
         <TeamMemberCarousel
           title="Članovi Paleto tima"
           accentWord="Paleto"
-          subheading="Meet Our Instructors – Discover the talented individuals behind our workshops, each bringing their unique expertise and passion to guide you on your creative journey."
+          subheading="Upoznajte naše instruktorke i saznajte ko stoji iza naših radionica. Svaka od njih donosi svoje iskustvo i energiju, i vodi vas kroz kreativni proces na svoj jedinstven način."
           members={[...TEAM_MEMBERS]}
           headingId="team-members-heading"
         />
@@ -317,6 +332,7 @@ export default function AboutPage() {
       >
         <AboutTeamHero
           title={ORIGIN_STORY.title}
+          accentWord={ORIGIN_STORY.accentWord}
           body={ORIGIN_STORY.body}
           imageSrc={ORIGIN_STORY.imageSrc}
           imageAlt={ORIGIN_STORY.imageAlt}

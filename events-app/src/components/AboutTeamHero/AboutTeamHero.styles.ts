@@ -10,6 +10,8 @@ export const ABOUT_TEAM_HERO = {
     "absolute right-0 top-0 w-[280px] lg:w-[438px] h-auto -rotate-[177.61deg] opacity-80 pointer-events-none -translate-y-24 translate-x-16",
   title:
     "font-[family-name:var(--font-comfortaa),'Comfortaa',sans-serif] font-normal z-10 text-3xl sm:text-4xl lg:text-[48px] leading-[1.1] text-[#000914]",
+  accent:
+    "font-[family-name:var(--font-caveat),'Caveat',cursive] font-semibold text-[1.5em]",
   body:
     "font-[family-name:var(--font-geist-sans),'Neue Haas Unica',sans-serif] z-10 font-normal text-base leading-[29px] text-[#000914] max-w-[490px] whitespace-pre-line",
 } as const

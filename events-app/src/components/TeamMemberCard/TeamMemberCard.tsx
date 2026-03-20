@@ -26,7 +26,11 @@ export const TeamMemberCard = ({
         sizes="(max-width: 640px) 140px, 160px"
       />
     </figure>
-    <p className={TEAM_MEMBER_CARD.name}>{name}</p>
+    <p className={TEAM_MEMBER_CARD.name}>
+      {name.split(" ").map((part, i) => (
+        <span key={i} className="block">{part}</span>
+      ))}
+    </p>
     <p className={TEAM_MEMBER_CARD.role}>{role}</p>
   </article>
 )

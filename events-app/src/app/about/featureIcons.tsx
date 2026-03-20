@@ -1,17 +1,11 @@
-import {
-  Puzzle,
-  Palette,
-  Layers,
-  Lightbulb,
-  PartyPopper,
-} from "lucide-react"
+import Image from "next/image"
 
-const ICON_CLASS = "text-[var(--color-primary)]"
+const ICON_SIZE = 48
 
 export const FEATURE_ICONS = [
-  <Puzzle key="puzzle" size={48} strokeWidth={1.5} className={ICON_CLASS} aria-hidden />,
-  <Palette key="palette" size={48} strokeWidth={1.5} className={ICON_CLASS} aria-hidden />,
-  <Layers key="layers" size={48} strokeWidth={1.5} className={ICON_CLASS} aria-hidden />,
-  <Lightbulb key="lightbulb" size={48} strokeWidth={1.5} className={ICON_CLASS} aria-hidden />,
-  <PartyPopper key="party" size={48} strokeWidth={1.5} className={ICON_CLASS} aria-hidden />,
+  <Image key="puzzle" src="/Puzzle_Game.svg" alt="" aria-hidden width={ICON_SIZE} height={ICON_SIZE} unoptimized />,
+  <Image key="painting" src="/painting-accessory_16995115 1.svg" alt="" aria-hidden width={ICON_SIZE} height={ICON_SIZE} unoptimized />,
+  <Image key="paper" src="/paper-stack_16995118 1.png" alt="" aria-hidden width={ICON_SIZE} height={ICON_SIZE} />,
+  <Image key="art" src="/art-design_16995186 1.svg" alt="" aria-hidden width={ICON_SIZE} height={ICON_SIZE} unoptimized />,
+  <Image key="decoration" src="/decoration_16995049 1.svg" alt="" aria-hidden width={ICON_SIZE} height={ICON_SIZE} unoptimized />,
 ] as const
