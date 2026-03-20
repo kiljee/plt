@@ -8,7 +8,7 @@ export const EVENT_DETAIL_STYLES = {
   
   imageSection: "w-full lg:w-[446px] lg:flex-none lg:shrink-0",
   
-  contentSection: "flex w-full flex-col gap-1.5 lg:w-[640px] lg:shrink-0",
+  contentSection: "flex w-full flex-col gap-3 lg:w-[640px] lg:shrink-0",
   
   title: {
     wrapper: "flex justify-start px-4",
