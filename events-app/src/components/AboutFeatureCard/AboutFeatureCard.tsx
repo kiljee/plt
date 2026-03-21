@@ -17,7 +17,7 @@ const FLOAT_VARIANTS = {
     transition: {
       duration: 3,
       repeat: Infinity,
-      ease: "easeInOut",
+      ease: "easeInOut" as const,
       delay: i * 0.4,
     },
   }),
@@ -26,7 +26,7 @@ const FLOAT_VARIANTS = {
 const ICON_HOVER = {
   scale: 1.15,
   rotate: [0, -8, 8, -4, 0],
-  transition: { duration: 0.5, ease: "easeInOut" },
+  transition: { duration: 0.5, ease: "easeInOut" as const },
 }
 
 export const AboutFeatureCard = ({
