@@ -17,7 +17,7 @@ export const EVENT_CALENDAR = {
     "rounded-md border border-[#F6F2F4] bg-white px-2.5 py-1.5 text-[#5BA4B8] text-xs focus:border-[#2D9CDB] focus:outline-none focus:ring-1 focus:ring-[#2D9CDB] sm:px-3 sm:py-2 sm:text-sm",
   count: "text-xs text-zinc-500 sm:text-sm",
   grid:
-    "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-5",
+    "grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-5",
   error: "rounded-lg bg-red-50 p-3 text-sm text-red-700 sm:p-4",
   empty: "py-8 text-center text-sm text-zinc-500 sm:py-12",
 } as const;
