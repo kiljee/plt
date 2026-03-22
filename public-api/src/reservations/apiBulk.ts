@@ -7,6 +7,7 @@ import {
 import {
   sendReservationConfirmation,
   sendReservationShortEmail,
+  sendAdminReservationNotification,
 } from "./sendReservationConfirmation";
 
 const sendConfirmationWithRetry = async (
@@ -200,6 +201,14 @@ export const createReservationsBulkPublic: CreateReservationsBulkPublic =
           customerPhone: normalizedPhone ?? "",
         });
       }
+
+      sendAdminReservationNotification({
+        customerName: normalizedName ?? "",
+        customerEmail: normalizedEmail,
+        reservations: reservationsWithEvent,
+      }).catch((err) =>
+        console.error("[apiBulk] admin notification failed", err)
+      );
 
       res.status(201).json({
         reservations: reservationsWithEvent.map((r) => ({

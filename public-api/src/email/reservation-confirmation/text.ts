@@ -108,6 +108,7 @@ PODACI O REZERVACIJI
 
 Broj rezervacije: ${data.orderId}
 Datum prijave: ${data.orderDate}
+Adresa: ${getAddressByLocation(data.location)}
 
 --------------------------------------------------------------------------------
 REZERVISANE RADIONICE

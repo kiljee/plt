@@ -9,7 +9,10 @@ import {
   buildReservationConfirmationText,
   formatOrderId,
 } from "../email/reservation-confirmation";
-import { sendReservationShortEmail } from "./sendReservationConfirmation";
+import {
+  sendReservationShortEmail,
+  sendAdminReservationNotification,
+} from "./sendReservationConfirmation";
 
 export const createReservationPublic: CreateReservationPublic = async (
   req,
@@ -110,6 +113,21 @@ export const createReservationPublic: CreateReservationPublic = async (
     .findFirst({ where: { email } })
     .then((row) => !!row);
 
+  const reservationWithEvent = {
+    id: reservation.id,
+    eventId: reservation.eventId,
+    seats: seatsCount,
+    createdAt: reservation.createdAt,
+    event: {
+      title: event.title,
+      date: event.date,
+      startTime: event.startTime,
+      price: event.price,
+      currency: event.currency,
+      location: event.location,
+    },
+  };
+
   try {
     if (isBlacklisted) {
       await sendReservationShortEmail({
@@ -127,6 +145,14 @@ export const createReservationPublic: CreateReservationPublic = async (
   } catch (err) {
     console.error("Failed to send reservation confirmation email:", err);
   }
+
+  sendAdminReservationNotification({
+    customerName: name ?? "",
+    customerEmail: email,
+    reservations: [reservationWithEvent],
+  }).catch((err) =>
+    console.error("[api] admin notification failed", err)
+  );
 
   res.status(201).json({
     id: reservation.id,

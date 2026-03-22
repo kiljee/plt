@@ -112,3 +112,49 @@ export const sendReservationShortEmail = async (
     throw err;
   }
 };
+
+const ADMIN_EMAIL = "info@paleto.rs";
+
+export interface SendAdminNotificationParams {
+  customerName: string;
+  customerEmail: string;
+  reservations: ReservationWithEvent[];
+}
+
+export const sendAdminReservationNotification = async (
+  params: SendAdminNotificationParams
+): Promise<void> => {
+  const { customerName, customerEmail, reservations } = params;
+  const totalSeats = reservations.reduce((sum, r) => sum + r.seats, 0);
+  const location = parseLocation(reservations[0].event.location);
+  const cityName = locationToCityName(location);
+
+  const itemLines = reservations
+    .map(
+      (r) =>
+        `- ${r.event.title} (${formatEventDateTime(r.event.date, r.event.startTime)}) – ${r.seats} mesta`
+    )
+    .join("\n");
+
+  const text = `Nova rezervacija
+
+Ime: ${customerName || "—"}
+E-mail: ${customerEmail}
+Ukupno mesta: ${totalSeats}
+Grad: ${cityName}
+
+Rezervisane radionice:
+${itemLines}
+`;
+
+  try {
+    await sendEmail({
+      to: ADMIN_EMAIL,
+      subject: `Nova rezervacija – ${customerName || customerEmail} (${totalSeats} mesta)`,
+      text,
+      html: `<pre style="font-family: sans-serif; font-size: 14px; line-height: 1.6;">${text}</pre>`,
+    });
+  } catch (err) {
+    console.error("Failed to send admin notification email:", err);
+  }
+};

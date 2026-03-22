@@ -57,7 +57,7 @@ export const renderPaymentSlip = ({
         </tr>
         ${row("Banka", BANK_ACCOUNT.bank, STYLES)}
         ${row("Primaoc", PAYMENT_SLIP.recipientLabel, STYLES)}
-        ${row("Adresa primaoca", recipientAddress, STYLES)}
+        ${row("Adresa primaoca", `<strong>${recipientAddress}</strong>`, STYLES)}
         ${row("Broj računa", BANK_ACCOUNT.accountNumber, STYLES)}
         ${row("Iznos", formatPrice(amount, currency), STYLES)}
         ${row("Model / Poziv na broj", `${BANK_ACCOUNT.model} / ${orderId || "—"}`, STYLES)}

@@ -158,7 +158,7 @@ const TEAM_MEMBERS = [
   },
   {
     name: "Jana Savić",
-    role: "Instruktor",
+    role: "Akademski slikar",
     imageSrc: "/a645c1cb-6f92-473e-8cd7-886e9d4f81fb.jpeg",
     imageAlt: "Jana Savić",
   },

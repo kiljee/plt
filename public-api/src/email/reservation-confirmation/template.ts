@@ -36,7 +36,7 @@ export const buildReservationConfirmationHtml = (data: ReservationConfirmationDa
     renderOrderBanner({ customerName: data.customerName, variant }),
     renderStatusTracker(activeStep),
     renderGreetingMessage({ orderId: data.orderId, variant }),
-    renderOrderDetails({ orderId: data.orderId, orderDate: data.orderDate }),
+    renderOrderDetails({ orderId: data.orderId, orderDate: data.orderDate, location: data.location }),
     renderItemList(data.items),
     renderOrderSummary({ total: data.total, currency: data.currency }),
   ]
