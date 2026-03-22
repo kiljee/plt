@@ -26,15 +26,20 @@ export function Header() {
         </Link>
         <nav className="flex items-center gap-3 sm:gap-6">
           {user && isAdmin && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={openAddEventModal}
-              className="shrink-0"
-            >
-              Dodaj radionicu
-            </Button>
+            <>
+              <Button asChild variant="outline" size="sm" className="shrink-0">
+                <Link to="/kalendar">Kalendar</Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={openAddEventModal}
+                className="shrink-0"
+              >
+                Dodaj radionicu
+              </Button>
+            </>
           )}
           {user ? (
             <Button onClick={logout} className="shrink-0">

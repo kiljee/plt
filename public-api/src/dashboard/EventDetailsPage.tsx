@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
-import { Link, useParams } from "react-router-dom";
+import utc from "dayjs/plugin/utc.js";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 dayjs.extend(utc);
 import { toast } from "sonner";
@@ -22,8 +22,14 @@ import { useRequireAdmin } from "../hooks/useRequireAdmin";
 
 const SUCCESS_MESSAGE = "Radionica je uspešno ažurirana.";
 
+type RadionicaLocationState = {
+  fromCalendar?: boolean;
+  calendarReturn?: { view: string; dateIso: string };
+};
+
 export const EventDetailsPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
+  const location = useLocation();
   const { id } = useParams();
   const eventId = id ?? "";
   const { data: event, isLoading, refetch } = useQuery(getAdminEventById, {
@@ -65,13 +71,31 @@ export const EventDetailsPage = () => {
     );
   }
 
+  const locState = location.state as RadionicaLocationState | null;
+  const fromCalendar = locState?.fromCalendar === true;
+  const backTo = fromCalendar ? "/kalendar" : "/";
+  const backLabel = fromCalendar
+    ? "← Nazad na kalendar"
+    : "← Nazad na radionice";
+  const kalendarRestoreState =
+    fromCalendar && locState?.calendarReturn
+      ? {
+          calendarInitialView: locState.calendarReturn.view,
+          calendarInitialDate: locState.calendarReturn.dateIso,
+        }
+      : undefined;
+
   return (
     <div className="min-h-screen bg-muted/30">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
-            <Link to="/" className="text-sm text-muted-foreground hover:underline">
-              ← Nazad na radionice
+            <Link
+              to={backTo}
+              state={kalendarRestoreState}
+              className="text-sm text-muted-foreground hover:underline"
+            >
+              {backLabel}
             </Link>
             <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
               {event?.title ?? "Radionica"}

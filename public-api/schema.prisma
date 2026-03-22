@@ -36,6 +36,9 @@ model Event {
   user         User         @relation(fields: [userId], references: [id])
   userId       String
   reservations Reservation[]
+
+  @@index([date])
+  @@index([location, date])
 }
 
 model Reservation {

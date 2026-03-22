@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
+import utc from "dayjs/plugin/utc.js";
 import { useEffect, useState } from "react";
 
 dayjs.extend(utc);
@@ -88,7 +88,9 @@ export const DashboardPage = () => {
   });
 
   useEffect(() => {
-    onSuccessRef.current = refetch;
+    onSuccessRef.current = () => {
+      void refetch();
+    };
     return () => {
       onSuccessRef.current = null;
     };
@@ -135,35 +137,40 @@ export const DashboardPage = () => {
                       </span>
                     )}
                   </CardTitle>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                    <div className="flex gap-2">
-                      {STATUS_FILTER_OPTIONS.map((opt) => (
-                        <Button
-                          key={opt.value}
-                          variant={
-                            statusFilter === opt.value ? "default" : "outline"
-                          }
-                          size="sm"
-                          onClick={() => setStatusFilter(opt.value)}
-                        >
-                          {opt.label}
-                        </Button>
-                      ))}
-                    </div>
-                    <div className="flex gap-2 border-l border-border pl-3">
-                      {LOCATION_FILTER_OPTIONS.map((opt) => (
-                        <Button
-                          key={opt.value}
-                          variant={
-                            locationFilter === opt.value ? "default" : "outline"
-                          }
-                          size="sm"
-                          onClick={() => setLocationFilter(opt.value)}
-                        >
-                          {opt.label}
-                        </Button>
-                      ))}
-                    </div>
+                  <Button asChild size="sm" variant="outline" type="button">
+                    <Link to="/kalendar">Kalendar</Link>
+                  </Button>
+                </div>
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                  <div className="flex gap-2">
+                    {STATUS_FILTER_OPTIONS.map((opt) => (
+                      <Button
+                        key={opt.value}
+                        variant={
+                          statusFilter === opt.value ? "default" : "outline"
+                        }
+                        size="sm"
+                        type="button"
+                        onClick={() => setStatusFilter(opt.value)}
+                      >
+                        {opt.label}
+                      </Button>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 border-l border-border pl-3">
+                    {LOCATION_FILTER_OPTIONS.map((opt) => (
+                      <Button
+                        key={opt.value}
+                        variant={
+                          locationFilter === opt.value ? "default" : "outline"
+                        }
+                        size="sm"
+                        type="button"
+                        onClick={() => setLocationFilter(opt.value)}
+                      >
+                        {opt.label}
+                      </Button>
+                    ))}
                   </div>
                 </div>
               </CardHeader>
@@ -343,6 +350,12 @@ export const DashboardPage = () => {
                     className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
                   >
                     Radionice
+                  </Link>
+                  <Link
+                    to="/kalendar"
+                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
+                  >
+                    Kalendar
                   </Link>
                   <Button
                     type="button"

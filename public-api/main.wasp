@@ -99,6 +99,17 @@ query getAdminEvents {
   entities: [Event, Reservation]
 }
 
+query getAdminEventsForRange {
+  fn: import { getAdminEventsForRange } from "@src/events/queriesCalendar",
+  entities: [Event, User]
+}
+
+route WorkshopsCalendarRoute { path: "/kalendar", to: WorkshopsCalendarPage }
+page WorkshopsCalendarPage {
+  authRequired: true,
+  component: import { WorkshopsCalendarPage } from "@src/dashboard/WorkshopsCalendarPage.tsx"
+}
+
 query getUploadedImages {
   fn: import { getUploadedImages } from "@src/events/queries",
   entities: [Event, User]

@@ -1,5 +1,5 @@
 import dayjs from "dayjs"
-import utc from "dayjs/plugin/utc"
+import utc from "dayjs/plugin/utc.js"
 import { Copy } from "lucide-react"
 import { useState } from "react"
 import { getAdminEvents, useQuery } from "wasp/client/operations"
