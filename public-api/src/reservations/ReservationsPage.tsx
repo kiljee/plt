@@ -191,7 +191,7 @@ export const ReservationsPage = () => {
                       <tr>
                         <th className="px-2 py-3 font-medium">ID</th>
                         <th className="px-2 py-3 font-medium">Datum rezervacije</th>
-                        <th className="px-2 py-3 font-medium">Radionica</th>
+                        <th className="px-2 py-3 font-medium">Radionica / Datum</th>
                         <th className="px-2 py-3 font-medium">Email</th>
                         <th className="px-2 py-3 font-medium">Telefon</th>
                         <th className="px-2 py-3 font-medium">Broj mesta</th>
@@ -204,7 +204,7 @@ export const ReservationsPage = () => {
                     </thead>
                     <tbody className="divide-y">
                       {reservations.map((r) => {
-                        const res = r as typeof r & { event: { title: string; date: Date; price: number; currency: string } };
+                        const res = r as typeof r & { event: { title: string; date: Date; startTime: string; endTime: string; price: number; currency: string } };
                         const seats = res.seats ?? 1;
                         return (
                           <tr key={res.id} className="hover:bg-muted/30">
@@ -214,8 +214,15 @@ export const ReservationsPage = () => {
                             <td className="px-2 py-3 text-muted-foreground">
                               {dayjs(res.createdAt).format("DD.MM.YYYY HH:mm")}
                             </td>
-                            <td className="px-2 py-3 font-medium">
-                              {res.event?.title ?? "—"}
+                            <td className="px-2 py-3 max-w-[200px]">
+                              <div className="font-medium truncate" title={res.event?.title}>{res.event?.title ?? "—"}</div>
+                              {res.event?.date && (
+                                <div className="text-xs text-muted-foreground">
+                                  {dayjs(res.event.date).format("DD.MM.YYYY.")}
+                                  {res.event.startTime && ` | ${res.event.startTime.slice(0, 5)}h`}
+                                  {res.event.endTime && ` – ${res.event.endTime.slice(0, 5)}h`}
+                                </div>
+                              )}
                             </td>
                             <td className="px-2 py-3">{res.email}</td>
                             <td className="px-2 py-3 text-muted-foreground">

@@ -56,7 +56,7 @@ export const getAdminEvents: GetAdminEvents<
   const [events, totalCount] = await Promise.all([
     context.entities.Event.findMany({
       where: finalWhere,
-      orderBy: { createdAt: "desc" },
+      orderBy: { date: "desc" },
       skip,
       take: pageSize,
     }),
