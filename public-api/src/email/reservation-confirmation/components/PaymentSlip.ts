@@ -3,22 +3,17 @@ import { formatPrice } from "../utils"
 import { BANK_ACCOUNT, PAYMENT_SLIP, getAddressByLocation } from "../constants"
 import type { LocationKey } from "../constants"
 import type { ReservationItem } from "./ItemList"
+import { buildPurposeFromItems } from "../buildPurposeFromItems"
 
 interface PaymentSlipProps {
   amount: number
   currency: string
   location: string
-  orderId: string
   customerName: string
   customerEmail: string
   customerPhone: string
   items: ReservationItem[]
 }
-
-const buildPurposeFromItems = (items: ReservationItem[]): string =>
-  items.length === 0
-    ? "Uplata za rezervaciju"
-    : items.map((i) => `${i.dateTime} – ${i.title}`).join("; ")
 
 const row = (label: string, value: string, styles: typeof STYLES) => `
   <tr>
@@ -31,7 +26,6 @@ export const renderPaymentSlip = ({
   amount,
   currency,
   location,
-  orderId,
   customerName,
   customerEmail,
   customerPhone,
@@ -60,7 +54,6 @@ export const renderPaymentSlip = ({
         ${row("Adresa primaoca", `<strong>${recipientAddress}</strong>`, STYLES)}
         ${row("Broj računa", BANK_ACCOUNT.accountNumber, STYLES)}
         ${row("Iznos", formatPrice(amount, currency), STYLES)}
-        ${row("Model / Poziv na broj", `${BANK_ACCOUNT.model} / ${orderId || "—"}`, STYLES)}
         ${row("Svrha uplate", purpose, STYLES)}
         <tr>
           <td colspan="2" style="padding: 12px 16px; background-color: ${STYLES.bgLight}; font-family: ${FONT_FAMILY}; font-size: 12px; font-weight: bold; color: ${STYLES.text}; border-top: 1px solid ${STYLES.border};">

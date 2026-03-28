@@ -13,6 +13,7 @@ import { locationToCitySlug } from "@/lib/slug";
 import { useCartStore } from "@/store/cart";
 import { QuantitySelector } from "@/components/QuantitySelector/QuantitySelector";
 import { CART_ITEM_STYLES } from "./CartItem.styles";
+import { isDataImageSrc } from "@/lib/nextImage";
 
 const PLACEHOLDER =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23e4e4e7' width='100' height='100'/%3E%3Ctext fill='%2371717a' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='10'%3ESlika%3C/text%3E%3C/svg%3E";
@@ -66,9 +67,7 @@ export const CartItem = ({
           height={100}
           sizes="100px"
           className={CART_ITEM_STYLES.image}
-          unoptimized={
-            mainImage.startsWith("http") || mainImage.startsWith("data:")
-          }
+          unoptimized={isDataImageSrc(mainImage)}
         />
       </Link>
       <div className={CART_ITEM_STYLES.content}>

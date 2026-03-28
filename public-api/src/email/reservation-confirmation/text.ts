@@ -1,4 +1,5 @@
 import type { ReservationConfirmationData } from "./template"
+import { buildPurposeFromItems } from "./buildPurposeFromItems"
 import { formatPrice } from "./utils"
 import { BANK_ACCOUNT, COMPANY, getAddressByLocation } from "./constants"
 
@@ -76,9 +77,7 @@ MB: ${BANK_ACCOUNT.mb}
 Adresa primaoca: ${getAddressByLocation(data.location)}
 Broj računa: ${BANK_ACCOUNT.accountNumber}
 Iznos: ${formatPrice(data.total, data.currency)}
-Model: ${BANK_ACCOUNT.model}
-Poziv na broj: ${data.orderId}
-Svrha uplate: ${BANK_ACCOUNT.purpose}
+Svrha uplate: ${buildPurposeFromItems(data.items)}
 
 Podaci o rezervaciji:
 Ime i prezime: ${data.customerName || "—"}

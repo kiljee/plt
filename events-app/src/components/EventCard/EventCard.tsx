@@ -11,6 +11,7 @@ import type { EventItem } from "@/types/event";
 import { LOCATION_LABELS } from "@/types/event";
 import { eventToSlug, locationToCitySlug } from "@/lib/slug";
 import { formatPrice } from "@/lib/price";
+import { isDataImageSrc } from "@/lib/nextImage";
 import { COLORS } from "@/lib/colors";
 import { EVENT_CARD_STYLES, EVENT_CARD_CSS } from "./EventCard.styles";
 
@@ -86,7 +87,7 @@ export const EventCard = ({
             fill
             className="object-cover"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-            unoptimized={mainImage.startsWith("http") || mainImage.startsWith("data:")}
+            unoptimized={isDataImageSrc(mainImage)}
           />
         </div>
 

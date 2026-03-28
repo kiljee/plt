@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { IMAGE_GALLERY_STYLES } from "./ImageGallery.styles";
+import { isDataImageSrc } from "@/lib/nextImage";
 
 interface ImageGalleryProps {
   images: string[];
@@ -26,10 +27,7 @@ export const ImageGallery = ({ images, alt }: ImageGalleryProps) => {
           className="object-cover"
           sizes="(max-width: 1024px) 100vw, 446px"
           priority
-          unoptimized={
-            safeImages[selected]?.startsWith("http") === true ||
-            safeImages[selected]?.startsWith("data:") === true
-          }
+          unoptimized={isDataImageSrc(safeImages[selected] ?? safeImages[0])}
         />
       </div>
       
@@ -56,7 +54,7 @@ export const ImageGallery = ({ images, alt }: ImageGalleryProps) => {
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 25vw, 133px"
-                unoptimized={src.startsWith("http") || src.startsWith("data:")}
+                unoptimized={isDataImageSrc(src)}
               />
             </button>
           ))}
