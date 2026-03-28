@@ -97,6 +97,22 @@ export const CalendarEventPill = memo(({ event, backgroundColor }: CalendarEvent
         </span>
       </div>
       <div className={CALENDAR_EVENT_PILL.textCol}>
+        {timeLabel ? (
+          <span
+            className={CALENDAR_EVENT_PILL.mobileTime}
+            style={{ color: COLORS.text.primary }}
+          >
+            {timeLabel}
+          </span>
+        ) : null}
+        {isFull ? (
+          <span
+            className={CALENDAR_EVENT_PILL.mobileFull}
+            style={{ color: COLORS.text.primary }}
+          >
+            Popunjena
+          </span>
+        ) : null}
         <p className={CALENDAR_EVENT_PILL.textLine} style={{ color: COLORS.calendar.eventText }}>
           {event.title}
         </p>

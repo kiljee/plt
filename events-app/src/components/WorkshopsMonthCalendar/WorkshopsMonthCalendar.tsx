@@ -138,10 +138,15 @@ export const WorkshopsMonthCalendar = () => {
                   const inMonth = day.year() === year && day.month() + 1 === month
                   const key = day.format("YYYY-MM-DD")
                   const dayEvents = eventsByDay.get(key) ?? []
+                  const hasEvents = dayEvents.length > 0
                   return (
                     <div
                       key={key}
-                      className={`${WORKSHOPS_MONTH_CALENDAR.dayCell} ${WORKSHOPS_MONTH_CALENDAR.dayCellMuted}`}
+                      className={`${WORKSHOPS_MONTH_CALENDAR.dayCell} ${
+                        hasEvents
+                          ? WORKSHOPS_MONTH_CALENDAR.dayCellWithEvents
+                          : WORKSHOPS_MONTH_CALENDAR.dayCellEmpty
+                      }`}
                     >
                       <span
                         className={`${WORKSHOPS_MONTH_CALENDAR.dayNumber} ${

@@ -70,10 +70,13 @@ export const getEventsPublic: GetEventsPublic = async (req, res, context) => {
       .startOf("day")
       .toDate();
 
+    const today = dayjs.utc().startOf("day").toDate();
+    const rangeStart = today > monthStart ? today : monthStart;
+
     const whereMonth = {
       status: EventStatus.ACTIVE,
       ...locationFilter,
-      date: { gte: monthStart, lt: monthEndExclusive },
+      date: { gte: rangeStart, lt: monthEndExclusive },
     };
 
     const inMonth = (await context.entities.Event.findMany({
