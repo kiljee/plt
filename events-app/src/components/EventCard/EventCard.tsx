@@ -71,7 +71,10 @@ export const EventCard = ({
       className={EVENT_CARD_STYLES.card.container}
       style={{ backgroundColor: EVENT_CARD_CSS.colors.background }}
     >
-      <div className={EVENT_CARD_STYLES.card.wrapper} onClick={() => router.push(eventUrl)}>
+      <div
+        className={EVENT_CARD_STYLES.card.wrapper}
+        onClick={() => router.push(eventUrl)}
+      >
         <div className={`relative w-full overflow-hidden ${EVENT_CARD_STYLES.image.container}`}>
           <div className={EVENT_CARD_STYLES.dateBadge.wrapper}>
             <span

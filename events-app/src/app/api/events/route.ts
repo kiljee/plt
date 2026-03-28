@@ -17,12 +17,19 @@ export const GET = async (
   try {
     const { searchParams } = new URL(request.url);
     const location = searchParams.get("location");
+    const year = searchParams.get("year");
+    const month = searchParams.get("month");
     const page = searchParams.get("page") ?? "1";
     const pageSize = searchParams.get("pageSize") ?? "12";
     const params = new URLSearchParams();
     if (location) params.set("location", location);
-    params.set("page", page);
-    params.set("pageSize", pageSize);
+    if (year && month) {
+      params.set("year", year);
+      params.set("month", month);
+    } else {
+      params.set("page", page);
+      params.set("pageSize", pageSize);
+    }
     const url = `${EVENTS_URL}?${params.toString()}`;
     const res = await fetch(url, {
       headers: { Accept: "application/json" },

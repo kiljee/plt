@@ -13,20 +13,21 @@ const LOCATIONS: { value: LocationFilter; label: string }[] = [
 
 interface LocationSwitchProps {
   current: LocationFilter;
+  buildHref?: (value: LocationFilter) => string;
 }
 
-const hrefForLocation = (value: LocationFilter): string => {
+const defaultHrefForLocation = (value: LocationFilter): string => {
   if (value === undefined) return "/";
   return `/?location=${encodeURIComponent(value)}`;
 };
 
-export const LocationSwitch = ({ current }: LocationSwitchProps) => {
+export const LocationSwitch = ({ current, buildHref = defaultHrefForLocation }: LocationSwitchProps) => {
   return (
     <div className={LOCATION_SWITCH.root} role="tablist" aria-label="Lokacija">
       {LOCATIONS.map(({ value, label }) => (
         <Link
           key={label}
-          href={hrefForLocation(value)}
+          href={buildHref(value)}
           scroll={false}
           role="tab"
           aria-selected={current === value}

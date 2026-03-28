@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAdminEventsForRange } from "wasp/client/operations";
 import { Link } from "wasp/client/router";
 import { Button } from "../components/ui/button";
@@ -32,27 +32,6 @@ const LOCATION_LABELS: Record<EventLocationType, string> = {
 };
 
 type LocationFilterValue = "all" | EventLocationType;
-
-const CALENDAR_VIEW_TYPES = new Set([
-  "dayGridMonth",
-  "timeGridWeek",
-  "timeGridDay",
-  "listWeek",
-]);
-
-type RouterCalendarState = {
-  calendarInitialView?: string;
-  calendarInitialDate?: string;
-};
-
-const CALENDAR_RESTORE_STORAGE_KEY = "paleto-workshop-calendar-restore";
-const CALENDAR_RESTORE_MAX_AGE_MS = 30 * 60 * 1000;
-
-type StoredCalendarRestore = {
-  view: string;
-  dateIso: string;
-  savedAt: number;
-};
 
 const LOCATION_FILTER_OPTIONS: {
   value: LocationFilterValue;
@@ -191,7 +170,6 @@ const renderEventContent = (arg: {
 
 export const WorkshopsCalendarPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
-  const location = useLocation();
   const navigate = useNavigate();
   const calendarRef = useRef<InstanceType<typeof FullCalendar>>(null);
   const initialCalendarRef = useRef<{
@@ -200,48 +178,7 @@ export const WorkshopsCalendarPage = () => {
   } | null>(null);
 
   if (initialCalendarRef.current === null) {
-    const s = location.state as RouterCalendarState | null;
-    let view = "dayGridMonth";
-    let date = new Date();
-
-    if (
-      s?.calendarInitialView &&
-      CALENDAR_VIEW_TYPES.has(s.calendarInitialView)
-    ) {
-      view = s.calendarInitialView;
-      if (s.calendarInitialDate) {
-        const parsed = new Date(s.calendarInitialDate);
-        if (!Number.isNaN(parsed.getTime())) date = parsed;
-      }
-      sessionStorage.removeItem(CALENDAR_RESTORE_STORAGE_KEY);
-    } else {
-      try {
-        const raw = sessionStorage.getItem(CALENDAR_RESTORE_STORAGE_KEY);
-        if (raw) {
-          const stored = JSON.parse(raw) as StoredCalendarRestore;
-          const fresh =
-            typeof stored.savedAt === "number" &&
-            Date.now() - stored.savedAt < CALENDAR_RESTORE_MAX_AGE_MS;
-          if (
-            fresh &&
-            stored.view &&
-            CALENDAR_VIEW_TYPES.has(stored.view) &&
-            stored.dateIso
-          ) {
-            const parsed = new Date(stored.dateIso);
-            if (!Number.isNaN(parsed.getTime())) {
-              view = stored.view;
-              date = parsed;
-            }
-          }
-        }
-      } catch {
-        // ignore invalid JSON
-      }
-      sessionStorage.removeItem(CALENDAR_RESTORE_STORAGE_KEY);
-    }
-
-    initialCalendarRef.current = { view, date };
+    initialCalendarRef.current = { view: "dayGridMonth", date: new Date() };
   }
 
   const { view: fcInitialView, date: fcInitialDate } =
@@ -367,32 +304,7 @@ export const WorkshopsCalendarPage = () => {
               info.jsEvent.preventDefault();
               const id = info.event.id;
               if (!id) return;
-              const api = calendarRef.current?.getApi();
-              const viewType = api?.view.type;
-              const d = api?.getDate();
-              const calendarReturn =
-                viewType &&
-                d &&
-                CALENDAR_VIEW_TYPES.has(viewType)
-                  ? { view: viewType, dateIso: d.toISOString() }
-                  : undefined;
-              if (calendarReturn) {
-                const payload: StoredCalendarRestore = {
-                  view: calendarReturn.view,
-                  dateIso: calendarReturn.dateIso,
-                  savedAt: Date.now(),
-                };
-                sessionStorage.setItem(
-                  CALENDAR_RESTORE_STORAGE_KEY,
-                  JSON.stringify(payload),
-                );
-              }
-              navigate(`/radionica/${id}`, {
-                state: {
-                  fromCalendar: true,
-                  calendarReturn,
-                },
-              });
+              navigate(`/radionica/${id}`);
             }}
             eventClassNames={(arg) =>
               arg.event.extendedProps.status === EventStatus.INACTIVE

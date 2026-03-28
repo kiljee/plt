@@ -13,6 +13,11 @@ const STATIC_ROUTES: MetadataRoute.Sitemap = [
     priority: 1,
   },
   {
+    url: `${SITE_URL}/kalendar`,
+    changeFrequency: 'daily',
+    priority: 0.9,
+  },
+  {
     url: `${SITE_URL}/about`,
     changeFrequency: 'monthly',
     priority: 0.7,

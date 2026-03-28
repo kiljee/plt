@@ -37,6 +37,24 @@ export const COLORS = {
     placeholder: "rgba(0, 9, 20, 0.12)",
   },
 
+  calendar: {
+    headerBg: "#EFF9FC",
+    surface: "#FFFFFF",
+    border: "#E5E5E5",
+    monthTitle: "#5CA2BC",
+    weekdayLabel: "#000000",
+    dayInMonth: "#403F3F",
+    dayOutsideMonth: "#E5E5E5",
+    eventText: "#403F3F",
+    chipBlue: "#DDF0F6",
+    chipGreen: "#E4F0E4",
+    chipPeach: "#FDEEE6",
+    chipLavender: "#F7EEFE",
+    chipPink: "#FFEFFC",
+    locationBelgrade: "#3D6B7E",
+    locationNoviSad: "#3D6F62",
+  },
+
   fonts: {
     heading: "var(--font-comfortaa), 'Comfortaa', sans-serif",
     body: "var(--font-geist-sans), 'Inter', sans-serif",
