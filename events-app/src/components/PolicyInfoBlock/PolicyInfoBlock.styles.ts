@@ -10,6 +10,7 @@ export const POLICY_INFO_STYLES = {
   
   text: "font-normal leading-relaxed text-[#000914]",
   textResponsive: "text-sm lg:text-base lg:leading-[26px]",
+  textEmphasis: "font-bold",
   
   link: "underline text-[#5CA2BC] hover:text-[#4a8ba3]",
 } as const;

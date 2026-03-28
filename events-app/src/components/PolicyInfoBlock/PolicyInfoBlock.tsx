@@ -12,29 +12,32 @@ export const PolicyInfoBlock = ({ className = "" }: PolicyInfoBlockProps) => (
         className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive}`}
         style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
       >
-        Po rezervaciji primićete potvrdu porudžbine i automatski ćete biti dodati na našu listu gostiju.
+        Nakon rezervacije, dobićete potvrdu na email, a nakon uplate ćete biti dodati na listu gostiju.
       </p>
-      
       <p 
         className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive}`}
         style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
       >
-        <strong>Ne šalje se posebna ulaznica.</strong>
+        Ukoliko rezervišete za više osoba,{" "}
+        <strong className={POLICY_INFO_STYLES.textEmphasis}>
+          moguće je i da uplatite samo jedno mesto kako biste rezervisali termin
+        </strong>
+        , a ostatak iznosa možete platiti na radionici u gotovini.
       </p>
-      
       <div>
         <p 
           className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive} mb-2`}
           style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
         >
-          <strong>INFO:</strong>
+          <strong>INFORMACIJE:</strong>
         </p>
         <p 
           className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive}`}
           style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
         >
-          Rezervacija važi 48 sata za uplatu.
-          Ako trebate produženi rok za uplatu, molimo kontaktirajte nas.
+          Rezervacija važi 48 sati. Ukoliko uplata ne bude izvršena u roku od 48 sati, Vaše mesto će biti oslobođeno za druge učesnike.Ukoliko vam je potreban produžen rok za plaćanje, slobodno nas kontaktirajte.
+
+
         </p>
       </div>
       
@@ -42,8 +45,8 @@ export const PolicyInfoBlock = ({ className = "" }: PolicyInfoBlockProps) => (
         className={`${POLICY_INFO_STYLES.text} ${POLICY_INFO_STYLES.textResponsive}`}
         style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
       >
-        Pitanja o rezervacijama, otkazivanju ili drugim detaljima? 
-        ,{" "}
+        Imate pitanja u vezi sa rezervacijama, otkazivanjem ili drugim detaljima?
+        Pogledajte našu{" "}
         <Link href="/politika-privatnosti" className={POLICY_INFO_STYLES.link}>
           Politiku privatnosti
         </Link>{" "}

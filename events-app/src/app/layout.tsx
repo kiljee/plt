@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono, Comfortaa, Caveat } from "next/font/google"
 import { Header } from "@/components/Header/Header";
 import { Footer } from "@/components/Footer/Footer";
+import { MicrosoftClarity } from "@/components/MicrosoftClarity/MicrosoftClarity";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -65,6 +66,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <MicrosoftClarity />
       </body>
     </html>
   );

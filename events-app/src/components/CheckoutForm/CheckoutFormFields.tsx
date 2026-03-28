@@ -105,7 +105,7 @@ export const CheckoutFormFields = ({ loading = false }: CheckoutFormFieldsProps)
               </span>
             </div>
             <span className={`font-[var(--font-geist-sans)] text-xs leading-3 ${CHECKOUT_FORM_STYLES.paymentTextMuted}`}>
-              Paket će biti poslat nakon uplate na žiro račun.
+              Na e-mail stižu potvrda i podaci za uplatu, mesto na radionici potvrđujemo nakon uplate.
             </span>
           </div>
           <div className={CHECKOUT_FORM_STYLES.paymentOptionInactive}>
