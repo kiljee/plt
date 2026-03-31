@@ -31,7 +31,18 @@ const RESERVATION_SELECT = {
   email: true,
   name: true,
   phone: true,
-  event: { select: { id: true, title: true, date: true, startTime: true, endTime: true, price: true, currency: true } },
+  event: {
+    select: {
+      id: true,
+      title: true,
+      date: true,
+      startTime: true,
+      endTime: true,
+      price: true,
+      currency: true,
+      location: true,
+    },
+  },
 } as const;
 
 const checkAdmin = async (
@@ -98,7 +109,16 @@ export type ReservationWithEvent = {
   email: string;
   name: string | null;
   phone: string | null;
-  event: { id: string; title: string; date: Date; startTime: string; endTime: string; price: number; currency: string };
+  event: {
+    id: string;
+    title: string;
+    date: Date;
+    startTime: string;
+    endTime: string;
+    price: number;
+    currency: string;
+    location: string;
+  };
 };
 
 export type GetReservationsAdminResult = {
@@ -134,12 +154,36 @@ export const getReservationsAdmin: GetReservationsAdmin<
 
 export const getReservationById: GetReservationById<
   { id: string },
-  (Reservation & { event: { id: string; title: string; date: Date; startTime: string; endTime: string; price: number; currency: string } }) | null
+  (Reservation & {
+    event: {
+      id: string;
+      title: string;
+      date: Date;
+      startTime: string;
+      endTime: string;
+      price: number;
+      currency: string;
+      location: string;
+    };
+  }) | null
 > = async ({ id }, context) => {
   await checkAdmin(context);
   const reservation = await context.entities.Reservation.findUnique({
     where: { id },
-    include: { event: { select: { id: true, title: true, date: true, startTime: true, endTime: true, price: true, currency: true } } },
+    include: {
+      event: {
+        select: {
+          id: true,
+          title: true,
+          date: true,
+          startTime: true,
+          endTime: true,
+          price: true,
+          currency: true,
+          location: true,
+        },
+      },
+    },
   });
   return reservation;
 };

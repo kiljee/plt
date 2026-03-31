@@ -10,6 +10,8 @@ import {
   useAction,
 } from "wasp/client/operations";
 import { useRequireAdmin } from "../hooks/useRequireAdmin";
+import { ReservationDetailPanel } from "./ReservationDetailPanel";
+import { ReservationLocationCircle } from "./ReservationLocationCircle";
 import { StatusFilter, type StatusFilterType } from "./types";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
@@ -42,8 +44,31 @@ const formatAmount = (price: number, currency: string, seats: number) =>
 
 export const ReservationsPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
-  const [searchParams] = useSearchParams()
-  const eventId = searchParams.get("eventId") ?? undefined
+  const [searchParams, setSearchParams] = useSearchParams();
+  const eventId = searchParams.get("eventId") ?? undefined;
+  const detailReservationId = searchParams.get("reservationId");
+
+  const closeReservationPanel = () => {
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        p.delete("reservationId");
+        return p;
+      },
+      { replace: true },
+    );
+  };
+
+  const openReservationPanel = (id: string) => {
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        p.set("reservationId", id);
+        return p;
+      },
+      { replace: false },
+    );
+  };
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -95,6 +120,11 @@ export const ReservationsPage = () => {
 
   return (
     <div className="min-h-screen bg-muted/30">
+      <ReservationDetailPanel
+        reservationId={detailReservationId}
+        onClose={closeReservationPanel}
+        onChanged={() => void refetch()}
+      />
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -189,7 +219,9 @@ export const ReservationsPage = () => {
                   <table className="w-full text-left text-sm">
                     <thead className="border-b text-xs uppercase tracking-wide text-muted-foreground">
                       <tr>
-                        <th className="px-2 py-3 font-medium">ID</th>
+                        <th className="w-12 px-1 py-3 font-medium" scope="col">
+                          <span className="sr-only">Lokacija</span>
+                        </th>
                         <th className="px-2 py-3 font-medium">Datum rezervacije</th>
                         <th className="px-2 py-3 font-medium">Radionica / Datum</th>
                         <th className="px-2 py-3 font-medium">Email</th>
@@ -204,12 +236,23 @@ export const ReservationsPage = () => {
                     </thead>
                     <tbody className="divide-y">
                       {reservations.map((r) => {
-                        const res = r as typeof r & { event: { title: string; date: Date; startTime: string; endTime: string; price: number; currency: string } };
+                        const res = r as typeof r & {
+                          event: {
+                            title: string;
+                            date: Date;
+                            startTime: string;
+                            endTime: string;
+                            price: number;
+                            currency: string;
+                            location: string;
+                          };
+                        };
                         const seats = res.seats ?? 1;
+                        const loc = res.event?.location ?? "BELGRADE";
                         return (
                           <tr key={res.id} className="hover:bg-muted/30">
-                            <td className="px-2 py-3 font-mono text-xs text-muted-foreground">
-                              {res.id.slice(0, 8)}
+                            <td className="px-1 py-3 align-middle">
+                              <ReservationLocationCircle location={loc} />
                             </td>
                             <td className="px-2 py-3 text-muted-foreground">
                               {dayjs(res.createdAt).format("DD.MM.YYYY HH:mm")}
@@ -249,10 +292,13 @@ export const ReservationsPage = () => {
                             </td>
                             <td className="px-2 py-3 text-right">
                               <div className="flex justify-end gap-1">
-                                <Button asChild size="sm" variant="outline">
-                                  <Link to={`/rezervacije/${res.id}`}>
-                                    Otvori
-                                  </Link>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => openReservationPanel(res.id)}
+                                >
+                                  Otvori
                                 </Button>
                                 <Button
                                   size="sm"
