@@ -8,11 +8,14 @@ import type { EventLocationType } from "../reservations/types";
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
 
+export type EventDateOrder = "asc" | "desc";
+
 export type GetAdminEventsInput = {
   page?: number;
   pageSize?: number;
   statusFilter?: EventStatus;
   locationFilter?: EventLocationType;
+  eventDateOrder?: EventDateOrder;
 };
 
 export type GetAdminEventsResult = {
@@ -52,11 +55,13 @@ export const getAdminEvents: GetAdminEvents<
   if (args?.locationFilter) where.location = args.locationFilter;
   const hasFilters = Object.keys(where).length > 0;
   const finalWhere = hasFilters ? where : undefined;
+  const orderDir =
+    args?.eventDateOrder === "desc" ? ("desc" as const) : ("asc" as const);
 
   const [events, totalCount] = await Promise.all([
     context.entities.Event.findMany({
       where: finalWhere,
-      orderBy: { date: "desc" },
+      orderBy: [{ date: orderDir }, { startTime: orderDir }],
       skip,
       take: pageSize,
     }),

@@ -5,6 +5,7 @@ import { useState } from "react"
 import { getAdminEvents, useQuery } from "wasp/client/operations"
 import { type Event } from "wasp/entities"
 import { Button } from "../../components/ui/button"
+import { EventStatus } from "../constants"
 import {
   Pagination,
   PaginationContent,
@@ -34,6 +35,7 @@ export const EventDuplicatePanel = ({ onDuplicate }: EventDuplicatePanelProps) =
   const { data, isLoading } = useQuery(getAdminEvents, {
     page,
     pageSize: PAGE_SIZE,
+    statusFilter: EventStatus.ACTIVE,
   })
 
   const events: Event[] = data?.events ?? []

@@ -3,6 +3,7 @@ import utc from "dayjs/plugin/utc.js";
 import { HttpError } from "wasp/server";
 import type { GetAdminEventsForRange } from "wasp/server/operations";
 import type { EventLocationType } from "../reservations/types";
+import { EventStatus } from "./constants";
 
 dayjs.extend(utc);
 
@@ -57,9 +58,11 @@ export const getAdminEventsForRange: GetAdminEventsForRange<
   }
 
   const where: {
+    status: string;
     date: { gte: Date; lt: Date };
     location?: string;
   } = {
+    status: EventStatus.ACTIVE,
     date: {
       gte: start,
       lt: end,

@@ -10,6 +10,7 @@ import {
   useQuery,
 } from "wasp/client/operations";
 import { toast } from "sonner";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -28,6 +29,7 @@ import {
 import { useRequireAdmin } from "../hooks/useRequireAdmin";
 import { useAddEventModal } from "../shared/context/AddEventModalContext";
 import { EventStatus } from "../events/constants";
+import type { EventDateOrder } from "../events/queries";
 import {
   EventLocation,
   type EventLocationType,
@@ -73,9 +75,11 @@ const LOCATION_FILTER_OPTIONS: {
 export const DashboardPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>(EventStatus.ACTIVE);
   const [locationFilter, setLocationFilter] =
     useState<LocationFilterValue>("all");
+  const [eventDateOrder, setEventDateOrder] =
+    useState<EventDateOrder>("asc");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const { open: openAddEventModal, onSuccessRef } = useAddEventModal();
 
@@ -85,6 +89,7 @@ export const DashboardPage = () => {
     statusFilter: statusFilter === "all" ? undefined : statusFilter,
     locationFilter:
       locationFilter === "all" ? undefined : locationFilter,
+    eventDateOrder,
   });
 
   useEffect(() => {
@@ -98,7 +103,7 @@ export const DashboardPage = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, locationFilter]);
+  }, [statusFilter, locationFilter, eventDateOrder]);
 
   const handleStatusChange = async (eventId: string, status: EventStatus) => {
     setUpdatingId(eventId);
@@ -127,51 +132,95 @@ export const DashboardPage = () => {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
           <section className="order-1">
             <Card>
-              <CardHeader className="border-b">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <CardTitle>
+              <CardHeader className="border-b px-4 py-4 sm:px-6">
+                <div className="flex min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-0.5">
+                  <CardTitle className="mb-0 shrink-0 whitespace-nowrap pr-1 text-base sm:text-lg">
                     Sve radionice
                     {totalCount > 0 && (
-                      <span className="ml-2 text-muted-foreground">
+                      <span className="ml-1.5 text-muted-foreground sm:ml-2">
                         ({totalCount})
                       </span>
                     )}
                   </CardTitle>
-                  <Button asChild size="sm" variant="outline" type="button">
+                  <span
+                    className="h-6 w-px shrink-0 bg-border"
+                    aria-hidden
+                  />
+                  {STATUS_FILTER_OPTIONS.map((opt) => (
+                    <Button
+                      key={`st-${opt.value}`}
+                      variant={
+                        statusFilter === opt.value ? "default" : "outline"
+                      }
+                      size="sm"
+                      type="button"
+                      className="shrink-0 whitespace-nowrap"
+                      onClick={() => setStatusFilter(opt.value)}
+                    >
+                      {opt.label}
+                    </Button>
+                  ))}
+                  <span
+                    className="h-6 w-px shrink-0 bg-border"
+                    aria-hidden
+                  />
+                  {LOCATION_FILTER_OPTIONS.map((opt) => (
+                    <Button
+                      key={`loc-${opt.value ?? "all"}`}
+                      variant={
+                        locationFilter === opt.value ? "default" : "outline"
+                      }
+                      size="sm"
+                      type="button"
+                      className="shrink-0 whitespace-nowrap"
+                      onClick={() => setLocationFilter(opt.value)}
+                    >
+                      {opt.label}
+                    </Button>
+                  ))}
+                  <span
+                    className="h-6 w-px shrink-0 bg-border"
+                    aria-hidden
+                  />
+                  <div
+                    className="inline-flex shrink-0 rounded-md border border-border"
+                    role="group"
+                    aria-label="Redosled po datumu održavanja"
+                  >
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={eventDateOrder === "asc" ? "default" : "ghost"}
+                      className="rounded-r-none border-0 px-2.5"
+                      onClick={() => setEventDateOrder("asc")}
+                      aria-pressed={eventDateOrder === "asc"}
+                      title="ASC — rastuće po datumu i vremenu"
+                    >
+                      <ArrowUp className="mr-1 h-4 w-4 shrink-0" aria-hidden />
+                      ASC
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={eventDateOrder === "desc" ? "default" : "ghost"}
+                      className="rounded-l-none border-0 border-l border-border px-2.5"
+                      onClick={() => setEventDateOrder("desc")}
+                      aria-pressed={eventDateOrder === "desc"}
+                      title="DESC — opadajuće po datumu i vremenu"
+                    >
+                      <ArrowDown className="mr-1 h-4 w-4 shrink-0" aria-hidden />
+                      DESC
+                    </Button>
+                  </div>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    type="button"
+                    className="shrink-0 whitespace-nowrap"
+                  >
                     <Link to="/kalendar">Kalendar</Link>
                   </Button>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                  <div className="flex gap-2">
-                    {STATUS_FILTER_OPTIONS.map((opt) => (
-                      <Button
-                        key={opt.value}
-                        variant={
-                          statusFilter === opt.value ? "default" : "outline"
-                        }
-                        size="sm"
-                        type="button"
-                        onClick={() => setStatusFilter(opt.value)}
-                      >
-                        {opt.label}
-                      </Button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 border-l border-border pl-3">
-                    {LOCATION_FILTER_OPTIONS.map((opt) => (
-                      <Button
-                        key={opt.value}
-                        variant={
-                          locationFilter === opt.value ? "default" : "outline"
-                        }
-                        size="sm"
-                        type="button"
-                        onClick={() => setLocationFilter(opt.value)}
-                      >
-                        {opt.label}
-                      </Button>
-                    ))}
-                  </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
