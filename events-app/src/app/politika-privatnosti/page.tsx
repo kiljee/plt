@@ -3,6 +3,13 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Politika privatnosti | Paleto",
   description: "Politika privatnosti Paleto ateljea.",
+  alternates: {
+    canonical: "/politika-privatnosti",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const SECTION_GAP = "gap-6";

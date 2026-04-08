@@ -3,6 +3,13 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Uslovi korišćenja | Paleto",
   description: "Uslovi korišćenja i politika otkazivanja Paleto ateljea.",
+  alternates: {
+    canonical: "/uslovi-koriscenja",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const SECTION_GAP = "gap-6";

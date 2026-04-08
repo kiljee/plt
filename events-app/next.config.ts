@@ -2,6 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "index, follow" },
+        ],
+      },
+    ]
+  },
   images: {
     minimumCacheTTL: 86_400,
     remotePatterns: [

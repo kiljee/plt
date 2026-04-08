@@ -4,6 +4,13 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Kalendar radionica",
+  alternates: {
+    canonical: "/kalendar",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function KalendarPage() {

@@ -32,6 +32,13 @@ export const generateMetadata = async ({
   return {
     title,
     description,
+    alternates: {
+      canonical: `/${city}/${slug}`,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
     openGraph: {
       title,
       description,
