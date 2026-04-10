@@ -211,6 +211,16 @@ action uploadEventImage {
   entities: [Event, User]
 }
 
+action deleteEventImage {
+  fn: import { deleteEventImage } from "@src/events/actions",
+  entities: [Event, User]
+}
+
+action deleteGalleryImage {
+  fn: import { deleteGalleryImage } from "@src/events/actions",
+  entities: [Event, User]
+}
+
 action deleteEvent {
   fn: import { deleteEvent } from "@src/events/actions",
   entities: [Event, User]

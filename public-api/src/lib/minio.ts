@@ -84,3 +84,9 @@ export const deleteEventImages = async (imageUrls: string[]): Promise<void> => {
     }),
   )
 }
+
+export const deleteSingleImage = async (imageUrl: string): Promise<void> => {
+  const key = getKeyFromUrl(imageUrl)
+  if (!key) return
+  await client.removeObject(BUCKET, key)
+}

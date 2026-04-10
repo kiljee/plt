@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
-import { useQuery } from "wasp/client/operations"
-import { getUploadedImages } from "wasp/client/operations"
+import { useQuery, useAction } from "wasp/client/operations"
+import { getUploadedImages, deleteGalleryImage } from "wasp/client/operations"
+import { toast } from "sonner"
+import { X } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -29,12 +31,14 @@ export const ImageGalleryModal = ({
   onSelect,
 }: ImageGalleryModalProps) => {
   const [page, setPage] = useState(1)
+  const [deletingUrl, setDeletingUrl] = useState<string | null>(null)
+  const deleteAction = useAction(deleteGalleryImage)
 
   useEffect(() => {
     if (open) setPage(1)
   }, [open])
 
-  const { data, isLoading } = useQuery(getUploadedImages, {
+  const { data, isLoading, refetch } = useQuery(getUploadedImages, {
     page,
     pageSize: PAGE_SIZE,
   })
@@ -48,6 +52,21 @@ export const ImageGalleryModal = ({
   const handleSelect = (url: string) => {
     onSelect(url)
     onOpenChange(false)
+  }
+
+  const handleDelete = async (url: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!window.confirm("Obrisati sliku iz galerije i sa servera?")) return
+    setDeletingUrl(url)
+    try {
+      await deleteAction({ imageUrl: url })
+      toast.success("Slika je obrisana.")
+      await refetch()
+    } catch (err: unknown) {
+      toast.error(`Greška: ${String(err)}`)
+    } finally {
+      setDeletingUrl(null)
+    }
   }
 
   return (
@@ -71,12 +90,30 @@ export const ImageGalleryModal = ({
                   type="button"
                   className="group relative aspect-square overflow-hidden rounded-md border border-zinc-200 bg-zinc-100 transition-colors hover:border-primary-500 hover:ring-2 hover:ring-primary-500/30 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   onClick={() => handleSelect(url)}
+                  disabled={deletingUrl === url}
                 >
                   <img
                     src={url}
                     alt=""
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="absolute right-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white opacity-0 shadow transition-opacity group-hover:opacity-100 hover:bg-red-700 focus:opacity-100"
+                    title="Obriši sliku"
+                    onClick={(e) => handleDelete(url, e)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleDelete(url, e as unknown as React.MouseEvent)
+                    }}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </span>
+                  {deletingUrl === url && (
+                    <span className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 text-xs font-medium text-white">
+                      Brisanje…
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

@@ -6,7 +6,7 @@ import {
 import { type Event } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import { type CreateEvent } from "wasp/server/operations";
-import { deleteEventImages, uploadEventImage as uploadToMinio } from "../lib/minio";
+import { deleteEventImages, deleteSingleImage, uploadEventImage as uploadToMinio } from "../lib/minio";
 import { EventStatus } from "./constants";
 
 export { EventStatus };
@@ -119,6 +119,12 @@ export const updateEvent: UpdateEventAction = async (
     throw new HttpError(404, "Radionica nije pronađena.");
   }
 
+  const oldUrls = parseImageUrls(existing.imageUrls);
+  const newUrls = Array.isArray(args.imageUrls)
+    ? args.imageUrls.filter((u) => u?.trim())
+    : [];
+  const removedUrls = oldUrls.filter((url) => !newUrls.includes(url));
+
   const data = {
     title: args.title,
     description: args.description ?? "",
@@ -136,10 +142,16 @@ export const updateEvent: UpdateEventAction = async (
       : {}),
   };
 
-  return context.entities.Event.update({
+  const updated = await context.entities.Event.update({
     where: { id: args.id },
     data,
   });
+
+  if (removedUrls.length > 0) {
+    await deleteEventImages(removedUrls);
+  }
+
+  return updated;
 };
 
 export type UpdateEventStatusArgs = {
@@ -173,6 +185,76 @@ export const updateEventStatus: UpdateEventStatusAction = async (
       typeof context.entities.Event.update
     >[0]["data"],
   });
+};
+
+export type DeleteEventImageArgs = {
+  eventId: string;
+  imageUrl: string;
+};
+
+type DeleteEventImageAction = AuthenticatedActionDefinition<
+  [_Event, _User],
+  DeleteEventImageArgs,
+  { imageUrls: string[] }
+>;
+
+export const deleteEventImage: DeleteEventImageAction = async (
+  args,
+  context,
+) => {
+  await getAdminUserId(context);
+  const event = await context.entities.Event.findUnique({
+    where: { id: args.eventId },
+    select: { imageUrls: true },
+  });
+  if (!event) throw new HttpError(404, "Radionica nije pronađena.");
+
+  const urls = parseImageUrls(event.imageUrls);
+  const filtered = urls.filter((u) => u !== args.imageUrl);
+
+  await context.entities.Event.update({
+    where: { id: args.eventId },
+    data: { imageUrls: JSON.stringify(filtered) },
+  });
+
+  await deleteSingleImage(args.imageUrl);
+
+  return { imageUrls: filtered };
+};
+
+export type DeleteGalleryImageArgs = {
+  imageUrl: string;
+};
+
+type DeleteGalleryImageAction = AuthenticatedActionDefinition<
+  [_Event, _User],
+  DeleteGalleryImageArgs,
+  void
+>;
+
+export const deleteGalleryImage: DeleteGalleryImageAction = async (
+  args,
+  context,
+) => {
+  await getAdminUserId(context);
+  const url = args.imageUrl?.trim();
+  if (!url) throw new HttpError(400, "URL slike je obavezan.");
+
+  const events = await context.entities.Event.findMany({
+    select: { id: true, imageUrls: true },
+  });
+
+  for (const event of events) {
+    const urls = parseImageUrls(event.imageUrls);
+    if (!urls.includes(url)) continue;
+    const filtered = urls.filter((u) => u !== url);
+    await context.entities.Event.update({
+      where: { id: event.id },
+      data: { imageUrls: JSON.stringify(filtered) },
+    });
+  }
+
+  await deleteSingleImage(url);
 };
 
 export type UploadEventImageArgs = {
