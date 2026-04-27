@@ -7,7 +7,7 @@ import { FooterSection } from "./FooterSection/FooterSection";
 import { FooterContactItem } from "./FooterContactItem/FooterContactItem";
 import { FooterSocialLink } from "./FooterSocialLink/FooterSocialLink";
 
-const COMPANY_EMAIL = "rezervacije@paleto.rs";
+const COMPANY_EMAIL = "info@paleto.rsleto.rs";
 const COMPANY_PHONE = "065/201-2727";
 const POSITIVE_TECH_URL = "https://positivetechit.com";
 

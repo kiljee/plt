@@ -5,7 +5,7 @@ export const buildReservationThankYouText = (
 ): string => {
   const name = data.customerName || "Poštovani"
   return `Paleto.rs
-Za pitanja: rezervacije@paleto.rs
+Za pitanja: info@paleto.rsleto.rs
 
 ================================================================================
 REZERVACIJA PRIMLJENA

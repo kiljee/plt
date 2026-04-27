@@ -8,7 +8,7 @@ const client = TOKEN
 
 const DEFAULT_FROM = {
   name: "Paleto.rs",
-  email: "rezervacije@paleto.rs",
+  email: "info@paleto.rsleto.rs",
 }
 
 export interface SendEmailOptions {

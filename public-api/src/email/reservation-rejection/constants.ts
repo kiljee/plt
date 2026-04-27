@@ -1,7 +1,7 @@
 export const COMPANY = {
   name: "Paleto.rs",
   phone: "065/201-2727",
-  email: "rezervacije@paleto.rs",
+  email: "info@paleto.rsleto.rs",
 } as const
 
 const DEFAULT_EVENTS_SITE = "https://www.paleto.rs"
