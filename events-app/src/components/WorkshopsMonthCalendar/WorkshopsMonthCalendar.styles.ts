@@ -5,26 +5,31 @@ import {
 
 export const WORKSHOPS_MONTH_CALENDAR = {
   pageRoot: "min-h-screen bg-white",
-  main: "mx-auto max-w-[1240px] px-2 py-4 sm:px-6 sm:py-8 lg:px-8",
-  header: "mb-4 sm:mb-8",
+  main:
+    "mx-auto max-w-[1240px] px-1.5 py-3 sm:px-6 sm:py-8 lg:px-8",
+  header: "mb-3 sm:mb-8",
   title:
     "mb-2 font-[family-name:var(--font-comfortaa)] text-xl font-bold text-[#000914] sm:mb-4 sm:text-3xl",
   intro:
     "max-w-3xl font-[family-name:var(--font-geist-sans)] text-xs leading-relaxed text-[#212529] sm:text-base",
   locationBar:
-    "mb-4 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2.5 sm:mb-6",
+    "mb-3 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2.5 sm:mb-6",
   locationBarSwitchWrap: "min-w-0 flex-1",
   eventsListNavOuter: LOCATION_SWITCH.standaloneOuter,
   eventsListNavInner: LOCATION_BAR_STANDALONE_INNER_INACTIVE,
   eventsListNavIcon: "h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]",
   calendarWrap:
-    "w-full overflow-x-auto [box-shadow:0px_4px_4px_rgba(0,0,0,0.04)]",
+    "w-full overflow-x-auto pb-2 [box-shadow:0px_4px_4px_rgba(0,0,0,0.04)] [-webkit-overflow-scrolling:touch]",
   calendarOuter:
     "box-border min-w-0 overflow-hidden rounded-md border border-[#E5E5E5] bg-white",
+  mobileCalendarChrome: "border-t border-[#E5E5E5] sm:hidden",
+  mobileStateHint:
+    "px-2 py-8 text-center font-[family-name:var(--font-geist-sans)] text-sm text-[#989B9C]",
+  desktopCalendarChrome: "hidden sm:block min-w-[640px]",
   navRow:
     "flex h-11 min-h-[44px] items-center justify-between rounded-t-md border-b border-[#E5E5E5] bg-[#EFF9FC] px-2 sm:h-[51px] sm:min-h-[51px] sm:px-4",
   navButton:
-    "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent text-[#5CA2BC] transition hover:bg-white/80 focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#5CA2BC] sm:h-10 sm:w-10",
+    "flex h-11 min-h-[44px] w-11 min-w-[44px] shrink-0 items-center justify-center rounded-md border border-transparent text-[#5CA2BC] transition hover:bg-white/80 active:scale-95 focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#5CA2BC] motion-reduce:active:scale-100 sm:h-10 sm:min-h-[40px] sm:w-10 sm:min-w-[40px]",
   navButtonIcon: "h-5 w-5 sm:h-6 sm:w-6",
   monthTitle:
     "font-[family-name:var(--font-comfortaa)] text-base font-bold capitalize text-[#5CA2BC] sm:text-2xl sm:leading-[27px]",

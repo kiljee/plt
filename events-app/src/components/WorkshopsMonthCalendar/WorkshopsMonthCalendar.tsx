@@ -12,6 +12,7 @@ import { useCalendarMonth } from "@/hooks/useCalendarMonth"
 import { buildCalendarHref, buildEventsListHref } from "@/lib/calendarHref"
 import { LocationSwitch } from "@/components/LocationSwitch/LocationSwitch"
 import { CalendarEventPill } from "./CalendarEventPill"
+import { MobileMonthAgenda } from "./MobileMonthAgenda"
 import { WORKSHOPS_MONTH_CALENDAR } from "./WorkshopsMonthCalendar.styles"
 
 dayjs.extend(utc)
@@ -137,61 +138,81 @@ export const WorkshopsMonthCalendar = () => {
               </button>
             </div>
 
-            <div className={WORKSHOPS_MONTH_CALENDAR.weekdaysRow} role="row">
-              {WEEKDAYS.map((label) => (
-                <div key={label} className={WORKSHOPS_MONTH_CALENDAR.weekdayCell} role="columnheader">
-                  <span className={WORKSHOPS_MONTH_CALENDAR.weekdayLabel}>{label}</span>
+            <div className={WORKSHOPS_MONTH_CALENDAR.mobileCalendarChrome}>
+              {loading && (
+                <p className={WORKSHOPS_MONTH_CALENDAR.mobileStateHint}>Učitavanje…</p>
+              )}
+              {!loading && !error && eventsByDay.size === 0 && (
+                <p className={WORKSHOPS_MONTH_CALENDAR.mobileStateHint}>
+                  Nema radionica u ovom mesecu.
+                </p>
+              )}
+              {!loading && !error && eventsByDay.size > 0 && (
+                <MobileMonthAgenda eventsByDay={eventsByDay} />
+              )}
+            </div>
+
+            <div className={WORKSHOPS_MONTH_CALENDAR.desktopCalendarChrome}>
+              <div className={WORKSHOPS_MONTH_CALENDAR.weekdaysRow} role="row">
+                {WEEKDAYS.map((label) => (
+                  <div key={label} className={WORKSHOPS_MONTH_CALENDAR.weekdayCell} role="columnheader">
+                    <span className={WORKSHOPS_MONTH_CALENDAR.weekdayLabel}>{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {weeks.map((week, wi) => (
+                <div
+                  key={week[0]?.format("YYYY-MM-DD") ?? wi}
+                  className={`${WORKSHOPS_MONTH_CALENDAR.grid} ${wi === weeks.length - 1 ? "rounded-b-md" : ""}`}
+                >
+                  {week.map((day) => {
+                    const inMonth = day.year() === year && day.month() + 1 === month
+                    const key = day.format("YYYY-MM-DD")
+                    const dayEvents = eventsByDay.get(key) ?? []
+                    const hasEvents = dayEvents.length > 0
+                    return (
+                      <div
+                        key={key}
+                        className={`${WORKSHOPS_MONTH_CALENDAR.dayCell} ${
+                          hasEvents
+                            ? WORKSHOPS_MONTH_CALENDAR.dayCellWithEvents
+                            : WORKSHOPS_MONTH_CALENDAR.dayCellEmpty
+                        }`}
+                      >
+                        <span
+                          className={`${WORKSHOPS_MONTH_CALENDAR.dayNumber} ${
+                            inMonth ? "" : WORKSHOPS_MONTH_CALENDAR.dayNumberOutside
+                          }`}
+                        >
+                          {day.date()}
+                        </span>
+                        <div className={WORKSHOPS_MONTH_CALENDAR.eventsCol}>
+                          {dayEvents.map((ev) => (
+                            <CalendarEventPill
+                              key={ev.id}
+                              event={ev}
+                              backgroundColor={chipColorForId(ev.id)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               ))}
             </div>
-
-            {weeks.map((week, wi) => (
-              <div
-                key={week[0]?.format("YYYY-MM-DD") ?? wi}
-                className={`${WORKSHOPS_MONTH_CALENDAR.grid} ${wi === weeks.length - 1 ? "rounded-b-md" : ""}`}
-              >
-                {week.map((day) => {
-                  const inMonth = day.year() === year && day.month() + 1 === month
-                  const key = day.format("YYYY-MM-DD")
-                  const dayEvents = eventsByDay.get(key) ?? []
-                  const hasEvents = dayEvents.length > 0
-                  return (
-                    <div
-                      key={key}
-                      className={`${WORKSHOPS_MONTH_CALENDAR.dayCell} ${
-                        hasEvents
-                          ? WORKSHOPS_MONTH_CALENDAR.dayCellWithEvents
-                          : WORKSHOPS_MONTH_CALENDAR.dayCellEmpty
-                      }`}
-                    >
-                      <span
-                        className={`${WORKSHOPS_MONTH_CALENDAR.dayNumber} ${
-                          inMonth ? "" : WORKSHOPS_MONTH_CALENDAR.dayNumberOutside
-                        }`}
-                      >
-                        {day.date()}
-                      </span>
-                      <div className={WORKSHOPS_MONTH_CALENDAR.eventsCol}>
-                        {dayEvents.map((ev) => (
-                          <CalendarEventPill
-                            key={ev.id}
-                            event={ev}
-                            backgroundColor={chipColorForId(ev.id)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            ))}
           </div>
         </div>
 
         {!loading && !error && eventsByDay.size === 0 && (
-          <p className={WORKSHOPS_MONTH_CALENDAR.emptyHint}>Nema radionica u ovom mesecu.</p>
+          <p className={`${WORKSHOPS_MONTH_CALENDAR.emptyHint} hidden sm:block`}>
+            Nema radionica u ovom mesecu.
+          </p>
         )}
-        {loading && <p className={WORKSHOPS_MONTH_CALENDAR.emptyHint}>Učitavanje…</p>}
+        {loading && (
+          <p className={`${WORKSHOPS_MONTH_CALENDAR.emptyHint} hidden sm:block`}>Učitavanje…</p>
+        )}
       </div>
     </div>
   )
