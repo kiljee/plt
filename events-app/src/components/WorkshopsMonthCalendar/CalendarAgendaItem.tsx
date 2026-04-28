@@ -69,7 +69,6 @@ export const CalendarAgendaItem = ({
         borderColor: COLORS.calendar.border,
         backgroundColor: COLORS.calendar.surface,
       }}
-      scroll={false}
       onClick={() => setWorkshopEntry("calendar", calendarReturnHref)}
     >
       {imageSrc ? (

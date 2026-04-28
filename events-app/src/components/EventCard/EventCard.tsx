@@ -86,8 +86,8 @@ export const EventCard = ({
       <div
         className={EVENT_CARD_STYLES.card.wrapper}
         onClick={() => {
-          markEventsOrigin();
-          router.push(eventUrl);
+          markEventsOrigin()
+          router.push(eventUrl, { scroll: true })
         }}
       >
         <div className={`relative w-full overflow-hidden ${EVENT_CARD_STYLES.image.container}`}>
@@ -161,7 +161,7 @@ export const EventCard = ({
           </div>
 
           {soldOut ? (
-            <Link href={eventUrl} className="block" scroll={false} onClick={markEventsOrigin}>
+            <Link href={eventUrl} className="block" onClick={markEventsOrigin}>
               <motion.span
                 className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.soldOut} block cursor-pointer`}
                 style={{ borderColor: EVENT_CARD_CSS.colors.primaryBorder }}
@@ -180,7 +180,7 @@ export const EventCard = ({
               </motion.span>
             </Link>
           ) : (
-            <Link href={eventUrl} className="block" scroll={false} onClick={markEventsOrigin}>
+            <Link href={eventUrl} className="block" onClick={markEventsOrigin}>
               <motion.span
                 className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.available} block cursor-pointer`}
                 style={{

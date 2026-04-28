@@ -60,7 +60,6 @@ export const CalendarEventPill = memo(({ event, backgroundColor, calendarReturnH
       href={href}
       className={CALENDAR_EVENT_PILL.link}
       style={{ backgroundColor }}
-      scroll={false}
       onClick={() => setWorkshopEntry("calendar", calendarReturnHref)}
     >
       <div className={CALENDAR_EVENT_PILL.imageColumn}>
