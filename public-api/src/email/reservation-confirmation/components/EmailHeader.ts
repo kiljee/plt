@@ -14,7 +14,7 @@ export const renderEmailHeader = () => `
             ${renderEmailLogo()}
           </td>
           <td align="right" style="font-family: ${FONT_FAMILY}; font-size: 11px; color: ${STYLES.textMuted};">
-            Za pitanja: info@paleto.rsleto.rs
+            Za pitanja: info@paleto.rs
           </td>
         </tr>
       </table>

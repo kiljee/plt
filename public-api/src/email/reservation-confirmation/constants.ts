@@ -1,7 +1,7 @@
 export const COMPANY = {
   name: "Paleto.rs",
   phone: "065/201-2727",
-  email: "info@paleto.rsleto.rs",
+  email: "info@paleto.rs",
   pib: "114779948",
   mb: "67849272",
 } as const
