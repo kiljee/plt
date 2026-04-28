@@ -7,6 +7,7 @@ import { EventLocation, LOCATION_LABELS, type EventItem } from "@/types/event";
 import { eventToSlug, locationToCitySlug } from "@/lib/slug";
 import { isDataImageSrc } from "@/lib/nextImage";
 import { COLORS } from "@/lib/colors";
+import { useWorkshopNavigationStore } from "@/store/workshopNavigation";
 import { CALENDAR_EVENT_PILL } from "./CalendarEventPill.styles";
 
 const parseImageUrls = (json: string): string[] => {
@@ -32,9 +33,11 @@ const formatTimeRangeLabel = (startTime: string, endTime: string): string | null
 interface CalendarEventPillProps {
   event: EventItem;
   backgroundColor: string;
+  calendarReturnHref: string;
 }
 
-export const CalendarEventPill = memo(({ event, backgroundColor }: CalendarEventPillProps) => {
+export const CalendarEventPill = memo(({ event, backgroundColor, calendarReturnHref }: CalendarEventPillProps) => {
+  const setWorkshopEntry = useWorkshopNavigationStore((s) => s.setWorkshopEntry);
   const images = parseImageUrls(event.imageUrls);
   const src = images.length > 0 ? images[0] : PLACEHOLDER;
   const citySlug = locationToCitySlug(event.location);
@@ -53,7 +56,13 @@ export const CalendarEventPill = memo(({ event, backgroundColor }: CalendarEvent
       : event.location;
 
   return (
-    <Link href={href} className={CALENDAR_EVENT_PILL.link} style={{ backgroundColor }}>
+    <Link
+      href={href}
+      className={CALENDAR_EVENT_PILL.link}
+      style={{ backgroundColor }}
+      scroll={false}
+      onClick={() => setWorkshopEntry("calendar", calendarReturnHref)}
+    >
       <div className={CALENDAR_EVENT_PILL.imageColumn}>
         <div className={CALENDAR_EVENT_PILL.imageWrap}>
           {(timeLabel || isFull) && (

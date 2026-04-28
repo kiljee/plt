@@ -12,10 +12,12 @@ dayjs.extend(utc)
 
 interface MobileMonthAgendaProps {
   eventsByDay: Map<string, EventItem[]>;
+  calendarReturnHref: string;
 }
 
 export const MobileMonthAgenda = ({
   eventsByDay,
+  calendarReturnHref,
 }: MobileMonthAgendaProps) => {
   const grouped = useMemo(() => {
     return [...eventsByDay.entries()]
@@ -40,7 +42,10 @@ export const MobileMonthAgenda = ({
             <ul className={MOBILE_MONTH_AGENDA.eventStack}>
               {list.map((ev) => (
                 <li key={ev.id}>
-                  <CalendarAgendaItem event={ev} />
+                  <CalendarAgendaItem
+                    event={ev}
+                    calendarReturnHref={calendarReturnHref}
+                  />
                 </li>
               ))}
             </ul>

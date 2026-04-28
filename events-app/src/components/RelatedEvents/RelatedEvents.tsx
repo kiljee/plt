@@ -30,6 +30,7 @@ export const RelatedEvents = ({ events, excludeId }: RelatedEventsProps) => {
                 event={event}
                 soldOut={soldOut}
                 headingLevel={3}
+                suppressWorkshopOrigin
               />
             );
           })}

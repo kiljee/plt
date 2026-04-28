@@ -11,6 +11,7 @@ import {
 import { eventToSlug, locationToCitySlug } from "@/lib/slug";
 import { isDataImageSrc } from "@/lib/nextImage";
 import { COLORS } from "@/lib/colors";
+import { useWorkshopNavigationStore } from "@/store/workshopNavigation";
 import { CALENDAR_AGENDA_ITEM } from "./CalendarAgendaItem.styles";
 
 const parseImageUrls = (json: string): string[] => {
@@ -34,9 +35,14 @@ const formatTimeRange = (startTime: string, endTime: string): string | null => {
 
 interface CalendarAgendaItemProps {
   event: EventItem;
+  calendarReturnHref: string;
 }
 
-export const CalendarAgendaItem = ({ event }: CalendarAgendaItemProps) => {
+export const CalendarAgendaItem = ({
+  event,
+  calendarReturnHref,
+}: CalendarAgendaItemProps) => {
+  const setWorkshopEntry = useWorkshopNavigationStore((s) => s.setWorkshopEntry);
   const slug = eventToSlug(event.title, event.date)
   const href = `/${locationToCitySlug(event.location)}/${slug}`
   const timeLabel = formatTimeRange(event.startTime, event.endTime)
@@ -63,6 +69,8 @@ export const CalendarAgendaItem = ({ event }: CalendarAgendaItemProps) => {
         borderColor: COLORS.calendar.border,
         backgroundColor: COLORS.calendar.surface,
       }}
+      scroll={false}
+      onClick={() => setWorkshopEntry("calendar", calendarReturnHref)}
     >
       {imageSrc ? (
         <div className={CALENDAR_AGENDA_ITEM.thumbWrap}>

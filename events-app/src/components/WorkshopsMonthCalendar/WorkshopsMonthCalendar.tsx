@@ -90,6 +90,11 @@ export const WorkshopsMonthCalendar = () => {
 
   const eventsListHref = useMemo(() => buildEventsListHref(location), [location])
 
+  const calendarReturnHref = useMemo(
+    () => buildCalendarHref(year, month, location),
+    [year, month, location],
+  )
+
   return (
     <div className={WORKSHOPS_MONTH_CALENDAR.pageRoot}>
       <div className={WORKSHOPS_MONTH_CALENDAR.main}>
@@ -148,7 +153,10 @@ export const WorkshopsMonthCalendar = () => {
                 </p>
               )}
               {!loading && !error && eventsByDay.size > 0 && (
-                <MobileMonthAgenda eventsByDay={eventsByDay} />
+                <MobileMonthAgenda
+                  eventsByDay={eventsByDay}
+                  calendarReturnHref={calendarReturnHref}
+                />
               )}
             </div>
 
@@ -193,6 +201,7 @@ export const WorkshopsMonthCalendar = () => {
                               key={ev.id}
                               event={ev}
                               backgroundColor={chipColorForId(ev.id)}
+                              calendarReturnHref={calendarReturnHref}
                             />
                           ))}
                         </div>

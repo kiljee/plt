@@ -13,12 +13,17 @@ import { eventToSlug, locationToCitySlug } from "@/lib/slug";
 import { formatPrice } from "@/lib/price";
 import { isDataImageSrc } from "@/lib/nextImage";
 import { COLORS } from "@/lib/colors";
+import {
+  captureEventsListingReturnHref,
+  useWorkshopNavigationStore,
+} from "@/store/workshopNavigation";
 import { EVENT_CARD_STYLES, EVENT_CARD_CSS } from "./EventCard.styles";
 
 interface EventCardProps {
-  event: EventItem
-  soldOut?: boolean
-  headingLevel?: 2 | 3
+  event: EventItem;
+  soldOut?: boolean;
+  headingLevel?: 2 | 3;
+  suppressWorkshopOrigin?: boolean;
 }
 
 const parseImageUrls = (json: string): string[] => {
@@ -52,13 +57,20 @@ export const EventCard = ({
   event,
   soldOut = false,
   headingLevel = 2,
+  suppressWorkshopOrigin = false,
 }: EventCardProps) => {
+  const setWorkshopEntry = useWorkshopNavigationStore((s) => s.setWorkshopEntry);
   const images = parseImageUrls(event.imageUrls);
   const mainImage = images.length > 0 ? images[0] : PLACEHOLDER;
   const eventSlug = eventToSlug(event.title, event.date);
   const citySlug = locationToCitySlug(event.location);
   const eventUrl = `/${citySlug}/${eventSlug}`;
   const router = useRouter();
+
+  const markEventsOrigin = () => {
+    if (suppressWorkshopOrigin) return;
+    setWorkshopEntry("events", captureEventsListingReturnHref());
+  };
   const badgeDate = formatBadgeDate(event.date);
   const dateTimeLine = formatDateTimeLine(event.date, event.startTime);
   const locationLabel =
@@ -73,7 +85,10 @@ export const EventCard = ({
     >
       <div
         className={EVENT_CARD_STYLES.card.wrapper}
-        onClick={() => router.push(eventUrl)}
+        onClick={() => {
+          markEventsOrigin();
+          router.push(eventUrl);
+        }}
       >
         <div className={`relative w-full overflow-hidden ${EVENT_CARD_STYLES.image.container}`}>
           <div className={EVENT_CARD_STYLES.dateBadge.wrapper}>
@@ -146,7 +161,7 @@ export const EventCard = ({
           </div>
 
           {soldOut ? (
-            <Link href={eventUrl} className="block">
+            <Link href={eventUrl} className="block" scroll={false} onClick={markEventsOrigin}>
               <motion.span
                 className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.soldOut} block cursor-pointer`}
                 style={{ borderColor: EVENT_CARD_CSS.colors.primaryBorder }}
@@ -165,7 +180,7 @@ export const EventCard = ({
               </motion.span>
             </Link>
           ) : (
-            <Link href={eventUrl} className="block">
+            <Link href={eventUrl} className="block" scroll={false} onClick={markEventsOrigin}>
               <motion.span
                 className={`${EVENT_CARD_STYLES.button.base} ${EVENT_CARD_STYLES.button.available} block cursor-pointer`}
                 style={{

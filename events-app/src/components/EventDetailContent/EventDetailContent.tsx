@@ -1,9 +1,15 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import type { EventDetailItem } from "@/types/event";
 import { eventToSlug } from "@/lib/slug";
 import { useCartStore } from "@/store/cart";
+import {
+  useWorkshopNavigationStore,
+  workshopBackLabel,
+} from "@/store/workshopNavigation";
 import { EventDetailsBlock } from "@/components/EventDetailsBlock/EventDetailsBlock";
 import { ImageGallery } from "@/components/ImageGallery/ImageGallery";
 import { OrderButton } from "@/components/OrderButton/OrderButton";
@@ -30,6 +36,9 @@ const ADDED_DURATION_MS = 1600;
 
 export const EventDetailContent = ({ event }: EventDetailContentProps) => {
   const addToCart = useCartStore((s) => s.addItem);
+  const origin = useWorkshopNavigationStore((s) => s.origin);
+  const returnHref = useWorkshopNavigationStore((s) => s.returnHref);
+  const clearWorkshopEntry = useWorkshopNavigationStore((s) => s.clearWorkshopEntry);
   const [quantity, setQuantity] = useState(1);
   const [showAddedSuccess, setShowAddedSuccess] = useState(false);
   const [showCappedEffect, setShowCappedEffect] = useState(false);
@@ -58,17 +67,34 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
 
   return (
     <section className={EVENT_DETAIL_STYLES.section}>
-      {/* Decorative element */}
       <div className={EVENT_DETAIL_STYLES.decorativeElement} />
 
-      <div className={`${EVENT_DETAIL_STYLES.container} ${EVENT_DETAIL_STYLES.containerInner}`}>
-        {/* Left side - Images */}
-        <div className={EVENT_DETAIL_STYLES.imageSection}>
-          <ImageGallery images={images} alt={event.title} />
-        </div>
+      <div className={EVENT_DETAIL_STYLES.pageWrap}>
+        <div className={EVENT_DETAIL_STYLES.pageWrapInner}>
+          {origin !== null && returnHref !== null ? (
+            <div className={EVENT_DETAIL_STYLES.backRow}>
+              <Link
+                href={returnHref}
+                className={EVENT_DETAIL_STYLES.backLink}
+                scroll={false}
+                onClick={() => clearWorkshopEntry()}
+              >
+                <ArrowLeft
+                  className={EVENT_DETAIL_STYLES.backLinkIcon}
+                  strokeWidth={2}
+                  aria-hidden
+                />
+                {workshopBackLabel(origin)}
+              </Link>
+            </div>
+          ) : null}
 
-        {/* Right side - Details */}
-        <div className={EVENT_DETAIL_STYLES.contentSection}>
+          <div className={EVENT_DETAIL_STYLES.columns}>
+          <div className={EVENT_DETAIL_STYLES.imageSection}>
+            <ImageGallery images={images} alt={event.title} />
+          </div>
+
+          <div className={EVENT_DETAIL_STYLES.contentSection}>
           {/* Title */}
           <div className={EVENT_DETAIL_STYLES.title.wrapper}>
             <h1 
@@ -162,9 +188,9 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
             <PolicyInfoBlock />
           </div>
         </div>
+          </div>
+        </div>
       </div>
-
-      
     </section>
   );
 };
