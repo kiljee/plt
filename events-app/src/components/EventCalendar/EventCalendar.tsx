@@ -54,11 +54,13 @@ export const EventCalendar = ({
           </div>
           <Link
             href={calendarHref}
-            className={EVENT_CALENDAR.calendarNavLink}
+            className={EVENT_CALENDAR.calendarNavOuter}
             scroll={false}
           >
-            <CalendarDays className={EVENT_CALENDAR.calendarNavIcon} aria-hidden />
-            <span>Kalendar</span>
+            <span className={EVENT_CALENDAR.calendarNavInner}>
+              <CalendarDays className={EVENT_CALENDAR.calendarNavIcon} aria-hidden />
+              <span>Kalendar</span>
+            </span>
           </Link>
         </div>
 

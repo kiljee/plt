@@ -1,3 +1,8 @@
+import {
+  LOCATION_BAR_STANDALONE_INNER_INACTIVE,
+  LOCATION_SWITCH,
+} from "@/components/LocationSwitch/LocationSwitch.styles";
+
 export const EVENT_CALENDAR = {
   root: "min-h-screen bg-white",
   main: "mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8",
@@ -7,8 +12,8 @@ export const EVENT_CALENDAR = {
   locationBar:
     "mb-4 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2.5 sm:mb-6",
   locationBarSwitchWrap: "min-w-0 flex-1",
-  calendarNavLink:
-    "inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-sm border border-[#F6F2F4] bg-white px-3 py-2 text-xs font-medium text-[#5BA4B8] transition-colors hover:bg-[#F6F2F4] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#2D9CDB]/30 focus-visible:ring-offset-2 sm:min-h-0 sm:min-w-0 sm:px-3.5 sm:py-2 sm:text-sm",
+  calendarNavOuter: LOCATION_SWITCH.standaloneOuter,
+  calendarNavInner: LOCATION_BAR_STANDALONE_INNER_INACTIVE,
   calendarNavIcon: "h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]",
   countBar: "mb-6",
   filterBar:

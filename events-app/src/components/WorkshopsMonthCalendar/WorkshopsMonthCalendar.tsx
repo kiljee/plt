@@ -103,11 +103,13 @@ export const WorkshopsMonthCalendar = () => {
           </div>
           <Link
             href={eventsListHref}
-            className={WORKSHOPS_MONTH_CALENDAR.eventsListNavLink}
+            className={WORKSHOPS_MONTH_CALENDAR.eventsListNavOuter}
             scroll={false}
           >
-            <LayoutList className={WORKSHOPS_MONTH_CALENDAR.eventsListNavIcon} aria-hidden />
-            <span>Događaji</span>
+            <span className={WORKSHOPS_MONTH_CALENDAR.eventsListNavInner}>
+              <LayoutList className={WORKSHOPS_MONTH_CALENDAR.eventsListNavIcon} aria-hidden />
+              <span>Događaji</span>
+            </span>
           </Link>
         </div>
 

@@ -31,7 +31,7 @@ export const LocationSwitch = ({ current, buildHref = defaultHrefForLocation }: 
           scroll={false}
           role="tab"
           aria-selected={current === value}
-          className={`${LOCATION_SWITCH.link} ${
+          className={`${LOCATION_SWITCH.link} ${LOCATION_SWITCH.tabPress} ${
             current === value ? LOCATION_SWITCH.linkActive : LOCATION_SWITCH.linkInactive
           }`}
         >

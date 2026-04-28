@@ -1,3 +1,8 @@
+import {
+  LOCATION_BAR_STANDALONE_INNER_INACTIVE,
+  LOCATION_SWITCH,
+} from "@/components/LocationSwitch/LocationSwitch.styles";
+
 export const WORKSHOPS_MONTH_CALENDAR = {
   pageRoot: "min-h-screen bg-white",
   main: "mx-auto max-w-[1240px] px-2 py-4 sm:px-6 sm:py-8 lg:px-8",
@@ -9,8 +14,8 @@ export const WORKSHOPS_MONTH_CALENDAR = {
   locationBar:
     "mb-4 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2.5 sm:mb-6",
   locationBarSwitchWrap: "min-w-0 flex-1",
-  eventsListNavLink:
-    "inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-sm border border-[#E5E5E5] bg-white px-3 py-2 text-xs font-medium text-[#5CA2BC] transition-colors hover:bg-[#EFF9FC] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#5CA2BC] focus-visible:ring-offset-2 sm:min-h-0 sm:min-w-0 sm:px-3.5 sm:py-2 sm:text-sm",
+  eventsListNavOuter: LOCATION_SWITCH.standaloneOuter,
+  eventsListNavInner: LOCATION_BAR_STANDALONE_INNER_INACTIVE,
   eventsListNavIcon: "h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]",
   calendarWrap:
     "w-full overflow-x-auto [box-shadow:0px_4px_4px_rgba(0,0,0,0.04)]",
