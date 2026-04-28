@@ -5,11 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import { EventLocation, type EventItem } from "@/types/event"
+import { buildCalendarHref, type LocationFilter } from "@/lib/calendarHref"
 import { normalizeEventItem } from "@/lib/normalizeEvent"
 
 dayjs.extend(utc)
 
-type LocationFilter = EventLocation | undefined
+export { buildCalendarHref } from "@/lib/calendarHref"
 
 const parseLocation = (raw: string | null): LocationFilter => {
   if (raw === EventLocation.BELGRADE || raw === EventLocation.NOVI_SAD) return raw
@@ -27,14 +28,6 @@ const parseYm = (
   }
   const now = dayjs.utc()
   return { year: now.year(), month: now.month() + 1, isValid: false }
-}
-
-export const buildCalendarHref = (year: number, month: number, loc: LocationFilter): string => {
-  const p = new URLSearchParams()
-  p.set("year", String(year))
-  p.set("month", String(month))
-  if (loc) p.set("location", loc)
-  return `/kalendar?${p.toString()}`
 }
 
 export const useCalendarMonth = () => {

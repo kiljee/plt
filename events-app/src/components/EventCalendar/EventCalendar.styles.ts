@@ -4,7 +4,12 @@ export const EVENT_CALENDAR = {
   header: "mb-5 sm:mb-8",
   title: "mb-3 text-2xl font-bold text-zinc-900 sm:mb-4 sm:text-3xl lg:text-4xl",
   intro: "max-w-3xl text-sm text-zinc-600 leading-relaxed sm:text-base",
-  locationBar: "mb-4 flex flex-wrap items-center gap-2 sm:mb-6 sm:gap-4",
+  locationBar:
+    "mb-4 flex w-full min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2.5 sm:mb-6",
+  locationBarSwitchWrap: "min-w-0 flex-1",
+  calendarNavLink:
+    "inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center gap-1.5 rounded-lg border border-[#F6F2F4] bg-white px-3 py-2 text-xs font-medium text-[#5BA4B8] transition-colors hover:bg-[#F6F2F4] focus-visible:outline focus-visible:ring-2 focus-visible:ring-[#2D9CDB]/30 focus-visible:ring-offset-2 sm:min-h-0 sm:min-w-0 sm:px-3.5 sm:py-2 sm:text-sm",
+  calendarNavIcon: "h-4 w-4 shrink-0 sm:h-[18px] sm:w-[18px]",
   countBar: "mb-6",
   filterBar:
     "mb-6 flex flex-col gap-3 border-b border-[#F6F2F4] pb-4 sm:mb-8 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4",

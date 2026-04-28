@@ -1,7 +1,10 @@
 import type { EventItem, EventLocation } from "@/types/event";
+import Link from "next/link";
+import { CalendarDays } from "lucide-react";
 import { LocationSwitch } from "@/components/LocationSwitch/LocationSwitch";
 import { EventCard } from "@/components/EventCard/EventCard";
 import { Pagination } from "@/components/Pagination/Pagination";
+import { buildCurrentMonthCalendarHref } from "@/lib/calendarHref";
 import { EVENT_CALENDAR } from "./EventCalendar.styles";
 
 export type LocationFilter = EventLocation | undefined;
@@ -35,6 +38,7 @@ export const EventCalendar = ({
   error,
 }: EventCalendarProps) => {
   const getPageHref = (page: number) => buildPageHref(location, page);
+  const calendarHref = buildCurrentMonthCalendarHref(location);
 
   return (
     <div className={EVENT_CALENDAR.root}>
@@ -45,7 +49,17 @@ export const EventCalendar = ({
         </header>
 
         <div className={EVENT_CALENDAR.locationBar}>
-          <LocationSwitch current={location} />
+          <div className={EVENT_CALENDAR.locationBarSwitchWrap}>
+            <LocationSwitch current={location} />
+          </div>
+          <Link
+            href={calendarHref}
+            className={EVENT_CALENDAR.calendarNavLink}
+            scroll={false}
+          >
+            <CalendarDays className={EVENT_CALENDAR.calendarNavIcon} aria-hidden />
+            <span>Kalendar</span>
+          </Link>
         </div>
 
         <div className={EVENT_CALENDAR.countBar}>

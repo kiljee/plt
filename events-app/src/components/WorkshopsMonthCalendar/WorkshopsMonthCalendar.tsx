@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import "dayjs/locale/sr"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import Link from "next/link"
+import { ChevronLeft, ChevronRight, LayoutList } from "lucide-react"
 import { COLORS } from "@/lib/colors"
-import { useCalendarMonth, buildCalendarHref } from "@/hooks/useCalendarMonth"
+import { useCalendarMonth } from "@/hooks/useCalendarMonth"
+import { buildCalendarHref, buildEventsListHref } from "@/lib/calendarHref"
 import { LocationSwitch } from "@/components/LocationSwitch/LocationSwitch"
 import { CalendarEventPill } from "./CalendarEventPill"
 import { WORKSHOPS_MONTH_CALENDAR } from "./WorkshopsMonthCalendar.styles"
@@ -85,6 +87,8 @@ export const WorkshopsMonthCalendar = () => {
     [year, month],
   )
 
+  const eventsListHref = useMemo(() => buildEventsListHref(location), [location])
+
   return (
     <div className={WORKSHOPS_MONTH_CALENDAR.pageRoot}>
       <div className={WORKSHOPS_MONTH_CALENDAR.main}>
@@ -94,7 +98,17 @@ export const WorkshopsMonthCalendar = () => {
         </header>
 
         <div className={WORKSHOPS_MONTH_CALENDAR.locationBar}>
-          <LocationSwitch current={location} buildHref={hrefForLocation} />
+          <div className={WORKSHOPS_MONTH_CALENDAR.locationBarSwitchWrap}>
+            <LocationSwitch current={location} buildHref={hrefForLocation} />
+          </div>
+          <Link
+            href={eventsListHref}
+            className={WORKSHOPS_MONTH_CALENDAR.eventsListNavLink}
+            scroll={false}
+          >
+            <LayoutList className={WORKSHOPS_MONTH_CALENDAR.eventsListNavIcon} aria-hidden />
+            <span>Događaji</span>
+          </Link>
         </div>
 
         {error && <p className={WORKSHOPS_MONTH_CALENDAR.error}>{error}</p>}
