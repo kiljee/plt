@@ -65,6 +65,7 @@ const buildStatusWhere = (filter: StatusFilterType): Prisma.ReservationWhereInpu
 const buildWhere = (args: GetReservationsAdminInput): Prisma.ReservationWhereInput => {
   const filter = (args?.statusFilter as StatusFilterType) ?? StatusFilter.ACTIVE;
   const search = (typeof args?.search === "string" ? args.search : "").trim();
+  const codePrefix = search.replace(/-/g, "").toLowerCase().slice(0, 8);
 
   return {
     status: buildStatusWhere(filter),
@@ -72,10 +73,13 @@ const buildWhere = (args: GetReservationsAdminInput): Prisma.ReservationWhereInp
     ...(search
       ? {
           OR: [
-            { id: { contains: search, mode: "insensitive" } },
-            { email: { contains: search, mode: "insensitive" } },
-            { name: { contains: search, mode: "insensitive" } },
-            { phone: { contains: search, mode: "insensitive" } },
+            ...(codePrefix.length >= 4
+              ? [{ id: { startsWith: codePrefix } }]
+              : []),
+            { id: { contains: search, mode: "insensitive" as const } },
+            { email: { contains: search, mode: "insensitive" as const } },
+            { name: { contains: search, mode: "insensitive" as const } },
+            { phone: { contains: search, mode: "insensitive" as const } },
           ],
         }
       : {}),

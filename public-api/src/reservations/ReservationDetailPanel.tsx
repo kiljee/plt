@@ -11,6 +11,8 @@ import {
   useAction,
 } from "wasp/client/operations";
 import { Button } from "../components/ui/button";
+import { formatEventDateTime } from "../lib/date";
+import { formatReservationCode } from "../lib/reservationCode";
 import { ReservationLocationCircle } from "./ReservationLocationCircle";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -161,6 +163,18 @@ const ReservationDetailPanelInner = ({
           {!isLoading && reservation && (
             <div className="space-y-4">
               <div>
+                <span className="text-sm text-muted-foreground">Ime i prezime</span>
+                <div className="text-base font-semibold">
+                  {reservation.name ?? "—"}
+                </div>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Šifra rezervacije</span>
+                <div className="font-mono text-base font-semibold tracking-wide">
+                  {formatReservationCode(reservation.id)}
+                </div>
+              </div>
+              <div>
                 <span className="text-sm text-muted-foreground">Datum rezervisanja</span>
                 <div className="font-medium">
                   {dayjs(reservation.createdAt).format("DD.MM.YYYY HH:mm")}
@@ -169,14 +183,18 @@ const ReservationDetailPanelInner = ({
               <div>
                 <span className="text-sm text-muted-foreground">Radionica</span>
                 <div className="font-medium">{reservation.event?.title ?? "—"}</div>
+                {reservation.event?.date && (
+                  <div className="text-sm text-muted-foreground">
+                    {formatEventDateTime(
+                      reservation.event.date,
+                      reservation.event.startTime ?? "",
+                    )}
+                  </div>
+                )}
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Email</span>
-                <div className="font-medium">{reservation.email}</div>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Ime</span>
-                <div className="font-medium">{reservation.name ?? "—"}</div>
+                <div className="font-medium break-all">{reservation.email}</div>
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Telefon</span>
@@ -217,6 +235,7 @@ const ReservationDetailPanelInner = ({
                     <Button
                       onClick={handleConfirm}
                       disabled={confirming || rejecting}
+                      className="w-full sm:w-auto"
                     >
                       {confirming
                         ? "Obrada…"
@@ -226,6 +245,7 @@ const ReservationDetailPanelInner = ({
                       variant="secondary"
                       onClick={handleReject}
                       disabled={rejecting || confirming}
+                      className="w-full sm:w-auto"
                     >
                       {rejecting ? "Obrada…" : "Odbij rezervaciju (pošalji email)"}
                     </Button>
@@ -235,7 +255,7 @@ const ReservationDetailPanelInner = ({
                   variant="destructive"
                   onClick={handleDelete}
                   disabled={deleting}
-                  className="gap-2"
+                  className="w-full gap-2 sm:w-auto"
                 >
                   <Trash2 className="h-4 w-4 shrink-0" aria-hidden />
                   {deleting ? "Brisanje…" : "Obriši rezervaciju"}
