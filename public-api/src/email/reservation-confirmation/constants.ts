@@ -47,15 +47,15 @@ export const getAddressByLocation = (location: string): string => {
 }
 
 export const BANK_ACCOUNT = {
-  recipient: COMPANY.name,
-  accountNumber: "265-1100310091771-22",
+  recipient: "SVETLANA VIGNJEVIC PR",
+  accountNumber: "265-2030310001443-91",
   bank: "Raiffeisen banka A.D. Beograd",
   pib: COMPANY.pib,
   mb: COMPANY.mb,
 } as const
 
 export const PAYMENT_SLIP = {
-  recipientLabel: "PR Paleto",
+  recipientLabel: "SVETLANA VIGNJEVIC PR",
   addressShort: (location: LocationKey): string => {
     const a = ADDRESSES[location]
     const streetFormatted = a.street
