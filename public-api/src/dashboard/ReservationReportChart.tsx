@@ -11,7 +11,7 @@ import {
 import type { ReservationReportWorkshopRow } from "../reservations/reportQueries";
 
 const MAX_WORKSHOPS = 8;
-const MAX_TITLE_LENGTH = 22;
+const MAX_TITLE_LENGTH = 16;
 const CHART_1 = "hsl(var(--chart-1))";
 const CHART_2 = "hsl(var(--chart-2))";
 
@@ -52,7 +52,7 @@ export const ReservationReportChart = ({
         <YAxis
           type="category"
           dataKey="shortTitle"
-          width={150}
+          width={108}
           tick={{ fontSize: 11 }}
         />
         <Tooltip
@@ -65,12 +65,14 @@ export const ReservationReportChart = ({
           dataKey="reservationCount"
           fill={CHART_1}
           radius={[0, 4, 4, 0]}
+          isAnimationActive={false}
         />
         <Bar
           name="Karte"
           dataKey="seatsSum"
           fill={CHART_2}
           radius={[0, 4, 4, 0]}
+          isAnimationActive={false}
         />
       </BarChart>
     </ResponsiveContainer>

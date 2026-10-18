@@ -1,4 +1,3 @@
-import { Banknote, ClipboardList, Ticket, Wallet } from "lucide-react";
 import { formatMoney } from "../lib/reportFormat";
 import type { ReservationReportSummary } from "../reservations/reportQueries";
 import { RESERVATION_REPORT_STYLES } from "./ReservationReportPage.styles";
@@ -22,58 +21,46 @@ export const ReservationReportSummaryCards = ({
   summary,
 }: ReservationReportSummaryCardsProps) => {
   const data = summary ?? EMPTY_SUMMARY;
-  const cards = [
+  const stats = [
     {
       label: "Rezervacije",
       value: data.reservationCount.toLocaleString("sr-RS"),
-      hint: `${data.workshopCount} radionica u mesecu`,
-      Icon: ClipboardList,
+      hint: `${data.workshopCount} radionica`,
     },
     {
-      label: "Prodate karte",
+      label: "Karte",
       value: data.seatsSum.toLocaleString("sr-RS"),
-      hint: "Ukupan broj mesta",
-      Icon: Ticket,
+      hint: "prodatih mesta",
     },
     {
       label: "Očekivano",
       value: formatMoney(data.expectedSum, data.currency),
-      hint: "Cena × karte",
-      Icon: Wallet,
+      hint: "cena × karte",
     },
     {
       label: "Uplaćeno",
       value: formatMoney(data.amountPaidSum, data.currency),
       hint:
         data.unpaidSum > 0
-          ? `Nenaplaćeno ${formatMoney(data.unpaidSum, data.currency)}`
-          : "Sve je naplaćeno",
-      Icon: Banknote,
+          ? `naplata ${data.collectionRate.toLocaleString("sr-RS")}% · fali ${formatMoney(data.unpaidSum, data.currency)}`
+          : `naplata ${data.collectionRate.toLocaleString("sr-RS")}%`,
     },
   ];
 
   return (
-    <div className={RESERVATION_REPORT_STYLES.kpiGrid}>
-      {cards.map(({ label, value, hint, Icon }) => (
-        <div key={label} className={RESERVATION_REPORT_STYLES.kpiCard}>
-          <div className={RESERVATION_REPORT_STYLES.kpiHeader}>
-            <span className={RESERVATION_REPORT_STYLES.kpiLabel}>{label}</span>
-            <Icon className={RESERVATION_REPORT_STYLES.kpiIcon} aria-hidden />
-          </div>
-          <p className={RESERVATION_REPORT_STYLES.kpiValue}>{value}</p>
-          <p className={RESERVATION_REPORT_STYLES.kpiHint}>{hint}</p>
-          {label === "Uplaćeno" ? (
+    <div className={RESERVATION_REPORT_STYLES.kpiStrip}>
+      {stats.map((stat) => (
+        <div key={stat.label} className={RESERVATION_REPORT_STYLES.kpiCell}>
+          <p className={RESERVATION_REPORT_STYLES.kpiLabel}>{stat.label}</p>
+          <p className={RESERVATION_REPORT_STYLES.kpiValue}>{stat.value}</p>
+          <p className={RESERVATION_REPORT_STYLES.kpiHint}>{stat.hint}</p>
+          {stat.label === "Uplaćeno" ? (
             <progress
               className={RESERVATION_REPORT_STYLES.progress}
               value={Math.min(100, Math.max(0, data.collectionRate))}
               max={100}
               aria-label={`Naplata ${data.collectionRate}%`}
             />
-          ) : null}
-          {label === "Uplaćeno" ? (
-            <p className={RESERVATION_REPORT_STYLES.kpiHint}>
-              Naplata {data.collectionRate.toLocaleString("sr-RS")}%
-            </p>
           ) : null}
         </div>
       ))}

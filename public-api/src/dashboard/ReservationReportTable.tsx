@@ -57,18 +57,18 @@ export const ReservationReportTable = ({
       : 0;
 
   return (
-    <table className="w-full min-w-[720px] text-left text-sm">
+    <table className="w-full min-w-[620px] text-left text-[13px]">
       <thead className="sticky top-0 border-b bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
         <tr>
-          <th className="px-3 py-2.5 font-medium">Radionica</th>
-          <th className="px-3 py-2.5 font-medium">Datum</th>
-          <th className="px-3 py-2.5 font-medium">Lokacija</th>
-          <th className="px-3 py-2.5 text-right font-medium">Rez.</th>
-          <th className="px-3 py-2.5 text-right font-medium">Karte</th>
-          <th className="px-3 py-2.5 text-right font-medium">Očekivano</th>
-          <th className="px-3 py-2.5 text-right font-medium">Uplaćeno</th>
-          <th className="px-3 py-2.5 text-right font-medium">Naplata</th>
-          <th className="px-3 py-2.5 text-right font-medium">Razlika</th>
+          <th className="px-2.5 py-2 font-medium">Radionica</th>
+          <th className="px-2.5 py-2 font-medium">Datum</th>
+          <th className="px-2.5 py-2 font-medium">Lokacija</th>
+          <th className="px-2.5 py-2 text-right font-medium">Rez.</th>
+          <th className="px-2.5 py-2 text-right font-medium">Karte</th>
+          <th className="px-2.5 py-2 text-right font-medium">Očekivano</th>
+          <th className="px-2.5 py-2 text-right font-medium">Uplaćeno</th>
+          <th className="px-2.5 py-2 text-right font-medium">Naplata</th>
+          <th className="px-2.5 py-2 text-right font-medium">Razlika</th>
         </tr>
       </thead>
       <tbody>
@@ -79,28 +79,33 @@ export const ReservationReportTable = ({
               key={row.eventId}
               className="border-b transition-colors last:border-0 hover:bg-muted/30"
             >
-              <td className="px-3 py-2.5 font-medium">{row.title}</td>
-              <td className="whitespace-nowrap px-3 py-2.5">
+              <td
+                className="max-w-[170px] truncate px-2.5 py-2 font-medium"
+                title={row.title}
+              >
+                {row.title}
+              </td>
+              <td className="whitespace-nowrap px-2.5 py-2">
                 {dayjs.utc(row.date).format("DD.MM.YYYY")}
               </td>
-              <td className="px-3 py-2.5">{getLocationLabel(row.location)}</td>
-              <td className="px-3 py-2.5 text-right tabular-nums">
+              <td className="px-2.5 py-2">{getLocationLabel(row.location)}</td>
+              <td className="px-2.5 py-2 text-right tabular-nums">
                 {row.reservationCount}
               </td>
-              <td className="px-3 py-2.5 text-right tabular-nums">
+              <td className="px-2.5 py-2 text-right tabular-nums">
                 {row.seatsSum}
               </td>
-              <td className="px-3 py-2.5 text-right tabular-nums">
+              <td className="px-2.5 py-2 text-right tabular-nums">
                 {formatMoney(row.expectedSum, row.currency)}
               </td>
-              <td className="px-3 py-2.5 text-right tabular-nums">
+              <td className="px-2.5 py-2 text-right tabular-nums">
                 {formatMoney(row.amountPaidSum, row.currency)}
               </td>
-              <td className="px-3 py-2.5 text-right tabular-nums">
+              <td className="px-2.5 py-2 text-right tabular-nums">
                 {row.collectionRate.toLocaleString("sr-RS")}%
               </td>
               <td
-                className={`px-3 py-2.5 text-right tabular-nums ${getDiffClass(diff)}`}
+                className={`px-2.5 py-2 text-right tabular-nums ${getDiffClass(diff)}`}
               >
                 {formatMoney(diff, row.currency)}
               </td>
@@ -110,26 +115,26 @@ export const ReservationReportTable = ({
       </tbody>
       <tfoot className="border-t bg-muted/40 font-medium">
         <tr>
-          <td className="px-3 py-2.5" colSpan={3}>
+          <td className="px-2.5 py-2" colSpan={3}>
             Ukupno ({rows.length} radionica)
           </td>
-          <td className="px-3 py-2.5 text-right tabular-nums">
+          <td className="px-2.5 py-2 text-right tabular-nums">
             {totals.reservationCount}
           </td>
-          <td className="px-3 py-2.5 text-right tabular-nums">
+          <td className="px-2.5 py-2 text-right tabular-nums">
             {totals.seatsSum}
           </td>
-          <td className="px-3 py-2.5 text-right tabular-nums">
+          <td className="px-2.5 py-2 text-right tabular-nums">
             {formatMoney(totals.expectedSum, totals.currency)}
           </td>
-          <td className="px-3 py-2.5 text-right tabular-nums">
+          <td className="px-2.5 py-2 text-right tabular-nums">
             {formatMoney(totals.amountPaidSum, totals.currency)}
           </td>
-          <td className="px-3 py-2.5 text-right tabular-nums">
+          <td className="px-2.5 py-2 text-right tabular-nums">
             {totalRate.toLocaleString("sr-RS")}%
           </td>
           <td
-            className={`px-3 py-2.5 text-right tabular-nums ${getDiffClass(totalDiff)}`}
+            className={`px-2.5 py-2 text-right tabular-nums ${getDiffClass(totalDiff)}`}
           >
             {formatMoney(totalDiff, totals.currency)}
           </td>

@@ -29,43 +29,40 @@ export const ReservationReportMonthPicker = ({
   onCurrent,
 }: ReservationReportMonthPickerProps) => (
   <div className={RESERVATION_REPORT_STYLES.toolbar}>
-    <div className={RESERVATION_REPORT_STYLES.toolbarGroup}>
-      <span className={RESERVATION_REPORT_STYLES.monthLabel}>Mesec</span>
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        className={RESERVATION_REPORT_STYLES.navButton}
-        onClick={onPrev}
-        disabled={!canGoPrev || isDisabled}
-        aria-label="Prethodni mesec"
-      >
-        <ChevronLeft aria-hidden />
-      </Button>
-      <select
-        className={RESERVATION_REPORT_STYLES.monthSelect}
-        value={selectedMonth}
-        onChange={(event) => onSelect(event.target.value)}
-        aria-label="Izaberi mesec izveštaja"
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        className={RESERVATION_REPORT_STYLES.navButton}
-        onClick={onNext}
-        disabled={!canGoNext || isDisabled}
-        aria-label="Sledeći mesec"
-      >
-        <ChevronRight aria-hidden />
-      </Button>
-    </div>
+    <Button
+      type="button"
+      variant="outline"
+      size="icon"
+      className={RESERVATION_REPORT_STYLES.navButton}
+      onClick={onPrev}
+      disabled={!canGoPrev || isDisabled}
+      aria-label="Prethodni mesec"
+    >
+      <ChevronLeft aria-hidden />
+    </Button>
+    <select
+      className={RESERVATION_REPORT_STYLES.monthSelect}
+      value={selectedMonth}
+      onChange={(event) => onSelect(event.target.value)}
+      aria-label="Izaberi mesec izveštaja"
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+    <Button
+      type="button"
+      variant="outline"
+      size="icon"
+      className={RESERVATION_REPORT_STYLES.navButton}
+      onClick={onNext}
+      disabled={!canGoNext || isDisabled}
+      aria-label="Sledeći mesec"
+    >
+      <ChevronRight aria-hidden />
+    </Button>
     <Button
       type="button"
       variant={isCurrentMonth ? "secondary" : "default"}
