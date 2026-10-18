@@ -27,6 +27,8 @@ import type { EventDateOrder } from "../events/queries";
 import { EventLocation, type EventLocationType } from "../reservations/types";
 
 const PAGE_SIZE = 10;
+const OCCUPANCY_CIRCLE_RADIUS = 13;
+const OCCUPANCY_CIRCLE_CIRCUMFERENCE = 2 * Math.PI * OCCUPANCY_CIRCLE_RADIUS;
 
 const STATUS_LABELS: Record<EventStatus, string> = {
   [EventStatus.ACTIVE]: "Aktivna",
@@ -269,6 +271,13 @@ export const DashboardPage = () => {
                       EventStatus.ACTIVE;
                     const reservedCount =
                       (event as { reservedCount?: number }).reservedCount ?? 0;
+                    const occupancyPercent =
+                      event.capacity > 0
+                        ? Math.min(
+                            100,
+                            Math.round((reservedCount / event.capacity) * 100),
+                          )
+                        : 0;
                     return (
                       <li
                         key={event.id}
@@ -293,28 +302,64 @@ export const DashboardPage = () => {
                               {timeLabel ? ` · ${timeLabel}` : ""}
                             </span>{" "}
                             <span className="text-muted-foreground">
-                              · {locationLabel} ·{" "}
-                              <span
-                                className="tabular-nums"
-                                aria-label={`Rezervisano ${reservedCount} od ${event.capacity}`}
+                              · {locationLabel}
+                            </span>
+                          </p>
+                          <span className="flex shrink-0 items-center gap-1.5">
+                            <span
+                              className="relative inline-flex h-8 w-8 shrink-0 items-center justify-center"
+                              role="img"
+                              aria-label={`Rezervisano ${reservedCount} od ${event.capacity}, popunjeno ${occupancyPercent}%`}
+                              title={`Popunjeno ${occupancyPercent}%`}
+                            >
+                              <svg
+                                className="h-8 w-8 -rotate-90"
+                                viewBox="0 0 32 32"
+                                aria-hidden
                               >
+                                <circle
+                                  cx="16"
+                                  cy="16"
+                                  r={OCCUPANCY_CIRCLE_RADIUS}
+                                  fill="none"
+                                  strokeWidth="3"
+                                  className="stroke-zinc-200"
+                                />
+                                <circle
+                                  cx="16"
+                                  cy="16"
+                                  r={OCCUPANCY_CIRCLE_RADIUS}
+                                  fill="none"
+                                  strokeWidth="3"
+                                  strokeLinecap="round"
+                                  strokeDasharray={
+                                    OCCUPANCY_CIRCLE_CIRCUMFERENCE
+                                  }
+                                  strokeDashoffset={
+                                    OCCUPANCY_CIRCLE_CIRCUMFERENCE *
+                                    (1 - occupancyPercent / 100)
+                                  }
+                                  className="stroke-[#D14D8A]"
+                                />
+                              </svg>
+                              <span className="absolute text-[8px] font-semibold tabular-nums text-foreground">
                                 {reservedCount}/{event.capacity}
                               </span>
                             </span>
-                          </p>
-                          <Button
-                            asChild
-                            size="sm"
-                            className="relative z-10 h-6 shrink-0 border-0 bg-[#D14D8A] px-2 text-[11px] font-semibold text-white shadow-none hover:bg-[#bd3f7a] hover:text-white"
-                          >
-                            <Link
-                              to={`/rezervacije?eventId=${event.id}`}
-                              aria-label={`Rezervacije za ${event.title}`}
-                              title="Rezervacije"
+                            <Button
+                              asChild
+                              size="sm"
+                              className="relative z-10 h-6 shrink-0 border-0 bg-[#D14D8A] px-2 text-[11px] font-semibold text-white shadow-none hover:bg-[#bd3f7a] hover:text-white"
                             >
-                              REZ
-                            </Link>
-                          </Button>
+                              <Link
+                                to={`/rezervacije?eventId=${event.id}`}
+                                aria-label={`Rezervacije za ${event.title}`}
+                                title="Rezervacije"
+                              >
+                                REZ
+                              </Link>
+                            </Button>
+                          </span>
                         </div>
                       </li>
                     );

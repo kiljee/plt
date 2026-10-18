@@ -26,7 +26,7 @@ export function Header() {
   const active = getActiveFromPathname(pathname);
 
   return (
-    <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white">
+    <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-3">
           <Link
