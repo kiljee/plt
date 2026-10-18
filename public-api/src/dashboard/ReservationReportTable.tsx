@@ -13,12 +13,12 @@ const LOCATION_LABELS: Record<EventLocationType, string> = {
 
 const LOCATION_ROW_CLASS: Record<EventLocationType, string> = {
   [EventLocation.BELGRADE]: "bg-[#3D6B7E]/[0.07] hover:bg-[#3D6B7E]/[0.14]",
-  [EventLocation.NOVI_SAD]: "bg-[#3D6F62]/[0.07] hover:bg-[#3D6F62]/[0.14]",
+  [EventLocation.NOVI_SAD]: "bg-[#D14D8A]/[0.08] hover:bg-[#D14D8A]/[0.16]",
 };
 
 const LOCATION_DOT_CLASS: Record<EventLocationType, string> = {
   [EventLocation.BELGRADE]: "bg-[#3D6B7E]",
-  [EventLocation.NOVI_SAD]: "bg-[#3D6F62]",
+  [EventLocation.NOVI_SAD]: "bg-[#D14D8A]",
 };
 
 const DEFAULT_ROW_CLASS = "hover:bg-muted/30";

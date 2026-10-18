@@ -6,6 +6,7 @@ import { ActiveReservationStatuses } from "./types";
 
 const MONTH_PATTERN = /^\d{4}-\d{2}$/;
 const DEFAULT_CURRENCY = "RSD";
+const EXCLUDED_REPORT_EMAILS = ["vignjevic23@gmail.com"];
 
 export type ReservationReportSummary = {
   reservationCount: number;
@@ -93,6 +94,7 @@ export const getReservationReport: GetReservationReport<
     where: {
       createdAt: { gte: monthStart.toDate(), lt: monthEnd.toDate() },
       status: { in: [...ActiveReservationStatuses] },
+      email: { notIn: EXCLUDED_REPORT_EMAILS, mode: "insensitive" },
     },
     _count: { _all: true },
     _sum: { seats: true, amountPaid: true },
