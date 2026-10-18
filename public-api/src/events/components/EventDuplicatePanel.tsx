@@ -45,8 +45,8 @@ export const EventDuplicatePanel = ({ onDuplicate }: EventDuplicatePanelProps) =
   const hasNext = page < totalPages
 
   return (
-    <div className="flex w-full flex-col border-t border-zinc-200 bg-zinc-50/50 pt-4 sm:w-80 sm:shrink-0 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
-      <h3 className="mb-3 text-sm font-medium text-zinc-700">
+    <div className="flex w-full flex-col border-t border-zinc-200 bg-zinc-50/50 px-3 pb-3 pt-3 sm:w-80 sm:shrink-0 sm:border-l sm:border-t-0 sm:px-0 sm:pb-0 sm:pl-6 sm:pt-0">
+      <h3 className="mb-2 text-sm font-medium text-zinc-700 sm:mb-3">
         Dupliciraj iz postojeće
       </h3>
 

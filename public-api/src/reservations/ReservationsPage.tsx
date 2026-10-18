@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -86,7 +87,9 @@ export const ReservationsPage = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilterType>(StatusFilter.ACTIVE);
+  const [statusFilter, setStatusFilter] = useState<StatusFilterType>(
+    StatusFilter.ACTIVE,
+  );
 
   const { data, isLoading, refetch } = useQuery(getReservationsAdmin, {
     page,
@@ -96,10 +99,9 @@ export const ReservationsPage = () => {
     eventId,
   });
   const { data: event } = useQuery(getAdminEventById, { id: eventId || "" });
-  const { data: eventReservations = [] } = useQuery(
-    getReservationsForEvent,
-    { eventId: eventId || "" },
-  );
+  const { data: eventReservations = [] } = useQuery(getReservationsForEvent, {
+    eventId: eventId || "",
+  });
 
   useEffect(() => {
     setPage(1);
@@ -118,13 +120,13 @@ export const ReservationsPage = () => {
       })
     : [];
 
-  const eventDateLabel =
-    event?.date
-      ? formatEventDateTime(event.date, event.startTime ?? "")
-      : null;
+  const eventDateLabel = event?.date
+    ? formatEventDateTime(event.date, event.startTime ?? "")
+    : null;
 
   const handleDelete = async (reservationId: string) => {
-    if (!window.confirm("Obrisati rezervaciju? Mesta će biti oslobođena.")) return;
+    if (!window.confirm("Obrisati rezervaciju? Mesta će biti oslobođena."))
+      return;
     setDeletingId(reservationId);
     try {
       await deleteAction({ id: reservationId });
@@ -156,23 +158,40 @@ export const ReservationsPage = () => {
         onClose={closeReservationPanel}
         onChanged={() => void refetch()}
       />
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <header className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto max-w-6xl px-2 py-3 sm:px-6 sm:py-8 lg:px-8">
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
+          className="-ml-2 mb-1 sm:mb-2"
+        >
+          <Link to="/">
+            <ArrowLeft aria-hidden />
+            Nazad na radionice
+          </Link>
+        </Button>
+        <header className="mb-2 flex flex-col gap-2 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div className="min-w-0">
-            <h1 className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">
-              {eventId ? `Rezervacije: ${event?.title ?? "Radionica"}` : "Rezervacije"}
+            <h1 className="text-lg font-bold tracking-tight sm:text-2xl lg:text-3xl">
+              {eventId
+                ? `Rezervacije: ${event?.title ?? "Radionica"}`
+                : "Rezervacije"}
             </h1>
-            <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+            <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-base">
               {eventId
                 ? event?.date
                   ? formatEventDateTime(event.date, event.startTime ?? "")
                   : "Rezervacije za izabranu radionicu"
                 : "Pregled svih rezervacija sa filterima i pretragom"}
             </p>
-            <nav className="mt-2 flex flex-wrap gap-3 text-sm sm:gap-4">
+            <nav className="mt-1 flex flex-wrap gap-2 text-xs sm:mt-2 sm:gap-4 sm:text-sm">
               <Link
                 to="/rezervacije"
-                className={eventId ? "text-muted-foreground hover:text-foreground" : "font-medium text-foreground"}
+                className={
+                  eventId
+                    ? "text-muted-foreground hover:text-foreground"
+                    : "font-medium text-foreground"
+                }
               >
                 Rezervacije
               </Link>
@@ -190,32 +209,34 @@ export const ReservationsPage = () => {
               </Link>
             </nav>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {eventId && (
               <ReservationShareActions
-                reservations={shareReservations}
+                reservations={shareReservations.map((reservation) => ({
+                  id: reservation.id,
+                  name: reservation.name,
+                  email: reservation.email,
+                  phone: reservation.phone,
+                  seats: reservation.seats,
+                  status: reservation.status,
+                  amountPaid: reservation.amountPaid,
+                  price: event?.price ?? null,
+                  currency: event?.currency ?? null,
+                }))}
                 eventTitle={event?.title}
                 eventDate={eventDateLabel}
               />
             )}
-            {eventId && (
-              <Button asChild variant="outline" size="sm">
-                <Link to="/rezervacije">Sve rezervacije</Link>
-              </Button>
-            )}
             <Button asChild variant="outline" size="sm">
               <Link to="/rezervacije/blacklist">Blacklist</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link to="/">← Nazad</Link>
             </Button>
           </div>
         </header>
 
         <Card>
-          <CardHeader className="border-b p-4 sm:p-6">
-            <div className="flex flex-col gap-3 sm:gap-4">
-              <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+          <CardHeader className="border-b p-2 sm:p-6">
+            <div className="flex flex-col gap-2 sm:gap-4">
+              <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-0.5 sm:gap-2 sm:pb-1">
                 {TAB_OPTIONS.map((opt) => (
                   <Button
                     key={opt.value}
@@ -233,36 +254,36 @@ export const ReservationsPage = () => {
               </div>
               <form
                 onSubmit={handleSearchSubmit}
-                className="flex w-full flex-col gap-2 sm:flex-row sm:items-center"
+                className="flex w-full gap-1.5 sm:flex-row sm:items-center sm:gap-2"
               >
                 <Input
                   placeholder="Pretraži po šifri, emailu, imenu, telefonu..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full sm:max-w-xs"
+                  className="min-w-0 flex-1 sm:max-w-xs sm:flex-none"
                 />
-                <Button type="submit" size="sm" className="w-full sm:w-auto">
+                <Button type="submit" size="sm" className="shrink-0">
                   Pretraži
                 </Button>
               </form>
             </div>
           </CardHeader>
-          <CardContent className="p-4 pt-4 sm:p-6 sm:pt-6">
+          <CardContent className="p-2 sm:p-6">
             {isLoading && (
-              <p className="py-8 text-center text-muted-foreground">
+              <p className="py-6 text-center text-muted-foreground sm:py-8">
                 Učitavanje…
               </p>
             )}
 
             {!isLoading && reservations.length === 0 && (
-              <p className="py-8 text-center text-muted-foreground">
+              <p className="py-6 text-center text-muted-foreground sm:py-8">
                 Nema rezervacija za izabrane filtere.
               </p>
             )}
 
             {!isLoading && reservations.length > 0 && (
               <>
-                <ul className="space-y-3 md:hidden">
+                <ul className="space-y-2 md:hidden">
                   {reservations.map((r) => {
                     const res = r as typeof r & { event: ReservationEvent };
                     const seats = res.seats ?? 1;
@@ -271,9 +292,9 @@ export const ReservationsPage = () => {
                     return (
                       <li
                         key={res.id}
-                        className="rounded-lg border bg-background p-3"
+                        className="rounded-lg border bg-background p-2.5"
                       >
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-2">
                           <ReservationLocationCircle location={loc} />
                           <div className="min-w-0 flex-1">
                             <div className="font-semibold leading-tight">
@@ -283,8 +304,10 @@ export const ReservationsPage = () => {
                               {code}
                             </div>
                             {!eventId && res.event?.title && (
-                              <div className="mt-1 text-sm text-muted-foreground">
-                                <div className="truncate">{res.event.title}</div>
+                              <div className="mt-0.5 text-sm text-muted-foreground">
+                                <div className="truncate">
+                                  {res.event.title}
+                                </div>
                                 {res.event.date && (
                                   <div className="text-xs">
                                     {formatEventDateTime(
@@ -295,7 +318,7 @@ export const ReservationsPage = () => {
                                 )}
                               </div>
                             )}
-                            <div className="mt-1 text-xs text-muted-foreground">
+                            <div className="mt-0.5 text-xs text-muted-foreground">
                               {dayjs(res.createdAt).format("DD.MM.YYYY HH:mm")}
                               {" · "}
                               {seats} {seats === 1 ? "mesto" : "mesta"}
@@ -303,7 +326,7 @@ export const ReservationsPage = () => {
                                 ? ` · ${formatAmount(res.event.price, res.event.currency, seats)}`
                                 : ""}
                             </div>
-                            <div className="mt-1 text-sm">
+                            <div className="mt-0.5 text-xs">
                               <span
                                 className={
                                   res.status === "CONFIRMED"
@@ -318,7 +341,7 @@ export const ReservationsPage = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="mt-3 flex flex-wrap items-center justify-end gap-2 border-t pt-3">
+                        <div className="mt-2 flex flex-wrap items-center justify-end gap-1.5 border-t pt-2">
                           <Button
                             type="button"
                             size="sm"
@@ -351,14 +374,16 @@ export const ReservationsPage = () => {
                         <th className="px-2 py-3 font-medium">Ime i prezime</th>
                         <th className="px-2 py-3 font-medium">Šifra</th>
                         {!eventId && (
-                          <th className="px-2 py-3 font-medium">Radionica / Datum</th>
+                          <th className="px-2 py-3 font-medium">
+                            Radionica / Datum
+                          </th>
                         )}
                         <th className="px-2 py-3 font-medium">Email</th>
                         <th className="px-2 py-3 font-medium">Telefon</th>
                         <th className="px-2 py-3 font-medium">Mesta</th>
                         <th className="px-2 py-3 font-medium">Iznos</th>
                         <th className="px-2 py-3 font-medium">Status</th>
-                        <th className="px-2 py-3 font-medium text-right">
+                        <th className="px-2 py-3 text-right font-medium">
                           Akcije
                         </th>
                       </tr>
@@ -378,11 +403,16 @@ export const ReservationsPage = () => {
                               {res.name ?? "—"}
                             </td>
                             <td className="px-2 py-3">
-                              <span className="font-mono tracking-wide">{code}</span>
+                              <span className="font-mono tracking-wide">
+                                {code}
+                              </span>
                             </td>
                             {!eventId && (
                               <td className="max-w-[220px] px-2 py-3">
-                                <div className="truncate font-medium" title={res.event?.title}>
+                                <div
+                                  className="truncate font-medium"
+                                  title={res.event?.title}
+                                >
                                   {res.event?.title ?? "—"}
                                 </div>
                                 {res.event?.date && (
@@ -402,7 +432,11 @@ export const ReservationsPage = () => {
                             <td className="px-2 py-3">{seats}</td>
                             <td className="px-2 py-3">
                               {res.event
-                                ? formatAmount(res.event.price, res.event.currency, seats)
+                                ? formatAmount(
+                                    res.event.price,
+                                    res.event.currency,
+                                    seats,
+                                  )
                                 : "—"}
                             </td>
                             <td className="px-2 py-3">
@@ -446,7 +480,7 @@ export const ReservationsPage = () => {
                 </div>
 
                 {totalPages > 1 && (
-                  <Pagination className="mt-6 sm:mt-8">
+                  <Pagination className="mt-3 sm:mt-8">
                     <PaginationContent>
                       <PaginationItem>
                         <PaginationPrevious

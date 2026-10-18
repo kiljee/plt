@@ -45,14 +45,14 @@ export const ReservationReportChart = ({
       <BarChart
         data={data}
         layout="vertical"
-        margin={{ top: 8, right: 16, left: 8, bottom: 0 }}
+        margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
       >
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
         <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11 }} />
         <YAxis
           type="category"
           dataKey="shortTitle"
-          width={108}
+          width={88}
           tick={{ fontSize: 11 }}
         />
         <Tooltip

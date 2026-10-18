@@ -1,21 +1,24 @@
+import { Plus } from "lucide-react";
 import { Link } from "wasp/client/router";
 import { Button } from "../../components/ui/button";
 
+type AdminNavActive = "workshops" | "calendar" | "reservations" | "report";
+
 interface AdminNavLinksProps {
-  active?: "workshops" | "calendar" | "reservations" | "report";
+  active?: AdminNavActive;
   onAddEvent?: () => void;
   orientation?: "vertical" | "horizontal";
 }
 
-const linkClass = (isActive: boolean) =>
+const LINK_CLASS = (isActive: boolean) =>
   isActive
     ? "rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
     : "rounded-md px-3 py-2 text-sm font-medium hover:bg-muted";
 
-const horizontalLinkClass = (isActive: boolean) =>
+const HORIZONTAL_LINK_CLASS = (isActive: boolean) =>
   isActive
-    ? "rounded-md bg-primary px-2.5 py-1 text-[13px] font-medium text-primary-foreground"
-    : "rounded-md px-2.5 py-1 text-[13px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground";
+    ? "rounded-md bg-muted px-2.5 py-1.5 text-[13px] font-medium text-foreground"
+    : "rounded-md px-2.5 py-1.5 text-[13px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground";
 
 export const AdminNavLinks = ({
   active = "workshops",
@@ -24,25 +27,25 @@ export const AdminNavLinks = ({
 }: AdminNavLinksProps) => {
   if (orientation === "horizontal") {
     return (
-      <nav className="flex flex-wrap items-center gap-1" aria-label="Admin">
-        <Link to="/" className={horizontalLinkClass(active === "workshops")}>
+      <nav className="flex items-center gap-1" aria-label="Admin">
+        <Link to="/" className={HORIZONTAL_LINK_CLASS(active === "workshops")}>
           Radionice
         </Link>
         <Link
           to="/kalendar"
-          className={horizontalLinkClass(active === "calendar")}
+          className={HORIZONTAL_LINK_CLASS(active === "calendar")}
         >
           Kalendar
         </Link>
         <Link
           to="/rezervacije"
-          className={horizontalLinkClass(active === "reservations")}
+          className={HORIZONTAL_LINK_CLASS(active === "reservations")}
         >
           Rezervacije
         </Link>
         <Link
           to="/izvestaj"
-          className={horizontalLinkClass(active === "report")}
+          className={HORIZONTAL_LINK_CLASS(active === "report")}
         >
           Izveštaj
         </Link>
@@ -51,10 +54,11 @@ export const AdminNavLinks = ({
             type="button"
             variant="ghost"
             size="sm"
-            className="h-7 px-2.5 text-[13px] text-muted-foreground"
+            className="h-8 px-2.5 text-[13px] text-muted-foreground"
             onClick={onAddEvent}
           >
-            + Nova radionica
+            <Plus aria-hidden />
+            Dodaj radionicu
           </Button>
         ) : null}
       </nav>
@@ -63,10 +67,10 @@ export const AdminNavLinks = ({
 
   return (
     <nav className="flex flex-col gap-2">
-      <Link to="/" className={linkClass(active === "workshops")}>
+      <Link to="/" className={LINK_CLASS(active === "workshops")}>
         Radionice
       </Link>
-      <Link to="/kalendar" className={linkClass(active === "calendar")}>
+      <Link to="/kalendar" className={LINK_CLASS(active === "calendar")}>
         Kalendar
       </Link>
       {onAddEvent ? (
@@ -76,13 +80,14 @@ export const AdminNavLinks = ({
           className="justify-start"
           onClick={onAddEvent}
         >
+          <Plus aria-hidden />
           Dodaj radionicu
         </Button>
       ) : null}
-      <Link to="/rezervacije" className={linkClass(active === "reservations")}>
+      <Link to="/rezervacije" className={LINK_CLASS(active === "reservations")}>
         Rezervacije
       </Link>
-      <Link to="/izvestaj" className={linkClass(active === "report")}>
+      <Link to="/izvestaj" className={LINK_CLASS(active === "report")}>
         Izveštaj
       </Link>
     </nav>

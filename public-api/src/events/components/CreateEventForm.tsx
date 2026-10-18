@@ -242,7 +242,7 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
       onSubmit={handleSubmit(onSubmitHandler)}
       className={formClassName ?? "flex w-full max-w-xl flex-col gap-4"}
     >
-      <h2 className="text-xl font-semibold text-zinc-900">
+      <h2 className="text-lg font-semibold text-zinc-900 sm:text-xl">
         {title ?? "Nova radionica"}
       </h2>
 
@@ -634,7 +634,7 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
       </div>
 
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="submit" disabled={formState.isSubmitting}>
+        <Button type="submit" disabled={formState.isSubmitting} className="w-full sm:w-auto">
           {formState.isSubmitting
             ? "Čuvanje…"
             : submitLabel ?? "Dodaj radionicu"}

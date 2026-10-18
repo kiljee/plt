@@ -10,8 +10,6 @@ import {
   countReservationsByLocation,
 } from "../lib/reportSummary";
 import { EventLocation } from "../reservations/types";
-import { AdminNavLinks } from "../shared/components/AdminNavLinks";
-import { useAddEventModal } from "../shared/context/AddEventModalContext";
 import { ReservationReportChart } from "./ReservationReportChart";
 import {
   ReservationReportLocationFilter,
@@ -32,7 +30,6 @@ const shiftMonth = (month: string, diff: number): string =>
 
 export const ReservationReportPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
-  const { open: openAddEventModal } = useAddEventModal();
   const currentMonth = dayjs().format("YYYY-MM");
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [locationFilter, setLocationFilter] =
@@ -107,11 +104,6 @@ export const ReservationReportPage = () => {
                 : ""}
             </p>
           </div>
-          <AdminNavLinks
-            active="report"
-            orientation="horizontal"
-            onAddEvent={openAddEventModal}
-          />
         </div>
 
         <div className={RESERVATION_REPORT_STYLES.controlsRow}>

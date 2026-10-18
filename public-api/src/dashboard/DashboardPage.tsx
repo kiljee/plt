@@ -10,15 +10,9 @@ import {
   useQuery,
 } from "wasp/client/operations";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, Plus } from "lucide-react";
 import { Button } from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
+import { Card, CardContent, CardHeader } from "../components/ui/card";
 import {
   Pagination,
   PaginationContent,
@@ -28,13 +22,9 @@ import {
 } from "../components/ui/pagination";
 import { useRequireAdmin } from "../hooks/useRequireAdmin";
 import { useAddEventModal } from "../shared/context/AddEventModalContext";
-import { AdminNavLinks } from "../shared/components/AdminNavLinks";
 import { EventStatus } from "../events/constants";
 import type { EventDateOrder } from "../events/queries";
-import {
-  EventLocation,
-  type EventLocationType,
-} from "../reservations/types";
+import { EventLocation, type EventLocationType } from "../reservations/types";
 
 const PAGE_SIZE = 10;
 
@@ -68,19 +58,26 @@ const LOCATION_FILTER_OPTIONS: {
   value: LocationFilterValue;
   label: string;
 }[] = [
-  { value: "all", label: "Sve" },
-  { value: EventLocation.NOVI_SAD, label: LOCATION_LABELS[EventLocation.NOVI_SAD] },
-  { value: EventLocation.BELGRADE, label: LOCATION_LABELS[EventLocation.BELGRADE] },
+  { value: "all", label: "Sve lokacije" },
+  {
+    value: EventLocation.NOVI_SAD,
+    label: LOCATION_LABELS[EventLocation.NOVI_SAD],
+  },
+  {
+    value: EventLocation.BELGRADE,
+    label: LOCATION_LABELS[EventLocation.BELGRADE],
+  },
 ];
 
 export const DashboardPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>(EventStatus.ACTIVE);
+  const [statusFilter, setStatusFilter] = useState<StatusFilterValue>(
+    EventStatus.ACTIVE,
+  );
   const [locationFilter, setLocationFilter] =
     useState<LocationFilterValue>("all");
-  const [eventDateOrder, setEventDateOrder] =
-    useState<EventDateOrder>("asc");
+  const [eventDateOrder, setEventDateOrder] = useState<EventDateOrder>("asc");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const { open: openAddEventModal, onSuccessRef } = useAddEventModal();
 
@@ -88,8 +85,7 @@ export const DashboardPage = () => {
     page,
     pageSize: PAGE_SIZE,
     statusFilter: statusFilter === "all" ? undefined : statusFilter,
-    locationFilter:
-      locationFilter === "all" ? undefined : locationFilter,
+    locationFilter: locationFilter === "all" ? undefined : locationFilter,
     eventDateOrder,
   });
 
@@ -119,6 +115,24 @@ export const DashboardPage = () => {
     }
   };
 
+  const renderStatusSelect = (eventId: string, status: EventStatus) => (
+    <select
+      value={status}
+      disabled={updatingId === eventId}
+      onChange={(e) => {
+        const value = e.target.value as EventStatus;
+        if (value === "ACTIVE" || value === "INACTIVE") {
+          handleStatusChange(eventId, value);
+        }
+      }}
+      aria-label="Status radionice"
+      className={`rounded-md border px-2 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary ${STATUS_BADGE_CLASS[status]} border-transparent disabled:opacity-60`}
+    >
+      <option value="ACTIVE">{STATUS_LABELS.ACTIVE}</option>
+      <option value="INACTIVE">{STATUS_LABELS.INACTIVE}</option>
+    </select>
+  );
+
   const events = data?.events ?? [];
   const totalCount = data?.totalCount ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
@@ -129,279 +143,320 @@ export const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-muted/30">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
-          <section className="order-1">
-            <Card>
-              <CardHeader className="border-b px-4 py-4 sm:px-6">
-                <div className="flex min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-0.5">
-                  <CardTitle className="mb-0 shrink-0 whitespace-nowrap pr-1 text-base sm:text-lg">
-                    Sve radionice
-                    {totalCount > 0 && (
-                      <span className="ml-1.5 text-muted-foreground sm:ml-2">
-                        ({totalCount})
-                      </span>
-                    )}
-                  </CardTitle>
-                  <span
-                    className="h-6 w-px shrink-0 bg-border"
-                    aria-hidden
-                  />
-                  {STATUS_FILTER_OPTIONS.map((opt) => (
-                    <Button
-                      key={`st-${opt.value}`}
-                      variant={
-                        statusFilter === opt.value ? "default" : "outline"
-                      }
-                      size="sm"
-                      type="button"
-                      className="shrink-0 whitespace-nowrap"
-                      onClick={() => setStatusFilter(opt.value)}
-                    >
-                      {opt.label}
-                    </Button>
-                  ))}
-                  <span
-                    className="h-6 w-px shrink-0 bg-border"
-                    aria-hidden
-                  />
-                  {LOCATION_FILTER_OPTIONS.map((opt) => (
-                    <Button
-                      key={`loc-${opt.value ?? "all"}`}
-                      variant={
-                        locationFilter === opt.value ? "default" : "outline"
-                      }
-                      size="sm"
-                      type="button"
-                      className="shrink-0 whitespace-nowrap"
-                      onClick={() => setLocationFilter(opt.value)}
-                    >
-                      {opt.label}
-                    </Button>
-                  ))}
-                  <span
-                    className="h-6 w-px shrink-0 bg-border"
-                    aria-hidden
-                  />
-                  <div
-                    className="inline-flex shrink-0 rounded-md border border-border"
-                    role="group"
-                    aria-label="Redosled po datumu održavanja"
-                  >
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={eventDateOrder === "asc" ? "default" : "ghost"}
-                      className="rounded-r-none border-0 px-2.5"
-                      onClick={() => setEventDateOrder("asc")}
-                      aria-pressed={eventDateOrder === "asc"}
-                      title="ASC — rastuće po datumu i vremenu"
-                    >
-                      <ArrowUp className="mr-1 h-4 w-4 shrink-0" aria-hidden />
-                      ASC
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant={eventDateOrder === "desc" ? "default" : "ghost"}
-                      className="rounded-l-none border-0 border-l border-border px-2.5"
-                      onClick={() => setEventDateOrder("desc")}
-                      aria-pressed={eventDateOrder === "desc"}
-                      title="DESC — opadajuće po datumu i vremenu"
-                    >
-                      <ArrowDown className="mr-1 h-4 w-4 shrink-0" aria-hidden />
-                      DESC
-                    </Button>
-                  </div>
-                  <Button
-                    asChild
-                    size="sm"
-                    variant="outline"
-                    type="button"
-                    className="shrink-0 whitespace-nowrap"
-                  >
-                    <Link to="/kalendar">Kalendar</Link>
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-6">
-                {isLoading && (
-                  <p className="py-8 text-center text-muted-foreground">
-                    Učitavanje…
-                  </p>
-                )}
-
-                {!isLoading && events.length === 0 && (
-                  <div className="flex flex-col items-center gap-4 py-8">
-                    <p className="text-center text-muted-foreground">
-                      Nema radionica. Kliknite „Dodaj radionicu” da kreirate prvu.
-                    </p>
-                    <Button onClick={openAddEventModal}>Dodaj radionicu</Button>
-                  </div>
-                )}
-
-                {!isLoading && events.length > 0 && (
-                  <>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-sm">
-                        <thead className="border-b text-xs uppercase tracking-wide text-muted-foreground">
-                          <tr>
-                            <th className="px-2 py-3 font-medium">Naziv</th>
-                            <th className="px-2 py-3 font-medium">Status</th>
-                            <th className="px-2 py-3 font-medium">Termin</th>
-                            <th className="px-2 py-3 font-medium">Lokacija</th>
-                            <th className="px-2 py-3 font-medium">Kapacitet</th>
-                            <th className="px-2 py-3 font-medium">Rezervisano</th>
-                            <th className="px-2 py-3 font-medium text-right">
-                              Akcije
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                          {events.map((event) => {
-                            const dateLabel = dayjs.utc(event.date).format(
-                              "DD.MM.YYYY",
-                            );
-                            const timeLabel = event.startTime
-                              ? `${event.startTime}–${event.endTime}`
-                              : "";
-                            const locationLabel =
-                              event.location === EventLocation.NOVI_SAD
-                                ? LOCATION_LABELS[EventLocation.NOVI_SAD]
-                                : LOCATION_LABELS[EventLocation.BELGRADE];
-                            const status = (event as { status?: EventStatus })
-                              .status ?? EventStatus.ACTIVE;
-
-                            return (
-                              <tr key={event.id} className="hover:bg-muted/30">
-                                <td className="px-2 py-3">
-                                  <Link
-                                    to={`/radionica/${event.id}`}
-                                    className="font-medium text-primary hover:underline"
-                                  >
-                                    {event.title}
-                                  </Link>
-                                </td>
-                                <td className="px-2 py-3">
-                                  <select
-                                    value={status}
-                                    disabled={updatingId === event.id}
-                                    onChange={(e) => {
-                                      const value = e.target
-                                        .value as EventStatus;
-                                      if (
-                                        value === "ACTIVE" ||
-                                        value === "INACTIVE"
-                                      ) {
-                                        handleStatusChange(event.id, value);
-                                      }
-                                    }}
-                                    className={`rounded-md border px-2 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary ${STATUS_BADGE_CLASS[status]} border-transparent disabled:opacity-60`}
-                                  >
-                                    <option value="ACTIVE">
-                                      {STATUS_LABELS.ACTIVE}
-                                    </option>
-                                    <option value="INACTIVE">
-                                      {STATUS_LABELS.INACTIVE}
-                                    </option>
-                                  </select>
-                                </td>
-                                <td className="px-2 py-3 text-muted-foreground">
-                                  <div>{dateLabel}</div>
-                                  {timeLabel && <div>{timeLabel}</div>}
-                                </td>
-                                <td className="px-2 py-3 text-muted-foreground">
-                                  {locationLabel}
-                                </td>
-                                <td className="px-2 py-3 text-muted-foreground">
-                                  {event.capacity}
-                                </td>
-                                <td className="px-2 py-3 text-muted-foreground">
-                                  {(event as { reservedCount?: number }).reservedCount ?? 0}
-                                </td>
-                                <td className="px-2 py-3 text-right">
-                                  <div className="flex justify-end gap-1">
-                                    <Button asChild size="sm" variant="outline">
-                                      <Link to={`/rezervacije?eventId=${event.id}`}>
-                                        Rezervacije
-                                      </Link>
-                                    </Button>
-                                    <Button asChild size="sm">
-                                      <Link to={`/radionica/${event.id}`}>
-                                        Otvori
-                                      </Link>
-                                    </Button>
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {totalPages > 1 && (
-                      <Pagination className="mt-8">
-                        <PaginationContent>
-                          <PaginationItem>
-                            <PaginationPrevious
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (hasPrev) setPage((p) => p - 1);
-                              }}
-                              className={
-                                !hasPrev
-                                  ? "pointer-events-none opacity-50"
-                                  : undefined
-                              }
-                            />
-                          </PaginationItem>
-                          <PaginationItem>
-                            <span className="px-3 text-sm text-muted-foreground">
-                              Strana {page} od {totalPages} ({totalCount} ukupno)
-                            </span>
-                          </PaginationItem>
-                          <PaginationItem>
-                            <PaginationNext
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (hasNext) setPage((p) => p + 1);
-                              }}
-                              className={
-                                !hasNext
-                                  ? "pointer-events-none opacity-50"
-                                  : undefined
-                              }
-                            />
-                          </PaginationItem>
-                        </PaginationContent>
-                      </Pagination>
-                    )}
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </section>
-
-          <aside className="order-2">
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-                  Meni
-                </CardTitle>
-                <CardDescription>Brza navigacija</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <AdminNavLinks
-                  active="workshops"
-                  onAddEvent={openAddEventModal}
-                />
-              </CardContent>
-            </Card>
-          </aside>
+      <div className="mx-auto max-w-6xl px-2 py-3 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mb-2 flex items-center justify-between gap-2 sm:mb-6 sm:gap-3">
+          <h1 className="text-lg font-semibold tracking-tight sm:text-2xl">
+            Radionice
+            {totalCount > 0 ? (
+              <span className="ml-2 font-normal text-muted-foreground">
+                ({totalCount})
+              </span>
+            ) : null}
+          </h1>
+          <Button
+            type="button"
+            size="sm"
+            onClick={openAddEventModal}
+            className="shrink-0"
+          >
+            <Plus aria-hidden />
+            <span className="hidden sm:inline">Dodaj radionicu</span>
+            <span className="sm:hidden">Dodaj</span>
+          </Button>
         </div>
+
+        <Card>
+          <CardHeader className="border-b px-2 py-2 sm:px-6 sm:py-3">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <div
+                className="flex w-full rounded-md border border-border bg-background p-0.5 sm:inline-flex sm:w-auto"
+                role="group"
+                aria-label="Filter po statusu"
+              >
+                {STATUS_FILTER_OPTIONS.map((opt) => (
+                  <Button
+                    key={`st-${opt.value}`}
+                    variant={statusFilter === opt.value ? "default" : "ghost"}
+                    size="sm"
+                    type="button"
+                    className="h-7 flex-1 whitespace-nowrap px-2.5 sm:flex-none"
+                    onClick={() => setStatusFilter(opt.value)}
+                    aria-pressed={statusFilter === opt.value}
+                  >
+                    {opt.label}
+                  </Button>
+                ))}
+              </div>
+
+              <select
+                value={locationFilter}
+                onChange={(e) =>
+                  setLocationFilter(e.target.value as LocationFilterValue)
+                }
+                aria-label="Filter po lokaciji"
+                className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary sm:flex-none"
+              >
+                {LOCATION_FILTER_OPTIONS.map((opt) => (
+                  <option key={`loc-${opt.value}`} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="shrink-0"
+                onClick={() =>
+                  setEventDateOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+                }
+                aria-label={
+                  eventDateOrder === "asc"
+                    ? "Sortirano rastuće po datumu. Prebaci na opadajuće."
+                    : "Sortirano opadajuće po datumu. Prebaci na rastuće."
+                }
+                title={
+                  eventDateOrder === "asc"
+                    ? "Rastuće po datumu i vremenu"
+                    : "Opadajuće po datumu i vremenu"
+                }
+              >
+                {eventDateOrder === "asc" ? (
+                  <ArrowUp aria-hidden />
+                ) : (
+                  <ArrowDown aria-hidden />
+                )}
+                Datum
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-2 sm:p-6">
+            {isLoading && (
+              <p className="py-6 text-center text-muted-foreground sm:py-8">
+                Učitavanje…
+              </p>
+            )}
+
+            {!isLoading && events.length === 0 && (
+              <div className="flex flex-col items-center gap-3 py-6 sm:gap-4 sm:py-8">
+                <p className="text-center text-muted-foreground">
+                  Nema radionica. Kliknite „Dodaj radionicu” da kreirate prvu.
+                </p>
+                <Button onClick={openAddEventModal}>
+                  <Plus aria-hidden />
+                  Dodaj radionicu
+                </Button>
+              </div>
+            )}
+
+            {!isLoading && events.length > 0 && (
+              <>
+                <ul className="space-y-2 md:hidden">
+                  {events.map((event) => {
+                    const dateLabel = dayjs
+                      .utc(event.date)
+                      .format("DD.MM.YYYY");
+                    const timeLabel = event.startTime
+                      ? `${event.startTime}–${event.endTime}`
+                      : "";
+                    const locationLabel =
+                      event.location === EventLocation.NOVI_SAD
+                        ? LOCATION_LABELS[EventLocation.NOVI_SAD]
+                        : LOCATION_LABELS[EventLocation.BELGRADE];
+                    const status =
+                      (event as { status?: EventStatus }).status ??
+                      EventStatus.ACTIVE;
+                    const reservedCount =
+                      (event as { reservedCount?: number }).reservedCount ?? 0;
+                    const occupancy =
+                      event.capacity > 0
+                        ? Math.min(
+                            100,
+                            Math.round((reservedCount / event.capacity) * 100),
+                          )
+                        : 0;
+                    return (
+                      <li
+                        key={event.id}
+                        className="rounded-lg border bg-background p-2.5"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <Link
+                            to={`/radionica/${event.id}`}
+                            className="min-w-0 font-semibold leading-snug text-primary"
+                          >
+                            {event.title}
+                          </Link>
+                          {renderStatusSelect(event.id, status)}
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {dateLabel}
+                          {timeLabel ? ` · ${timeLabel}` : ""} · {locationLabel}
+                        </p>
+                        <div className="mt-2">
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>Rezervisano</span>
+                            <span className="font-medium tabular-nums text-foreground">
+                              {reservedCount} / {event.capacity}
+                            </span>
+                          </div>
+                          <div
+                            className="mt-1 h-1 overflow-hidden rounded-full bg-muted"
+                            role="progressbar"
+                            aria-valuenow={reservedCount}
+                            aria-valuemin={0}
+                            aria-valuemax={event.capacity}
+                            aria-label={`Rezervisano ${reservedCount} od ${event.capacity}`}
+                          >
+                            <div
+                              className="h-full rounded-full bg-primary"
+                              style={{ width: `${occupancy}%` }}
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-2 flex gap-1.5 border-t pt-2">
+                          <Button
+                            asChild
+                            size="sm"
+                            variant="outline"
+                            className="flex-1"
+                          >
+                            <Link to={`/rezervacije?eventId=${event.id}`}>
+                              Rezervacije
+                            </Link>
+                          </Button>
+                          <Button asChild size="sm" className="flex-1">
+                            <Link to={`/radionica/${event.id}`}>Otvori</Link>
+                          </Button>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <div className="hidden overflow-x-auto md:block">
+                  <table className="w-full text-left text-sm">
+                    <thead className="border-b text-xs uppercase tracking-wide text-muted-foreground">
+                      <tr>
+                        <th className="px-2 py-3 font-medium">Naziv</th>
+                        <th className="px-2 py-3 font-medium">Status</th>
+                        <th className="px-2 py-3 font-medium">Termin</th>
+                        <th className="px-2 py-3 font-medium">Lokacija</th>
+                        <th className="px-2 py-3 font-medium">Kapacitet</th>
+                        <th className="px-2 py-3 font-medium">Rezervisano</th>
+                        <th className="px-2 py-3 text-right font-medium">
+                          Akcije
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {events.map((event) => {
+                        const dateLabel = dayjs
+                          .utc(event.date)
+                          .format("DD.MM.YYYY");
+                        const timeLabel = event.startTime
+                          ? `${event.startTime}–${event.endTime}`
+                          : "";
+                        const locationLabel =
+                          event.location === EventLocation.NOVI_SAD
+                            ? LOCATION_LABELS[EventLocation.NOVI_SAD]
+                            : LOCATION_LABELS[EventLocation.BELGRADE];
+                        const status =
+                          (event as { status?: EventStatus }).status ??
+                          EventStatus.ACTIVE;
+
+                        return (
+                          <tr key={event.id} className="hover:bg-muted/30">
+                            <td className="px-2 py-3">
+                              <Link
+                                to={`/radionica/${event.id}`}
+                                className="font-medium text-primary hover:underline"
+                              >
+                                {event.title}
+                              </Link>
+                            </td>
+                            <td className="px-2 py-3">
+                              {renderStatusSelect(event.id, status)}
+                            </td>
+                            <td className="px-2 py-3 text-muted-foreground">
+                              <div>{dateLabel}</div>
+                              {timeLabel && <div>{timeLabel}</div>}
+                            </td>
+                            <td className="px-2 py-3 text-muted-foreground">
+                              {locationLabel}
+                            </td>
+                            <td className="px-2 py-3 text-muted-foreground">
+                              {event.capacity}
+                            </td>
+                            <td className="px-2 py-3 text-muted-foreground">
+                              {(event as { reservedCount?: number })
+                                .reservedCount ?? 0}
+                            </td>
+                            <td className="px-2 py-3 text-right">
+                              <div className="flex justify-end gap-1">
+                                <Button asChild size="sm" variant="outline">
+                                  <Link to={`/rezervacije?eventId=${event.id}`}>
+                                    Rezervacije
+                                  </Link>
+                                </Button>
+                                <Button asChild size="sm">
+                                  <Link to={`/radionica/${event.id}`}>
+                                    Otvori
+                                  </Link>
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {totalPages > 1 && (
+                  <Pagination className="mt-4 sm:mt-8">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (hasPrev) setPage((p) => p - 1);
+                          }}
+                          className={
+                            !hasPrev
+                              ? "pointer-events-none opacity-50"
+                              : undefined
+                          }
+                        />
+                      </PaginationItem>
+                      <PaginationItem>
+                        <span className="px-3 text-sm text-muted-foreground">
+                          Strana {page} od {totalPages} ({totalCount} ukupno)
+                        </span>
+                      </PaginationItem>
+                      <PaginationItem>
+                        <PaginationNext
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (hasNext) setPage((p) => p + 1);
+                          }}
+                          className={
+                            !hasNext
+                              ? "pointer-events-none opacity-50"
+                              : undefined
+                          }
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                )}
+              </>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

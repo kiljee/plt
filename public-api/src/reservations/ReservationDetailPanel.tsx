@@ -35,10 +35,11 @@ const ReservationDetailPanelInner = ({
   onClose,
   onChanged,
 }: ReservationDetailPanelInnerProps) => {
-  const { data: reservation, isLoading, refetch } = useQuery(
-    getReservationById,
-    { id: reservationId },
-  );
+  const {
+    data: reservation,
+    isLoading,
+    refetch,
+  } = useQuery(getReservationById, { id: reservationId });
   const confirmAction = useAction(confirmReservation);
   const rejectAction = useAction(rejectReservation);
   const deleteAction = useAction(deleteReservation);
@@ -110,9 +111,11 @@ const ReservationDetailPanelInner = ({
 
   const handleSavePayment = async () => {
     const trimmed = amountPaidInput.trim();
-    const amountPaid =
-      trimmed === "" ? null : Number.parseInt(trimmed, 10);
-    if (amountPaid !== null && (!Number.isFinite(amountPaid) || amountPaid < 0)) {
+    const amountPaid = trimmed === "" ? null : Number.parseInt(trimmed, 10);
+    if (
+      amountPaid !== null &&
+      (!Number.isFinite(amountPaid) || amountPaid < 0)
+    ) {
       toast.error("Unesite ispravan iznos (ceo broj).");
       return;
     }
@@ -130,7 +133,8 @@ const ReservationDetailPanelInner = ({
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Obrisati rezervaciju? Mesta će biti oslobođena.")) return;
+    if (!window.confirm("Obrisati rezervaciju? Mesta će biti oslobođena."))
+      return;
     setDeleting(true);
     try {
       await deleteAction({ id: reservationId });
@@ -158,8 +162,8 @@ const ReservationDetailPanelInner = ({
         aria-modal="true"
         aria-labelledby="reservation-panel-title"
       >
-        <div className="flex items-start justify-between gap-3 border-b px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:pt-3">
-          <div className="flex min-w-0 items-center gap-3">
+        <div className="flex items-start justify-between gap-2 border-b px-3 pb-2 pt-[max(0.5rem,env(safe-area-inset-top))] sm:gap-3 sm:px-4 sm:pb-3 sm:pt-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             {reservation && (
               <ReservationLocationCircle
                 location={reservation.event?.location ?? "BELGRADE"}
@@ -167,7 +171,7 @@ const ReservationDetailPanelInner = ({
             )}
             <h2
               id="reservation-panel-title"
-              className="text-lg font-semibold leading-tight"
+              className="text-base font-semibold leading-tight sm:text-lg"
             >
               Detalji rezervacije
             </h2>
@@ -184,40 +188,50 @@ const ReservationDetailPanelInner = ({
           </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="flex-1 overflow-y-auto p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-4">
           {isLoading && (
-            <p className="py-8 text-center text-muted-foreground">Učitavanje…</p>
+            <p className="py-6 text-center text-muted-foreground sm:py-8">
+              Učitavanje…
+            </p>
           )}
 
           {!isLoading && !reservation && (
-            <p className="py-8 text-center text-muted-foreground">
+            <p className="py-6 text-center text-muted-foreground sm:py-8">
               Rezervacija nije pronađena.
             </p>
           )}
 
           {!isLoading && reservation && (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <span className="text-sm text-muted-foreground">Ime i prezime</span>
+                <span className="text-sm text-muted-foreground">
+                  Ime i prezime
+                </span>
                 <div className="text-base font-semibold">
                   {reservation.name ?? "—"}
                 </div>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Šifra rezervacije</span>
+                <span className="text-sm text-muted-foreground">
+                  Šifra rezervacije
+                </span>
                 <div className="font-mono text-base font-semibold tracking-wide">
                   {formatReservationCode(reservation.id)}
                 </div>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Datum rezervisanja</span>
+                <span className="text-sm text-muted-foreground">
+                  Datum rezervisanja
+                </span>
                 <div className="font-medium">
                   {dayjs(reservation.createdAt).format("DD.MM.YYYY HH:mm")}
                 </div>
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Radionica</span>
-                <div className="font-medium">{reservation.event?.title ?? "—"}</div>
+                <div className="font-medium">
+                  {reservation.event?.title ?? "—"}
+                </div>
                 {reservation.event?.date && (
                   <div className="text-sm text-muted-foreground">
                     {formatEventDateTime(
@@ -229,18 +243,22 @@ const ReservationDetailPanelInner = ({
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Email</span>
-                <div className="font-medium break-all">{reservation.email}</div>
+                <div className="break-all font-medium">{reservation.email}</div>
               </div>
               <div>
                 <span className="text-sm text-muted-foreground">Telefon</span>
                 <div className="font-medium">{reservation.phone ?? "—"}</div>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Broj mesta</span>
+                <span className="text-sm text-muted-foreground">
+                  Broj mesta
+                </span>
                 <div className="font-medium">{reservation.seats ?? 1}</div>
               </div>
               <div>
-                <span className="text-sm text-muted-foreground">Iznos za uplatu</span>
+                <span className="text-sm text-muted-foreground">
+                  Iznos za uplatu
+                </span>
                 <div className="font-medium">
                   {reservation.event
                     ? `${reservation.event.price * (reservation.seats ?? 1)} ${reservation.event.currency}`
@@ -287,7 +305,7 @@ const ReservationDetailPanelInner = ({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 pt-4 sm:flex-row sm:flex-wrap">
+              <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap sm:pt-4">
                 {reservation.status === "PENDING" && (
                   <>
                     <Button
@@ -305,7 +323,9 @@ const ReservationDetailPanelInner = ({
                       disabled={rejecting || confirming}
                       className="w-full sm:w-auto"
                     >
-                      {rejecting ? "Obrada…" : "Odbij rezervaciju (pošalji email)"}
+                      {rejecting
+                        ? "Obrada…"
+                        : "Odbij rezervaciju (pošalji email)"}
                     </Button>
                   </>
                 )}

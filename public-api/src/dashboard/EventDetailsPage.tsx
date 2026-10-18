@@ -3,6 +3,7 @@ import utc from "dayjs/plugin/utc.js";
 import { Link, useParams } from "react-router-dom";
 
 dayjs.extend(utc);
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import {
   getAdminEventById,
@@ -12,7 +13,12 @@ import {
   useAction,
 } from "wasp/client/operations";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import {
   CreateEventForm,
   type EventFormSubmitPayload,
@@ -26,7 +32,11 @@ export const EventDetailsPage = () => {
   const { isLoading: isAuthLoading, isAdmin } = useRequireAdmin();
   const { id } = useParams();
   const eventId = id ?? "";
-  const { data: event, isLoading, refetch } = useQuery(getAdminEventById, {
+  const {
+    data: event,
+    isLoading,
+    refetch,
+  } = useQuery(getAdminEventById, {
     id: eventId,
   });
 
@@ -43,7 +53,12 @@ export const EventDetailsPage = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Da li ste sigurni da želite da obrišete ovu radionicu? Sve slike će biti obrisane.")) return;
+    if (
+      !window.confirm(
+        "Da li ste sigurni da želite da obrišete ovu radionicu? Sve slike će biti obrisane.",
+      )
+    )
+      return;
     try {
       await deleteEventAction({ id: eventId });
       toast.success("Radionica je obrisana.");
@@ -57,33 +72,44 @@ export const EventDetailsPage = () => {
 
   if (!eventId) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        <p className="text-muted-foreground">
-          Radionica nije pronađena.
-        </p>
+      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+        <Button asChild variant="ghost" size="sm" className="-ml-2 mb-4">
+          <Link to="/">
+            <ArrowLeft aria-hidden />
+            Nazad na radionice
+          </Link>
+        </Button>
+        <p className="text-muted-foreground">Radionica nije pronađena.</p>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-muted/30">
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mb-4 sm:mb-6">
+          <Button asChild variant="ghost" size="sm" className="-ml-2">
+            <Link to="/">
+              <ArrowLeft aria-hidden />
+              Nazad na radionice
+            </Link>
+          </Button>
+          <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+            <h1 className="min-w-0 break-words text-xl font-bold tracking-tight sm:text-3xl">
               {event?.title ?? "Radionica"}
             </h1>
-          </div>
-          <div className="flex gap-2">
-            <Button asChild variant="outline">
-              <Link to={`/rezervacije?eventId=${eventId}`}>Rezervacije</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link to="/">Sve radionice</Link>
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Obriši radionicu
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" className="flex-1 sm:flex-none">
+                <Link to={`/rezervacije?eventId=${eventId}`}>Rezervacije</Link>
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                className="flex-1 sm:flex-none"
+              >
+                Obriši radionicu
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -100,10 +126,10 @@ export const EventDetailsPage = () => {
         {!isLoading && event && (
           <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
             <Card>
-              <CardHeader>
+              <CardHeader className="p-4 pb-3 sm:p-6 sm:pb-3">
                 <CardTitle>Detalji</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 text-sm">
+              <CardContent className="grid grid-cols-2 gap-x-3 gap-y-4 p-4 pt-0 text-sm sm:p-6 sm:pt-0 lg:flex lg:flex-col lg:gap-3">
                 <div>
                   <span className="text-muted-foreground">Datum</span>
                   <div className="font-medium">
@@ -129,17 +155,19 @@ export const EventDetailsPage = () => {
                 <div>
                   <span className="text-muted-foreground">Cena</span>
                   <div className="font-medium">
-                    {event.price === 0 ? "Besplatno" : `${event.price} ${event.currency}`}
+                    {event.price === 0
+                      ? "Besplatno"
+                      : `${event.price} ${event.currency}`}
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader>
+              <CardHeader className="p-4 pb-3 sm:p-6 sm:pb-3">
                 <CardTitle>Izmena</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
                 <CreateEventForm
                   key={event.id}
                   title="Izmeni radionicu"

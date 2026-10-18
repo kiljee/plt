@@ -73,49 +73,41 @@ export const ReservationReportTable = ({
       : 0;
 
   return (
-    <table className="w-full min-w-[620px] text-left text-[13px]">
-      <thead className="sticky top-0 border-b bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
-        <tr>
-          <th className="px-2.5 py-2 font-medium">Radionica</th>
-          <th className="px-2.5 py-2 font-medium">Datum</th>
-          <th className="px-2.5 py-2 font-medium">Lokacija</th>
-          <th
-            className="px-2.5 py-2 text-right font-medium"
-            title="Broj rezervacija"
-          >
-            Rez.
-          </th>
-          <th
-            className="px-2.5 py-2 text-right font-medium"
-            title="Ukupan broj mesta iz tih rezervacija"
-          >
-            Mesta
-          </th>
-          <th className="px-2.5 py-2 text-right font-medium">Očekivano</th>
-          <th className="px-2.5 py-2 text-right font-medium">Uplaćeno</th>
-          <th className="px-2.5 py-2 text-right font-medium">Naplata</th>
-          <th className="px-2.5 py-2 text-right font-medium">Razlika</th>
-        </tr>
-      </thead>
-      <tbody>
+    <>
+      <div className="md:hidden">
         {rows.map((row) => {
           const diff = row.amountPaidSum - row.expectedSum;
+          const metrics = [
+            { label: "Rez.", value: String(row.reservationCount) },
+            { label: "Mesta", value: String(row.seatsSum) },
+            {
+              label: "Naplata",
+              value: `${row.collectionRate.toLocaleString("sr-RS")}%`,
+            },
+            {
+              label: "Očekivano",
+              value: formatMoney(row.expectedSum, row.currency),
+            },
+            {
+              label: "Uplaćeno",
+              value: formatMoney(row.amountPaidSum, row.currency),
+            },
+            {
+              label: "Razlika",
+              value: formatMoney(diff, row.currency),
+              className: getDiffClass(diff),
+            },
+          ];
           return (
-            <tr
+            <article
               key={row.eventId}
-              className={`border-b transition-colors last:border-0 ${getRowClass(row.location)}`}
+              className={`border-b px-4 py-3 last:border-0 ${getRowClass(row.location)}`}
             >
-              <td
-                className="max-w-[170px] truncate px-2.5 py-2 font-medium"
-                title={row.title}
-              >
-                {row.title}
-              </td>
-              <td className="whitespace-nowrap px-2.5 py-2">
-                {dayjs.utc(row.date).format("DD.MM.YYYY")}
-              </td>
-              <td className="px-2.5 py-2">
-                <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <p className="font-medium leading-snug">{row.title}</p>
+              <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                <span>{dayjs.utc(row.date).format("DD.MM.YYYY")}</span>
+                <span aria-hidden>·</span>
+                <span className="inline-flex items-center gap-1.5">
                   {isEventLocation(row.location) ? (
                     <span
                       className={`h-2 w-2 shrink-0 rounded-full ${LOCATION_DOT_CLASS[row.location]}`}
@@ -124,58 +116,171 @@ export const ReservationReportTable = ({
                   ) : null}
                   {getLocationLabel(row.location)}
                 </span>
-              </td>
-              <td className="px-2.5 py-2 text-right tabular-nums">
-                {row.reservationCount}
-              </td>
-              <td className="px-2.5 py-2 text-right tabular-nums">
-                {row.seatsSum}
-              </td>
-              <td className="px-2.5 py-2 text-right tabular-nums">
-                {formatMoney(row.expectedSum, row.currency)}
-              </td>
-              <td className="px-2.5 py-2 text-right tabular-nums">
-                {formatMoney(row.amountPaidSum, row.currency)}
-              </td>
-              <td className="px-2.5 py-2 text-right tabular-nums">
-                {row.collectionRate.toLocaleString("sr-RS")}%
-              </td>
-              <td
-                className={`px-2.5 py-2 text-right tabular-nums ${getDiffClass(diff)}`}
-              >
-                {formatMoney(diff, row.currency)}
-              </td>
-            </tr>
+              </p>
+              <dl className="mt-3 grid grid-cols-3 gap-x-2 gap-y-3">
+                {metrics.map((metric) => (
+                  <div key={metric.label} className="min-w-0">
+                    <dt className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                      {metric.label}
+                    </dt>
+                    <dd
+                      className={`mt-0.5 break-words text-[13px] font-medium tabular-nums ${metric.className ?? ""}`}
+                    >
+                      {metric.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
           );
         })}
-      </tbody>
-      <tfoot className="border-t bg-muted/40 font-medium">
-        <tr>
-          <td className="px-2.5 py-2" colSpan={3}>
+        <div className="bg-muted/40 px-4 py-3">
+          <p className="text-[13px] font-medium">
             Ukupno ({rows.length} radionica)
-          </td>
-          <td className="px-2.5 py-2 text-right tabular-nums">
-            {totals.reservationCount}
-          </td>
-          <td className="px-2.5 py-2 text-right tabular-nums">
-            {totals.seatsSum}
-          </td>
-          <td className="px-2.5 py-2 text-right tabular-nums">
-            {formatMoney(totals.expectedSum, totals.currency)}
-          </td>
-          <td className="px-2.5 py-2 text-right tabular-nums">
-            {formatMoney(totals.amountPaidSum, totals.currency)}
-          </td>
-          <td className="px-2.5 py-2 text-right tabular-nums">
-            {totalRate.toLocaleString("sr-RS")}%
-          </td>
-          <td
-            className={`px-2.5 py-2 text-right tabular-nums ${getDiffClass(totalDiff)}`}
-          >
-            {formatMoney(totalDiff, totals.currency)}
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+          </p>
+          <dl className="mt-3 grid grid-cols-3 gap-x-2 gap-y-3">
+            {[
+              { label: "Rez.", value: String(totals.reservationCount) },
+              { label: "Mesta", value: String(totals.seatsSum) },
+              {
+                label: "Naplata",
+                value: `${totalRate.toLocaleString("sr-RS")}%`,
+              },
+              {
+                label: "Očekivano",
+                value: formatMoney(totals.expectedSum, totals.currency),
+              },
+              {
+                label: "Uplaćeno",
+                value: formatMoney(totals.amountPaidSum, totals.currency),
+              },
+              {
+                label: "Razlika",
+                value: formatMoney(totalDiff, totals.currency),
+                className: getDiffClass(totalDiff),
+              },
+            ].map((metric) => (
+              <div key={metric.label} className="min-w-0">
+                <dt className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  {metric.label}
+                </dt>
+                <dd
+                  className={`mt-0.5 break-words text-[13px] font-medium tabular-nums ${metric.className ?? ""}`}
+                >
+                  {metric.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[620px] text-left text-[13px]">
+          <thead className="sticky top-0 border-b bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
+            <tr>
+              <th className="px-2.5 py-2 font-medium">Radionica</th>
+              <th className="px-2.5 py-2 font-medium">Datum</th>
+              <th className="px-2.5 py-2 font-medium">Lokacija</th>
+              <th
+                className="px-2.5 py-2 text-right font-medium"
+                title="Broj rezervacija"
+              >
+                Rez.
+              </th>
+              <th
+                className="px-2.5 py-2 text-right font-medium"
+                title="Ukupan broj mesta iz tih rezervacija"
+              >
+                Mesta
+              </th>
+              <th className="px-2.5 py-2 text-right font-medium">Očekivano</th>
+              <th className="px-2.5 py-2 text-right font-medium">Uplaćeno</th>
+              <th className="px-2.5 py-2 text-right font-medium">Naplata</th>
+              <th className="px-2.5 py-2 text-right font-medium">Razlika</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => {
+              const diff = row.amountPaidSum - row.expectedSum;
+              return (
+                <tr
+                  key={row.eventId}
+                  className={`border-b transition-colors last:border-0 ${getRowClass(row.location)}`}
+                >
+                  <td
+                    className="max-w-[170px] truncate px-2.5 py-2 font-medium"
+                    title={row.title}
+                  >
+                    {row.title}
+                  </td>
+                  <td className="whitespace-nowrap px-2.5 py-2">
+                    {dayjs.utc(row.date).format("DD.MM.YYYY")}
+                  </td>
+                  <td className="px-2.5 py-2">
+                    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                      {isEventLocation(row.location) ? (
+                        <span
+                          className={`h-2 w-2 shrink-0 rounded-full ${LOCATION_DOT_CLASS[row.location]}`}
+                          aria-hidden
+                        />
+                      ) : null}
+                      {getLocationLabel(row.location)}
+                    </span>
+                  </td>
+                  <td className="px-2.5 py-2 text-right tabular-nums">
+                    {row.reservationCount}
+                  </td>
+                  <td className="px-2.5 py-2 text-right tabular-nums">
+                    {row.seatsSum}
+                  </td>
+                  <td className="px-2.5 py-2 text-right tabular-nums">
+                    {formatMoney(row.expectedSum, row.currency)}
+                  </td>
+                  <td className="px-2.5 py-2 text-right tabular-nums">
+                    {formatMoney(row.amountPaidSum, row.currency)}
+                  </td>
+                  <td className="px-2.5 py-2 text-right tabular-nums">
+                    {row.collectionRate.toLocaleString("sr-RS")}%
+                  </td>
+                  <td
+                    className={`px-2.5 py-2 text-right tabular-nums ${getDiffClass(diff)}`}
+                  >
+                    {formatMoney(diff, row.currency)}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot className="border-t bg-muted/40 font-medium">
+            <tr>
+              <td className="px-2.5 py-2" colSpan={3}>
+                Ukupno ({rows.length} radionica)
+              </td>
+              <td className="px-2.5 py-2 text-right tabular-nums">
+                {totals.reservationCount}
+              </td>
+              <td className="px-2.5 py-2 text-right tabular-nums">
+                {totals.seatsSum}
+              </td>
+              <td className="px-2.5 py-2 text-right tabular-nums">
+                {formatMoney(totals.expectedSum, totals.currency)}
+              </td>
+              <td className="px-2.5 py-2 text-right tabular-nums">
+                {formatMoney(totals.amountPaidSum, totals.currency)}
+              </td>
+              <td className="px-2.5 py-2 text-right tabular-nums">
+                {totalRate.toLocaleString("sr-RS")}%
+              </td>
+              <td
+                className={`px-2.5 py-2 text-right tabular-nums ${getDiffClass(totalDiff)}`}
+              >
+                {formatMoney(totalDiff, totals.currency)}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </>
   );
 };

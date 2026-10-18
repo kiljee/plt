@@ -21,24 +21,36 @@ export const ReservationShareActions = ({
   disabled = false,
 }: ReservationShareActionsProps) => {
   const [copied, setCopied] = useState(false);
+  const copyText = buildReservationsListShareText({
+    eventTitle,
+    eventDate,
+    reservations,
+    includePayments: false,
+  });
   const shareText = buildReservationsListShareText({
     eventTitle,
     eventDate,
     reservations,
+    includePayments: true,
   });
-  const shareTitle = eventTitle
-    ? `Rezervacije: ${eventTitle}`
-    : "Rezervacije";
+  const shareTitle = eventTitle ? `Rezervacije: ${eventTitle}` : "Rezervacije";
 
-  const handleCopy = async () => {
+  const copyToClipboard = async (text: string): Promise<boolean> => {
     try {
-      await navigator.clipboard.writeText(shareText);
-      setCopied(true);
-      toast.success("Sve rezervacije kopirane");
-      window.setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(text);
+      return true;
     } catch {
       toast.error("Kopiranje nije uspelo");
+      return false;
     }
+  };
+
+  const handleCopy = async () => {
+    const isCopied = await copyToClipboard(copyText);
+    if (!isCopied) return;
+    setCopied(true);
+    toast.success("Kopirano — samo ko je rezervisao");
+    window.setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShare = async () => {
@@ -53,7 +65,11 @@ export const ReservationShareActions = ({
         if (err instanceof Error && err.name === "AbortError") return;
       }
     }
-    await handleCopy();
+    const isCopied = await copyToClipboard(shareText);
+    if (!isCopied) return;
+    setCopied(true);
+    toast.success("Kopirano — sve sa uplatama");
+    window.setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -65,15 +81,15 @@ export const ReservationShareActions = ({
         onClick={handleCopy}
         disabled={disabled || reservations.length === 0}
         className="gap-1.5"
-        aria-label="Kopiraj sve rezervacije"
-        title="Kopiraj sve"
+        aria-label="Kopiraj samo ko je rezervisao"
+        title="Kopiraj samo ko je rezervisao"
       >
         {copied ? (
           <Check className="h-4 w-4 text-green-600" aria-hidden />
         ) : (
           <Copy className="h-4 w-4" aria-hidden />
         )}
-        <span>{copied ? "Kopirano" : "Kopiraj sve"}</span>
+        <span>{copied ? "Kopirano" : "Kopiraj"}</span>
       </Button>
       <Button
         type="button"
@@ -82,8 +98,8 @@ export const ReservationShareActions = ({
         onClick={handleShare}
         disabled={disabled || reservations.length === 0}
         className="gap-1.5"
-        aria-label="Podeli sve rezervacije"
-        title="Podeli sve"
+        aria-label="Podeli sve rezervacije sa uplatama"
+        title="Podeli sve sa uplatama"
       >
         <Share2 className="h-4 w-4" aria-hidden />
         <span>Podeli sve</span>
