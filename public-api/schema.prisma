@@ -46,14 +46,17 @@ model Reservation {
   email     String
   name      String?
   phone     String?
-  seats     Int      @default(1)
-  status    String   @default("PENDING")
-  createdAt DateTime @default(now())
+  seats       Int      @default(1)
+  amountPaid  Int?
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
 
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
   user    User?  @relation(fields: [userId], references: [id])
   userId  String?
+
+  @@index([status, createdAt])
 }
 
 model EmailBlacklist {

@@ -1,0 +1,140 @@
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc.js";
+import { formatMoney } from "../lib/reportFormat";
+import type { ReservationReportWorkshopRow } from "../reservations/reportQueries";
+import { EventLocation, type EventLocationType } from "../reservations/types";
+
+dayjs.extend(utc);
+
+const LOCATION_LABELS: Record<EventLocationType, string> = {
+  [EventLocation.BELGRADE]: "Beograd",
+  [EventLocation.NOVI_SAD]: "Novi Sad",
+};
+
+interface ReservationReportTableProps {
+  rows: ReservationReportWorkshopRow[];
+}
+
+const getLocationLabel = (location: string): string =>
+  location === EventLocation.BELGRADE || location === EventLocation.NOVI_SAD
+    ? LOCATION_LABELS[location as EventLocationType]
+    : location;
+
+const getDiffClass = (diff: number): string =>
+  diff < 0 ? "text-amber-600" : diff > 0 ? "text-emerald-600" : "";
+
+export const ReservationReportTable = ({
+  rows,
+}: ReservationReportTableProps) => {
+  if (rows.length === 0) {
+    return (
+      <p className="py-12 text-center text-sm text-muted-foreground">
+        Nema rezervacija za izabrani mesec.
+      </p>
+    );
+  }
+
+  const totals = rows.reduce(
+    (acc, row) => ({
+      reservationCount: acc.reservationCount + row.reservationCount,
+      seatsSum: acc.seatsSum + row.seatsSum,
+      expectedSum: acc.expectedSum + row.expectedSum,
+      amountPaidSum: acc.amountPaidSum + row.amountPaidSum,
+      currency: acc.currency || row.currency,
+    }),
+    {
+      reservationCount: 0,
+      seatsSum: 0,
+      expectedSum: 0,
+      amountPaidSum: 0,
+      currency: "",
+    },
+  );
+  const totalDiff = totals.amountPaidSum - totals.expectedSum;
+  const totalRate =
+    totals.expectedSum > 0
+      ? Math.round((totals.amountPaidSum / totals.expectedSum) * 1000) / 10
+      : 0;
+
+  return (
+    <table className="w-full min-w-[720px] text-left text-sm">
+      <thead className="sticky top-0 border-b bg-muted/60 text-xs uppercase tracking-wide text-muted-foreground">
+        <tr>
+          <th className="px-3 py-2.5 font-medium">Radionica</th>
+          <th className="px-3 py-2.5 font-medium">Datum</th>
+          <th className="px-3 py-2.5 font-medium">Lokacija</th>
+          <th className="px-3 py-2.5 text-right font-medium">Rez.</th>
+          <th className="px-3 py-2.5 text-right font-medium">Karte</th>
+          <th className="px-3 py-2.5 text-right font-medium">Očekivano</th>
+          <th className="px-3 py-2.5 text-right font-medium">Uplaćeno</th>
+          <th className="px-3 py-2.5 text-right font-medium">Naplata</th>
+          <th className="px-3 py-2.5 text-right font-medium">Razlika</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => {
+          const diff = row.amountPaidSum - row.expectedSum;
+          return (
+            <tr
+              key={row.eventId}
+              className="border-b transition-colors last:border-0 hover:bg-muted/30"
+            >
+              <td className="px-3 py-2.5 font-medium">{row.title}</td>
+              <td className="whitespace-nowrap px-3 py-2.5">
+                {dayjs.utc(row.date).format("DD.MM.YYYY")}
+              </td>
+              <td className="px-3 py-2.5">{getLocationLabel(row.location)}</td>
+              <td className="px-3 py-2.5 text-right tabular-nums">
+                {row.reservationCount}
+              </td>
+              <td className="px-3 py-2.5 text-right tabular-nums">
+                {row.seatsSum}
+              </td>
+              <td className="px-3 py-2.5 text-right tabular-nums">
+                {formatMoney(row.expectedSum, row.currency)}
+              </td>
+              <td className="px-3 py-2.5 text-right tabular-nums">
+                {formatMoney(row.amountPaidSum, row.currency)}
+              </td>
+              <td className="px-3 py-2.5 text-right tabular-nums">
+                {row.collectionRate.toLocaleString("sr-RS")}%
+              </td>
+              <td
+                className={`px-3 py-2.5 text-right tabular-nums ${getDiffClass(diff)}`}
+              >
+                {formatMoney(diff, row.currency)}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+      <tfoot className="border-t bg-muted/40 font-medium">
+        <tr>
+          <td className="px-3 py-2.5" colSpan={3}>
+            Ukupno ({rows.length} radionica)
+          </td>
+          <td className="px-3 py-2.5 text-right tabular-nums">
+            {totals.reservationCount}
+          </td>
+          <td className="px-3 py-2.5 text-right tabular-nums">
+            {totals.seatsSum}
+          </td>
+          <td className="px-3 py-2.5 text-right tabular-nums">
+            {formatMoney(totals.expectedSum, totals.currency)}
+          </td>
+          <td className="px-3 py-2.5 text-right tabular-nums">
+            {formatMoney(totals.amountPaidSum, totals.currency)}
+          </td>
+          <td className="px-3 py-2.5 text-right tabular-nums">
+            {totalRate.toLocaleString("sr-RS")}%
+          </td>
+          <td
+            className={`px-3 py-2.5 text-right tabular-nums ${getDiffClass(totalDiff)}`}
+          >
+            {formatMoney(totalDiff, totals.currency)}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  );
+};

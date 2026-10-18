@@ -150,6 +150,16 @@ action rejectReservation {
   entities: [Reservation, Event, User]
 }
 
+action updateReservationPayment {
+  fn: import { updateReservationPayment } from "@src/reservations/actions",
+  entities: [Reservation, User]
+}
+
+query getReservationReport {
+  fn: import { getReservationReport } from "@src/reservations/reportQueries",
+  entities: [Reservation, Event, User]
+}
+
 query getEmailBlacklist {
   fn: import { getEmailBlacklist } from "@src/reservations/emailBlacklist",
   entities: [User, EmailBlacklist]
@@ -181,6 +191,12 @@ route EmailBlacklistRoute { path: "/rezervacije/blacklist", to: EmailBlacklistPa
 page EmailBlacklistPage {
   authRequired: true,
   component: import { EmailBlacklistPage } from "@src/reservations/EmailBlacklistPage.tsx"
+}
+
+route ReservationReportRoute { path: "/izvestaj", to: ReservationReportPage }
+page ReservationReportPage {
+  authRequired: true,
+  component: import { ReservationReportPage } from "@src/dashboard/ReservationReportPage.tsx"
 }
 // #endregion Dashboard
 

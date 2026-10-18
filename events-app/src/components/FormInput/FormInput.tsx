@@ -7,7 +7,9 @@ interface FormInputProps {
   id: string;
   label: string;
   placeholder?: string;
-  type?: "text" | "email" | "tel";
+  type?: "text" | "email" | "tel" | "number";
+  min?: number;
+  step?: number;
   register: UseFormRegisterReturn;
   error?: { message?: string };
   optional?: boolean;
@@ -19,6 +21,8 @@ export const FormInput = ({
   label,
   placeholder,
   type = "text",
+  min,
+  step,
   register,
   error,
   optional = false,
@@ -33,6 +37,8 @@ export const FormInput = ({
       {...register}
       id={id}
       type={type}
+      min={min}
+      step={step}
       className={`${CHECKOUT_FORM_STYLES.input} ${error ? CHECKOUT_FORM_STYLES.inputError : ""}`}
       placeholder={placeholder}
     />

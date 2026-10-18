@@ -28,6 +28,7 @@ import {
 } from "../components/ui/pagination";
 import { useRequireAdmin } from "../hooks/useRequireAdmin";
 import { useAddEventModal } from "../shared/context/AddEventModalContext";
+import { AdminNavLinks } from "../shared/components/AdminNavLinks";
 import { EventStatus } from "../events/constants";
 import type { EventDateOrder } from "../events/queries";
 import {
@@ -393,34 +394,10 @@ export const DashboardPage = () => {
                 <CardDescription>Brza navigacija</CardDescription>
               </CardHeader>
               <CardContent>
-                <nav className="flex flex-col gap-2">
-                  <Link
-                    to="/"
-                    className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-                  >
-                    Radionice
-                  </Link>
-                  <Link
-                    to="/kalendar"
-                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
-                  >
-                    Kalendar
-                  </Link>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="justify-start"
-                    onClick={openAddEventModal}
-                  >
-                    Dodaj radionicu
-                  </Button>
-                  <Link
-                    to="/rezervacije"
-                    className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted"
-                  >
-                    Rezervacije
-                  </Link>
-                </nav>
+                <AdminNavLinks
+                  active="workshops"
+                  onAddEvent={openAddEventModal}
+                />
               </CardContent>
             </Card>
           </aside>

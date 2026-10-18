@@ -182,6 +182,12 @@ export const ReservationsPage = () => {
               >
                 Blacklist emailova
               </Link>
+              <Link
+                to="/izvestaj"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Izveštaj
+              </Link>
             </nav>
           </div>
           <div className="flex flex-wrap gap-2">

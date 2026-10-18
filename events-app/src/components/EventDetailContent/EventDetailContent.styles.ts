@@ -34,7 +34,7 @@ export const EVENT_DETAIL_STYLES = {
 
   description: {
     wrapper: "px-4 mt-2",
-    text: "text-xs font-normal uppercase tracking-widest text-[#212529] lg:text-[10px] lg:leading-[10px]",
+    text: "text-sm font-normal normal-case leading-relaxed whitespace-pre-wrap text-[#212529]",
   },
   
   quantitySection: "px-4",

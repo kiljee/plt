@@ -31,6 +31,7 @@ const RESERVATION_SELECT = {
   email: true,
   name: true,
   phone: true,
+  amountPaid: true,
   event: {
     select: {
       id: true,
@@ -109,6 +110,7 @@ export type ReservationWithEvent = {
   id: string;
   status: string;
   seats: number;
+  amountPaid: number | null;
   createdAt: Date;
   email: string;
   name: string | null;

@@ -13,6 +13,7 @@ import {
   type DeleteReservation,
   type ConfirmReservation,
   type RejectReservation,
+  type UpdateReservationPayment,
 } from "wasp/server/operations";
 import { eventToSlug } from "../lib/slug";
 import {
@@ -157,4 +158,34 @@ export const rejectReservation: RejectReservation<{ id: string }> = async (
   }
 
   return updated;
+};
+
+export const updateReservationPayment: UpdateReservationPayment<
+  { id: string; amountPaid: number | null }
+> = async ({ id, amountPaid }, context) => {
+  if (!context.user) throw new HttpError(401);
+  const user = await context.entities.User.findUnique({
+    where: { id: context.user.id },
+    select: { isAdmin: true },
+  });
+  if (!user?.isAdmin) {
+    throw new HttpError(403, "Samo admin može izvršiti ovu akciju.");
+  }
+
+  if (
+    amountPaid !== null &&
+    (!Number.isInteger(amountPaid) || amountPaid < 0)
+  ) {
+    throw new HttpError(400, "Neispravan iznos uplate.");
+  }
+
+  const reservation = await context.entities.Reservation.findUnique({
+    where: { id },
+  });
+  if (!reservation) throw new HttpError(404, "Rezervacija nije pronađena.");
+
+  return context.entities.Reservation.update({
+    where: { id },
+    data: { amountPaid },
+  });
 };

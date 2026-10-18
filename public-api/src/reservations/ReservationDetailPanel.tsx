@@ -7,10 +7,13 @@ import {
   confirmReservation,
   rejectReservation,
   deleteReservation,
+  updateReservationPayment,
   useQuery,
   useAction,
 } from "wasp/client/operations";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import { formatEventDateTime } from "../lib/date";
 import { formatReservationCode } from "../lib/reservationCode";
 import { ReservationLocationCircle } from "./ReservationLocationCircle";
@@ -39,9 +42,20 @@ const ReservationDetailPanelInner = ({
   const confirmAction = useAction(confirmReservation);
   const rejectAction = useAction(rejectReservation);
   const deleteAction = useAction(deleteReservation);
+  const paymentAction = useAction(updateReservationPayment);
   const [confirming, setConfirming] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [amountPaidInput, setAmountPaidInput] = useState("");
+  const [savingPayment, setSavingPayment] = useState(false);
+
+  useEffect(() => {
+    if (reservation?.amountPaid != null) {
+      setAmountPaidInput(String(reservation.amountPaid));
+    } else {
+      setAmountPaidInput("");
+    }
+  }, [reservation?.id, reservation?.amountPaid]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -91,6 +105,27 @@ const ReservationDetailPanelInner = ({
       toast.error(`Greška: ${String(err)}`);
     } finally {
       setRejecting(false);
+    }
+  };
+
+  const handleSavePayment = async () => {
+    const trimmed = amountPaidInput.trim();
+    const amountPaid =
+      trimmed === "" ? null : Number.parseInt(trimmed, 10);
+    if (amountPaid !== null && (!Number.isFinite(amountPaid) || amountPaid < 0)) {
+      toast.error("Unesite ispravan iznos (ceo broj).");
+      return;
+    }
+    setSavingPayment(true);
+    try {
+      await paymentAction({ id: reservationId, amountPaid });
+      toast.success("Iznos uplate je sačuvan.");
+      await refetch();
+      onChanged();
+    } catch (err: unknown) {
+      toast.error(`Greška: ${String(err)}`);
+    } finally {
+      setSavingPayment(false);
     }
   };
 
@@ -210,6 +245,29 @@ const ReservationDetailPanelInner = ({
                   {reservation.event
                     ? `${reservation.event.price * (reservation.seats ?? 1)} ${reservation.event.currency}`
                     : "—"}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="amount-paid">Uplaćeno na račun (RSD)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="amount-paid"
+                    type="number"
+                    min={0}
+                    step={1}
+                    inputMode="numeric"
+                    placeholder="npr. 3500"
+                    value={amountPaidInput}
+                    onChange={(e) => setAmountPaidInput(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={handleSavePayment}
+                    disabled={savingPayment}
+                  >
+                    {savingPayment ? "Čuvanje…" : "Sačuvaj"}
+                  </Button>
                 </div>
               </div>
               <div>
