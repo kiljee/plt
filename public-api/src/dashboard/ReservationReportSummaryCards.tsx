@@ -28,14 +28,14 @@ export const ReservationReportSummaryCards = ({
       hint: `${data.workshopCount} radionica`,
     },
     {
-      label: "Karte",
+      label: "Mesta",
       value: data.seatsSum.toLocaleString("sr-RS"),
-      hint: "prodatih mesta",
+      hint: "mesta iz rezervacija",
     },
     {
       label: "Očekivano",
       value: formatMoney(data.expectedSum, data.currency),
-      hint: "cena × karte",
+      hint: "cena × mesta",
     },
     {
       label: "Uplaćeno",

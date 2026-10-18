@@ -11,14 +11,30 @@ const LOCATION_LABELS: Record<EventLocationType, string> = {
   [EventLocation.NOVI_SAD]: "Novi Sad",
 };
 
+const LOCATION_ROW_CLASS: Record<EventLocationType, string> = {
+  [EventLocation.BELGRADE]: "bg-[#3D6B7E]/[0.07] hover:bg-[#3D6B7E]/[0.14]",
+  [EventLocation.NOVI_SAD]: "bg-[#3D6F62]/[0.07] hover:bg-[#3D6F62]/[0.14]",
+};
+
+const LOCATION_DOT_CLASS: Record<EventLocationType, string> = {
+  [EventLocation.BELGRADE]: "bg-[#3D6B7E]",
+  [EventLocation.NOVI_SAD]: "bg-[#3D6F62]",
+};
+
+const DEFAULT_ROW_CLASS = "hover:bg-muted/30";
+
 interface ReservationReportTableProps {
   rows: ReservationReportWorkshopRow[];
 }
 
+const isEventLocation = (location: string): location is EventLocationType =>
+  location === EventLocation.BELGRADE || location === EventLocation.NOVI_SAD;
+
 const getLocationLabel = (location: string): string =>
-  location === EventLocation.BELGRADE || location === EventLocation.NOVI_SAD
-    ? LOCATION_LABELS[location as EventLocationType]
-    : location;
+  isEventLocation(location) ? LOCATION_LABELS[location] : location;
+
+const getRowClass = (location: string): string =>
+  isEventLocation(location) ? LOCATION_ROW_CLASS[location] : DEFAULT_ROW_CLASS;
 
 const getDiffClass = (diff: number): string =>
   diff < 0 ? "text-amber-600" : diff > 0 ? "text-emerald-600" : "";
@@ -63,8 +79,18 @@ export const ReservationReportTable = ({
           <th className="px-2.5 py-2 font-medium">Radionica</th>
           <th className="px-2.5 py-2 font-medium">Datum</th>
           <th className="px-2.5 py-2 font-medium">Lokacija</th>
-          <th className="px-2.5 py-2 text-right font-medium">Rez.</th>
-          <th className="px-2.5 py-2 text-right font-medium">Karte</th>
+          <th
+            className="px-2.5 py-2 text-right font-medium"
+            title="Broj rezervacija"
+          >
+            Rez.
+          </th>
+          <th
+            className="px-2.5 py-2 text-right font-medium"
+            title="Ukupan broj mesta iz tih rezervacija"
+          >
+            Mesta
+          </th>
           <th className="px-2.5 py-2 text-right font-medium">Očekivano</th>
           <th className="px-2.5 py-2 text-right font-medium">Uplaćeno</th>
           <th className="px-2.5 py-2 text-right font-medium">Naplata</th>
@@ -77,7 +103,7 @@ export const ReservationReportTable = ({
           return (
             <tr
               key={row.eventId}
-              className="border-b transition-colors last:border-0 hover:bg-muted/30"
+              className={`border-b transition-colors last:border-0 ${getRowClass(row.location)}`}
             >
               <td
                 className="max-w-[170px] truncate px-2.5 py-2 font-medium"
@@ -88,7 +114,17 @@ export const ReservationReportTable = ({
               <td className="whitespace-nowrap px-2.5 py-2">
                 {dayjs.utc(row.date).format("DD.MM.YYYY")}
               </td>
-              <td className="px-2.5 py-2">{getLocationLabel(row.location)}</td>
+              <td className="px-2.5 py-2">
+                <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                  {isEventLocation(row.location) ? (
+                    <span
+                      className={`h-2 w-2 shrink-0 rounded-full ${LOCATION_DOT_CLASS[row.location]}`}
+                      aria-hidden
+                    />
+                  ) : null}
+                  {getLocationLabel(row.location)}
+                </span>
+              </td>
               <td className="px-2.5 py-2 text-right tabular-nums">
                 {row.reservationCount}
               </td>

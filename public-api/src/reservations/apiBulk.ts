@@ -5,6 +5,10 @@ import {
   parseBulkRequestBody,
 } from "./types";
 import {
+  getAvailabilityHttpStatus,
+  getEventAvailability,
+} from "../lib/eventAvailability";
+import {
   sendReservationConfirmation,
   sendReservationShortEmail,
   sendAdminReservationNotification,
@@ -133,21 +137,19 @@ export const createReservationsBulkPublic: CreateReservationsBulkPublic =
 
       for (const [eventId, requestedSeats] of requestedByEvent.entries()) {
         const event = eventMap.get(eventId)!;
-        const capacity = event.capacity;
         const alreadyReserved = reservedByEvent.get(eventId) ?? 0;
+        const availability = getEventAvailability(
+          event,
+          alreadyReserved,
+          requestedSeats,
+        );
 
-        if (!Number.isInteger(capacity) || capacity < 1) {
-          res.status(400).json({
-            error: `Događaj "${event.title}" nema validan kapacitet`,
-          });
-          return;
-        }
-
-        if (alreadyReserved + requestedSeats > capacity) {
-          res.status(400).json({
-            error: `Nema dovoljno mesta za "${event.title}"`,
+        if (!availability.isAvailable) {
+          res.status(getAvailabilityHttpStatus(availability.code)).json({
+            error: availability.error,
+            code: availability.code,
             eventId,
-            availableSeats: Math.max(0, capacity - alreadyReserved),
+            availableSeats: availability.availableSeats,
             requestedSeats,
           });
           return;

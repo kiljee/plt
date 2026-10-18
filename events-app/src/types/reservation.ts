@@ -9,3 +9,11 @@ export interface BulkReservationRequest {
   name?: string;
   phone?: string;
 }
+
+export interface BulkReservationErrorResponse {
+  error?: string;
+  code?: string;
+  eventId?: string;
+  availableSeats?: number;
+  requestedSeats?: number;
+}

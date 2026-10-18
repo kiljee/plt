@@ -18,8 +18,15 @@ export const POST = async (
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
+      const errorData = data as {
+        error?: string;
+        code?: string;
+        eventId?: string;
+        availableSeats?: number;
+        requestedSeats?: number;
+      };
       return NextResponse.json(
-        { error: (data as { error?: string })?.error ?? res.statusText },
+        { ...errorData, error: errorData?.error ?? res.statusText },
         { status: res.status },
       );
     }

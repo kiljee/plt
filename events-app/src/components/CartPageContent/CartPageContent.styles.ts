@@ -13,6 +13,7 @@ export const CART_PAGE_STYLES = {
     "rounded-lg bg-emerald-50 p-4 text-emerald-800 font-[var(--font-comfortaa)]",
   successContainer:
     "mx-auto max-w-[1184px] px-4 py-8 flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center",
+  noticeWrap: "w-full max-w-lg",
   successTitle:
     "font-[var(--font-comfortaa)] font-bold text-2xl leading-[27px] text-[#000914]",
   successSubtitle:

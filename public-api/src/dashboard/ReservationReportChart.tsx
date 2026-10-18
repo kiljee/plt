@@ -68,7 +68,7 @@ export const ReservationReportChart = ({
           isAnimationActive={false}
         />
         <Bar
-          name="Karte"
+          name="Mesta"
           dataKey="seatsSum"
           fill={CHART_2}
           radius={[0, 4, 4, 0]}

@@ -10,9 +10,14 @@ import {
   formatOrderId,
 } from "../email/reservation-confirmation";
 import {
+  getAvailabilityHttpStatus,
+  getEventAvailability,
+} from "../lib/eventAvailability";
+import {
   sendReservationShortEmail,
   sendAdminReservationNotification,
 } from "./sendReservationConfirmation";
+import { ActiveReservationStatuses } from "./types";
 
 export const createReservationPublic: CreateReservationPublic = async (
   req,
@@ -59,11 +64,18 @@ export const createReservationPublic: CreateReservationPublic = async (
   }
 
   const reservations = await context.entities.Reservation.findMany({
-    where: { eventId, status: { in: ["PENDING", "CONFIRMED"] } },
+    where: { eventId, status: { in: [...ActiveReservationStatuses] } },
   });
   const totalReserved = reservations.reduce((s, r) => s + (r.seats ?? 1), 0);
-  if (totalReserved + seats > event.capacity) {
-    res.status(400).json({ error: "Nema dovoljno slobodnih mesta" });
+  const availability = getEventAvailability(event, totalReserved, seats);
+  if (!availability.isAvailable) {
+    res.status(getAvailabilityHttpStatus(availability.code)).json({
+      error: availability.error,
+      code: availability.code,
+      eventId,
+      availableSeats: availability.availableSeats,
+      requestedSeats: seats,
+    });
     return;
   }
 
