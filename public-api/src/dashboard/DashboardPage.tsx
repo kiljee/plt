@@ -143,8 +143,8 @@ export const DashboardPage = () => {
 
   return (
     <div className="min-h-screen bg-muted/30">
-      <div className="mx-auto max-w-6xl px-2 py-3 sm:px-6 sm:py-8 lg:px-8">
-        <div className="mb-2 flex items-center justify-between gap-2 sm:mb-6 sm:gap-3">
+      <div className="mx-auto max-w-6xl px-2 py-2 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mb-1 flex items-center justify-between gap-2 sm:mb-6 sm:gap-3">
           <h1 className="text-lg font-semibold tracking-tight sm:text-2xl">
             Radionice
             {totalCount > 0 ? (
@@ -165,11 +165,11 @@ export const DashboardPage = () => {
           </Button>
         </div>
 
-        <Card>
-          <CardHeader className="border-b px-2 py-2 sm:px-6 sm:py-3">
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <Card className="rounded-none border-0 bg-transparent shadow-none sm:rounded-xl sm:border sm:bg-card sm:shadow">
+          <CardHeader className="border-b-0 px-0 py-1 sm:border-b sm:px-6 sm:py-3">
+            <div className="flex flex-wrap items-center gap-1 sm:gap-2">
               <div
-                className="flex w-full rounded-md border border-border bg-background p-0.5 sm:inline-flex sm:w-auto"
+                className="flex w-full gap-1 sm:inline-flex sm:w-auto sm:rounded-md sm:border sm:border-border sm:bg-background sm:p-0.5"
                 role="group"
                 aria-label="Filter po statusu"
               >
@@ -179,7 +179,7 @@ export const DashboardPage = () => {
                     variant={statusFilter === opt.value ? "default" : "ghost"}
                     size="sm"
                     type="button"
-                    className="h-7 flex-1 whitespace-nowrap px-2.5 sm:flex-none"
+                    className="h-6 flex-1 whitespace-nowrap px-2 sm:h-7 sm:flex-none sm:px-2.5"
                     onClick={() => setStatusFilter(opt.value)}
                     aria-pressed={statusFilter === opt.value}
                   >
@@ -194,7 +194,7 @@ export const DashboardPage = () => {
                   setLocationFilter(e.target.value as LocationFilterValue)
                 }
                 aria-label="Filter po lokaciji"
-                className="h-8 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary sm:flex-none"
+                className="h-7 min-w-0 flex-1 rounded-md border border-input bg-background px-2 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary sm:h-8 sm:flex-none"
               >
                 {LOCATION_FILTER_OPTIONS.map((opt) => (
                   <option key={`loc-${opt.value}`} value={opt.value}>
@@ -207,7 +207,7 @@ export const DashboardPage = () => {
                 type="button"
                 size="sm"
                 variant="outline"
-                className="shrink-0"
+                className="h-7 shrink-0 border-0 bg-transparent px-2 shadow-none hover:bg-muted sm:h-8 sm:border sm:bg-background sm:shadow-sm"
                 onClick={() =>
                   setEventDateOrder((prev) => (prev === "asc" ? "desc" : "asc"))
                 }
@@ -231,7 +231,7 @@ export const DashboardPage = () => {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="p-2 sm:p-6">
+          <CardContent className="p-0 sm:p-6">
             {isLoading && (
               <p className="py-6 text-center text-muted-foreground sm:py-8">
                 Učitavanje…
@@ -252,7 +252,7 @@ export const DashboardPage = () => {
 
             {!isLoading && events.length > 0 && (
               <>
-                <ul className="space-y-2 md:hidden">
+                <ul className="space-y-1 md:hidden">
                   {events.map((event) => {
                     const dateLabel = dayjs
                       .utc(event.date)
@@ -269,65 +269,51 @@ export const DashboardPage = () => {
                       EventStatus.ACTIVE;
                     const reservedCount =
                       (event as { reservedCount?: number }).reservedCount ?? 0;
-                    const occupancy =
-                      event.capacity > 0
-                        ? Math.min(
-                            100,
-                            Math.round((reservedCount / event.capacity) * 100),
-                          )
-                        : 0;
                     return (
                       <li
                         key={event.id}
-                        className="rounded-lg border bg-background p-2.5"
+                        className="relative rounded-lg border border-border px-2 py-1.5"
                       >
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center justify-between gap-2">
                           <Link
                             to={`/radionica/${event.id}`}
-                            className="min-w-0 font-semibold leading-snug text-primary"
+                            className="min-w-0 truncate text-sm font-semibold leading-snug text-primary after:absolute after:inset-0 after:content-['']"
+                            aria-label={`Otvori radionicu ${event.title}`}
                           >
                             {event.title}
                           </Link>
-                          {renderStatusSelect(event.id, status)}
+                          <span className="relative z-10 shrink-0">
+                            {renderStatusSelect(event.id, status)}
+                          </span>
                         </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {dateLabel}
-                          {timeLabel ? ` · ${timeLabel}` : ""} · {locationLabel}
-                        </p>
-                        <div className="mt-2">
-                          <div className="flex items-center justify-between text-xs text-muted-foreground">
-                            <span>Rezervisano</span>
-                            <span className="font-medium tabular-nums text-foreground">
-                              {reservedCount} / {event.capacity}
+                        <div className="mt-0.5 flex items-center justify-between gap-2">
+                          <p className="min-w-0 truncate text-[13px]">
+                            <span className="font-medium text-foreground">
+                              {dateLabel}
+                              {timeLabel ? ` · ${timeLabel}` : ""}
+                            </span>{" "}
+                            <span className="text-muted-foreground">
+                              · {locationLabel} ·{" "}
+                              <span
+                                className="tabular-nums"
+                                aria-label={`Rezervisano ${reservedCount} od ${event.capacity}`}
+                              >
+                                {reservedCount}/{event.capacity}
+                              </span>
                             </span>
-                          </div>
-                          <div
-                            className="mt-1 h-1 overflow-hidden rounded-full bg-muted"
-                            role="progressbar"
-                            aria-valuenow={reservedCount}
-                            aria-valuemin={0}
-                            aria-valuemax={event.capacity}
-                            aria-label={`Rezervisano ${reservedCount} od ${event.capacity}`}
-                          >
-                            <div
-                              className="h-full rounded-full bg-primary"
-                              style={{ width: `${occupancy}%` }}
-                            />
-                          </div>
-                        </div>
-                        <div className="mt-2 flex gap-1.5 border-t pt-2">
+                          </p>
                           <Button
                             asChild
                             size="sm"
-                            variant="outline"
-                            className="flex-1"
+                            className="relative z-10 h-6 shrink-0 border-0 bg-[#D14D8A] px-2 text-[11px] font-semibold text-white shadow-none hover:bg-[#bd3f7a] hover:text-white"
                           >
-                            <Link to={`/rezervacije?eventId=${event.id}`}>
-                              Rezervacije
+                            <Link
+                              to={`/rezervacije?eventId=${event.id}`}
+                              aria-label={`Rezervacije za ${event.title}`}
+                              title="Rezervacije"
+                            >
+                              REZ
                             </Link>
-                          </Button>
-                          <Button asChild size="sm" className="flex-1">
-                            <Link to={`/radionica/${event.id}`}>Otvori</Link>
                           </Button>
                         </div>
                       </li>
