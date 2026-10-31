@@ -8,6 +8,7 @@ export interface ReservationItem {
   currency: string
   quantity: number
   total: number
+  selectionSummary?: string
 }
 
 export const renderItemList = (items: ReservationItem[]) => `
@@ -27,7 +28,7 @@ export const renderItemList = (items: ReservationItem[]) => `
               Datum i vreme: ${item.dateTime}
             </p>
             <p style="margin: 0 0 4px 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: ${STYLES.textMuted};">
-              Cena: ${formatPrice(item.price, item.currency)}
+              ${item.selectionSummary ? `Opcije: ${item.selectionSummary}` : `Cena: ${formatPrice(item.price, item.currency)}`}
             </p>
             <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: ${STYLES.textMuted};">
               Količina: ${item.quantity} Komad

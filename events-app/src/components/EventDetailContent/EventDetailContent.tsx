@@ -16,7 +16,9 @@ import { OrderButton } from "@/components/OrderButton/OrderButton";
 import { PolicyInfoBlock } from "@/components/PolicyInfoBlock/PolicyInfoBlock";
 import { QuantitySelector } from "@/components/QuantitySelector/QuantitySelector";
 import { EVENT_DETAIL_STYLES } from "./EventDetailContent.styles";
-import { formatTotalPrice } from "@/lib/price";
+import { formatPrice } from "@/lib/price";
+import { alignOptionIds, selectedOptionsTotal } from "@/lib/workshopOptions";
+import { SeatOptionCards } from "@/components/SeatOptionCards/SeatOptionCards";
 
 interface EventDetailContentProps {
   event: EventDetailItem;
@@ -39,13 +41,36 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
   const origin = useWorkshopNavigationStore((s) => s.origin);
   const returnHref = useWorkshopNavigationStore((s) => s.returnHref);
   const clearWorkshopEntry = useWorkshopNavigationStore((s) => s.clearWorkshopEntry);
+  const hasOptions = event.options.length > 0;
   const [quantity, setQuantity] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>(() =>
+    event.options[0]?.id ? [event.options[0].id] : [],
+  );
   const [showAddedSuccess, setShowAddedSuccess] = useState(false);
   const [showCappedEffect, setShowCappedEffect] = useState(false);
 
   const images = parseImageUrls(event.imageUrls);
   const placesLeft = event.placesLeft ?? 0;
   const canOrder = placesLeft > 0 && quantity > 0 && quantity <= placesLeft;
+  const totalPrice = selectedOptionsTotal(
+    event.price,
+    quantity,
+    event.options,
+    selectedIds,
+  );
+
+  const handleQuantityChange = (next: number) => {
+    setQuantity(next);
+    if (event.options.length === 0) return;
+    const defaultOptionId = event.options[0]?.id ?? "";
+    setSelectedIds((current) => alignOptionIds(current, next, defaultOptionId));
+  };
+
+  const handleSelectOption = (index: number, optionId: string) => {
+    setSelectedIds((current) =>
+      current.map((id, currentIndex) => (currentIndex === index ? optionId : id)),
+    );
+  };
 
   const handleAddToCart = useCallback(() => {
     const slug = eventToSlug(event.title, event.date);
@@ -55,6 +80,7 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
         slug,
       },
       quantity,
+      event.options.length > 0 ? selectedIds : undefined,
     );
     if (result.capped) {
       setShowCappedEffect(true);
@@ -63,7 +89,7 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
     }
     setShowAddedSuccess(true);
     setTimeout(() => setShowAddedSuccess(false), ADDED_DURATION_MS);
-  }, [event, quantity, addToCart]);
+  }, [event, quantity, addToCart, selectedIds]);
 
   return (
     <section className={EVENT_DETAIL_STYLES.section}>
@@ -111,7 +137,7 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
               className={`${EVENT_DETAIL_STYLES.price.text} ${EVENT_DETAIL_STYLES.price.font}`}
               style={{ fontFamily: "var(--font-comfortaa), 'Comfortaa', sans-serif" }}
             >
-              {formatTotalPrice(event.price, event.currency, quantity)}
+              {formatPrice(totalPrice, event.currency)}
             </p>
           </div>
 
@@ -131,8 +157,20 @@ export const EventDetailContent = ({ event }: EventDetailContentProps) => {
                 value={quantity}
                 min={1}
                 max={placesLeft}
-                onChange={setQuantity}
+                onChange={handleQuantityChange}
                 label="Količina"
+              />
+            </div>
+          )}
+
+          {hasOptions && placesLeft > 0 && (
+            <div className={EVENT_DETAIL_STYLES.quantitySection}>
+              <SeatOptionCards
+                groupKey={event.id}
+                options={event.options}
+                selectedIds={selectedIds}
+                currency={event.currency}
+                onSelect={handleSelectOption}
               />
             </div>
           )}

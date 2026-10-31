@@ -28,6 +28,10 @@ import { ReservationDetailPanel } from "./ReservationDetailPanel";
 import { ReservationLocationCircle } from "./ReservationLocationCircle";
 import { ReservationShareActions } from "./ReservationShareActions";
 import { StatusFilter, type StatusFilterType } from "./types";
+import {
+  reservationExpectedAmount,
+  summarizeOptionSelections,
+} from "../events/workshopOptions";
 
 const PAGE_SIZE = 10;
 const STATUS_LABELS: Record<string, string> = {
@@ -43,8 +47,13 @@ const TAB_OPTIONS: { value: StatusFilterType; label: string }[] = [
   { value: StatusFilter.CANCELLED, label: "Otkazane" },
 ];
 
-const formatAmount = (price: number, currency: string, seats: number) =>
-  `${price * seats} ${currency}`;
+const formatReservationAmount = (
+  expectedAmount: number | null | undefined,
+  price: number,
+  currency: string,
+  seats: number,
+) =>
+  `${reservationExpectedAmount(expectedAmount, price, seats)} ${currency}`;
 
 type ReservationEvent = {
   title: string;
@@ -222,6 +231,10 @@ export const ReservationsPage = () => {
                   amountPaid: reservation.amountPaid,
                   price: event?.price ?? null,
                   currency: event?.currency ?? null,
+                  expectedAmount: reservation.expectedAmount,
+                  optionSummary:
+                    summarizeOptionSelections(reservation.optionSelections) ||
+                    null,
                 }))}
                 eventTitle={event?.title}
                 eventDate={eventDateLabel}
@@ -289,6 +302,9 @@ export const ReservationsPage = () => {
                     const seats = res.seats ?? 1;
                     const loc = res.event?.location ?? "BELGRADE";
                     const code = formatReservationCode(res.id);
+                    const optionSummary = summarizeOptionSelections(
+                      res.optionSelections,
+                    );
                     return (
                       <li
                         key={res.id}
@@ -323,9 +339,14 @@ export const ReservationsPage = () => {
                               {" · "}
                               {seats} {seats === 1 ? "mesto" : "mesta"}
                               {res.event
-                                ? ` · ${formatAmount(res.event.price, res.event.currency, seats)}`
+                                ? ` · ${formatReservationAmount(res.expectedAmount, res.event.price, res.event.currency, seats)}`
                                 : ""}
                             </div>
+                            {optionSummary ? (
+                              <div className="mt-0.5 text-xs text-muted-foreground">
+                                {optionSummary}
+                              </div>
+                            ) : null}
                             <div className="mt-0.5 text-xs">
                               <span
                                 className={
@@ -394,6 +415,9 @@ export const ReservationsPage = () => {
                         const seats = res.seats ?? 1;
                         const loc = res.event?.location ?? "BELGRADE";
                         const code = formatReservationCode(res.id);
+                        const optionSummary = summarizeOptionSelections(
+                          res.optionSelections,
+                        );
                         return (
                           <tr key={res.id} className="hover:bg-muted/30">
                             <td className="px-1 py-3 align-middle">
@@ -431,13 +455,25 @@ export const ReservationsPage = () => {
                             </td>
                             <td className="px-2 py-3">{seats}</td>
                             <td className="px-2 py-3">
-                              {res.event
-                                ? formatAmount(
-                                    res.event.price,
-                                    res.event.currency,
-                                    seats,
-                                  )
-                                : "—"}
+                              {res.event ? (
+                                <>
+                                  <div>
+                                    {formatReservationAmount(
+                                      res.expectedAmount,
+                                      res.event.price,
+                                      res.event.currency,
+                                      seats,
+                                    )}
+                                  </div>
+                                  {optionSummary ? (
+                                    <div className="text-xs text-muted-foreground">
+                                      {optionSummary}
+                                    </div>
+                                  ) : null}
+                                </>
+                              ) : (
+                                "—"
+                              )}
                             </td>
                             <td className="px-2 py-3">
                               <span

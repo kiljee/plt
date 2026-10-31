@@ -16,6 +16,7 @@ export const EVENT_PUBLIC_SELECT = {
   imageUrls: true,
   price: true,
   currency: true,
+  options: true,
   createdAt: true,
 } as const;
 
@@ -32,5 +33,6 @@ export type EventPublicRow = {
   imageUrls: string;
   price: number;
   currency: string;
+  options: string;
   createdAt: Date;
 };

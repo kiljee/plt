@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCartStore } from "@/store/cart";
+import { alignOptionIds } from "@/lib/workshopOptions";
 import type {
   BulkReservationErrorResponse,
   BulkReservationRequest,
@@ -63,7 +64,19 @@ export const CartPageContent = () => {
 
     try {
       const payload: BulkReservationRequest = {
-        items: items.map((i) => ({ eventId: i.eventId, seats: i.seats })),
+        items: items.map((i) => ({
+          eventId: i.eventId,
+          seats: i.seats,
+          ...(i.event.options?.length
+            ? {
+                optionIds: alignOptionIds(
+                  i.optionIds,
+                  i.seats,
+                  i.event.options[0]?.id,
+                ),
+              }
+            : {}),
+        })),
         email: formData.email.trim(),
         name: [formData.firstName, formData.lastName].filter(Boolean).join(" ") || undefined,
         phone: formData.phone.trim() || undefined,

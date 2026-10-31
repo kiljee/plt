@@ -10,7 +10,7 @@ import { CalendarDays, MapPin, Palette } from "lucide-react";
 import type { EventItem } from "@/types/event";
 import { LOCATION_LABELS } from "@/types/event";
 import { eventToSlug, locationToCitySlug } from "@/lib/slug";
-import { formatPrice } from "@/lib/price";
+import { formatEventListPrice } from "@/lib/workshopOptions";
 import { isDataImageSrc } from "@/lib/nextImage";
 import { COLORS } from "@/lib/colors";
 import {
@@ -156,7 +156,9 @@ export const EventCard = ({
 
             <div className={EVENT_CARD_STYLES.infoRow} style={{ color: COLORS.text.secondary }}>
               <Palette className={EVENT_CARD_STYLES.infoIcon} style={{ color: COLORS.primary }} />
-              <span>{formatPrice(event.price, event.currency)}</span>
+              <span>
+                {formatEventListPrice(event.price, event.currency, event.options ?? [])}
+              </span>
             </div>
           </div>
 

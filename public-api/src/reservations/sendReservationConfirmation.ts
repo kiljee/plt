@@ -23,6 +23,8 @@ export interface ReservationWithEvent {
   eventId: string;
   seats: number;
   createdAt: Date;
+  expectedAmount: number;
+  selectionSummary?: string;
   event: {
     title: string;
     date: Date;
@@ -49,10 +51,9 @@ export const sendReservationConfirmation = async (
   const { reservations, customerEmail, customerName, customerPhone } = params;
   const first = reservations[0];
   const orderDate = formatOrderDate(first.createdAt);
-  const total = reservations.reduce(
-    (sum, r) => sum + r.event.price * r.seats,
-    0
-  );
+  const lineTotal = (reservation: ReservationWithEvent) =>
+    reservation.expectedAmount;
+  const total = reservations.reduce((sum, r) => sum + lineTotal(r), 0);
   const location = parseLocation(first.event.location);
 
   const emailData = {
@@ -69,7 +70,8 @@ export const sendReservationConfirmation = async (
       price: r.event.price,
       currency: r.event.currency,
       quantity: r.seats,
-      total: r.event.price * r.seats,
+      total: lineTotal(r),
+      ...(r.selectionSummary ? { selectionSummary: r.selectionSummary } : {}),
     })),
     total,
     currency: first.event.currency,
@@ -130,10 +132,10 @@ export const sendAdminReservationNotification = async (
   const cityName = locationToCityName(location);
 
   const itemLines = reservations
-    .map(
-      (r) =>
-        `- ${r.event.title} (${formatEventDateTime(r.event.date, r.event.startTime)}) – ${r.seats} mesta`
-    )
+    .map((r) => {
+      const optionLine = r.selectionSummary ? `\n  ${r.selectionSummary}` : "";
+      return `- ${r.event.title} (${formatEventDateTime(r.event.date, r.event.startTime)}) – ${r.seats} mesta${optionLine}`;
+    })
     .join("\n");
 
   const text = `Nova rezervacija

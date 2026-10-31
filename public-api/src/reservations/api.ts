@@ -18,6 +18,7 @@ import {
   sendAdminReservationNotification,
 } from "./sendReservationConfirmation";
 import { ActiveReservationStatuses } from "./types";
+import { buildReservationPricing } from "../events/workshopOptions";
 
 export const createReservationPublic: CreateReservationPublic = async (
   req,
@@ -37,6 +38,7 @@ export const createReservationPublic: CreateReservationPublic = async (
           name?: string;
           phone?: string;
           seats?: number;
+          optionIds?: unknown;
         })
       : {};
   const eventId = body.eventId;
@@ -48,6 +50,11 @@ export const createReservationPublic: CreateReservationPublic = async (
   const seats = typeof body?.seats === "number" && body.seats > 0
     ? Math.min(body.seats, 99)
     : 1;
+  const optionIds = Array.isArray(body.optionIds)
+    ? body.optionIds.filter(
+        (id): id is string => typeof id === "string" && id.trim().length > 0,
+      )
+    : undefined;
 
   if (!eventId || !email) {
     res.status(400).json({ error: "eventId i email su obavezni" });
@@ -79,6 +86,16 @@ export const createReservationPublic: CreateReservationPublic = async (
     return;
   }
 
+  const pricing = buildReservationPricing(
+    event,
+    seats,
+    optionIds && optionIds.length > 0 ? optionIds : undefined,
+  );
+  if ("error" in pricing) {
+    res.status(400).json({ error: pricing.error, eventId });
+    return;
+  }
+
   const reservation = await context.entities.Reservation.create({
     data: {
       eventId,
@@ -86,12 +103,14 @@ export const createReservationPublic: CreateReservationPublic = async (
       name,
       phone,
       seats,
+      optionSelections: pricing.optionSelections,
+      expectedAmount: pricing.expectedAmount,
       status: "PENDING",
     },
   });
 
   const seatsCount = reservation.seats ?? 1
-  const totalAmount = event.price * seatsCount
+  const totalAmount = reservation.expectedAmount ?? pricing.expectedAmount
 
   const location: "BELGRADE" | "NOVI_SAD" =
     event.location === "NOVI_SAD" || event.location === "BELGRADE"
@@ -114,6 +133,9 @@ export const createReservationPublic: CreateReservationPublic = async (
         currency: event.currency,
         quantity: seatsCount,
         total: totalAmount,
+        ...(pricing.selectionSummary
+          ? { selectionSummary: pricing.selectionSummary }
+          : {}),
       },
     ],
     total: totalAmount,
@@ -130,6 +152,8 @@ export const createReservationPublic: CreateReservationPublic = async (
     eventId: reservation.eventId,
     seats: seatsCount,
     createdAt: reservation.createdAt,
+    expectedAmount: totalAmount,
+    selectionSummary: pricing.selectionSummary,
     event: {
       title: event.title,
       date: event.date,

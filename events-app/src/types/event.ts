@@ -17,6 +17,12 @@ export const AGE_CATEGORY_LABELS: Record<string, string> = {
 export const getAgeCategoryLabel = (ageCategory: string): string =>
   AGE_CATEGORY_LABELS[ageCategory] ?? ageCategory;
 
+export interface WorkshopOption {
+  id: string;
+  label: string;
+  price: number;
+}
+
 export interface EventItem {
   id: string;
   title: string;
@@ -30,6 +36,7 @@ export interface EventItem {
   imageUrls: string;
   price: number;
   currency: string;
+  options: WorkshopOption[];
   createdAt: string;
   placesLeft?: number;
 }

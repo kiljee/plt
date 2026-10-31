@@ -89,18 +89,51 @@ export const getReservationReport: GetReservationReport<
   const monthStart = dayjs(`${selectedMonth}-01`).startOf("month");
   const monthEnd = monthStart.add(1, "month");
 
-  const grouped = await context.entities.Reservation.groupBy({
-    by: ["eventId"],
+  const reservations = await context.entities.Reservation.findMany({
     where: {
       createdAt: { gte: monthStart.toDate(), lt: monthEnd.toDate() },
       status: { in: [...ActiveReservationStatuses] },
       email: { notIn: EXCLUDED_REPORT_EMAILS, mode: "insensitive" },
     },
-    _count: { _all: true },
-    _sum: { seats: true, amountPaid: true },
+    select: {
+      eventId: true,
+      seats: true,
+      amountPaid: true,
+      expectedAmount: true,
+    },
   });
 
-  const eventIds = grouped.map((group) => group.eventId);
+  const buckets = new Map<
+    string,
+    {
+      reservationCount: number;
+      seatsSum: number;
+      amountPaidSum: number;
+      expectedFromStored: number;
+      seatsWithoutExpected: number;
+    }
+  >();
+  for (const reservation of reservations) {
+    const bucket = buckets.get(reservation.eventId) ?? {
+      reservationCount: 0,
+      seatsSum: 0,
+      amountPaidSum: 0,
+      expectedFromStored: 0,
+      seatsWithoutExpected: 0,
+    };
+    const seats = reservation.seats ?? 1;
+    bucket.reservationCount += 1;
+    bucket.seatsSum += seats;
+    bucket.amountPaidSum += reservation.amountPaid ?? 0;
+    if (typeof reservation.expectedAmount === "number") {
+      bucket.expectedFromStored += reservation.expectedAmount;
+    } else {
+      bucket.seatsWithoutExpected += seats;
+    }
+    buckets.set(reservation.eventId, bucket);
+  }
+
+  const eventIds = [...buckets.keys()];
   const events =
     eventIds.length > 0
       ? await context.entities.Event.findMany({
@@ -118,24 +151,23 @@ export const getReservationReport: GetReservationReport<
 
   const eventById = new Map(events.map((event) => [event.id, event]));
 
-  const workshopRows = grouped
-    .flatMap((group) => {
-      const event = eventById.get(group.eventId);
+  const workshopRows = [...buckets.entries()]
+    .flatMap(([eventId, bucket]) => {
+      const event = eventById.get(eventId);
       if (!event) return [];
-      const seatsSum = group._sum.seats ?? 0;
-      const amountPaidSum = group._sum.amountPaid ?? 0;
-      const expectedSum = event.price * seatsSum;
+      const expectedSum =
+        bucket.expectedFromStored + event.price * bucket.seatsWithoutExpected;
       return [
         {
-          eventId: group.eventId,
+          eventId,
           title: event.title,
           date: event.date.toISOString(),
           location: event.location,
-          reservationCount: group._count._all,
-          seatsSum,
-          amountPaidSum,
+          reservationCount: bucket.reservationCount,
+          seatsSum: bucket.seatsSum,
+          amountPaidSum: bucket.amountPaidSum,
           expectedSum,
-          collectionRate: toCollectionRate(amountPaidSum, expectedSum),
+          collectionRate: toCollectionRate(bucket.amountPaidSum, expectedSum),
           currency: event.currency,
         },
       ];

@@ -12,6 +12,8 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../shared/components/Input";
 import { uploadImageFile } from "./uploadImageFile";
 import { EventStatus } from "../constants";
+import { parseWorkshopOptions } from "../workshopOptions";
+import { WorkshopOptionsFields } from "./WorkshopOptionsFields";
 
 export const AGE_CATEGORIES = [
   { value: "Adults", label: "Odrasli" },
@@ -22,6 +24,12 @@ export const AGE_CATEGORIES = [
 export const IMAGE_COUNT = 6;
 export const CAPACITY_MIN = 1;
 export const CAPACITY_MAX = 500;
+
+export interface WorkshopOptionInput {
+  id: string;
+  label: string;
+  price: string;
+}
 
 export interface EventFormValues {
   title: string;
@@ -36,6 +44,7 @@ export interface EventFormValues {
   price: string;
   currency: string;
   status: EventStatus;
+  options: WorkshopOptionInput[];
 }
 
 export interface EventFormSubmitPayload {
@@ -51,6 +60,7 @@ export interface EventFormSubmitPayload {
   price: number;
   currency: string;
   status?: EventStatus;
+  options: { id: string; label: string; price: number }[];
 }
 
 const DEFAULT_DATE = dayjs().format("YYYY-MM-DD");
@@ -60,6 +70,13 @@ const DEFAULT_AGE_CATEGORY = "Adults";
 const DEFAULT_CAPACITY = "10";
 const DEFAULT_PRICE = "0";
 const DEFAULT_CURRENCY = "RSD";
+
+const toOptionInputs = (raw: unknown): WorkshopOptionInput[] =>
+  parseWorkshopOptions(raw).map((option) => ({
+    id: option.id,
+    label: option.label,
+    price: String(option.price),
+  }));
 
 const getFilledImageUrls = (imageUrls: string[] = []) =>
   Array.from({ length: IMAGE_COUNT }, (_, i) => imageUrls[i] ?? "");
@@ -92,11 +109,17 @@ export const getEventFormDefaults = (
     price: DEFAULT_PRICE,
     currency: DEFAULT_CURRENCY,
     status: EventStatus.ACTIVE,
+    options: [],
   };
   const imageUrls = getFilledImageUrls(
     overrides.imageUrls ?? baseValues.imageUrls,
   );
-  return { ...baseValues, ...overrides, imageUrls };
+  return {
+    ...baseValues,
+    ...overrides,
+    imageUrls,
+    options: overrides.options ?? baseValues.options,
+  };
 };
 
 export const mapEventToFormValues = (event: Event): EventFormValues => ({
@@ -114,6 +137,7 @@ export const mapEventToFormValues = (event: Event): EventFormValues => ({
   imageUrls: getFilledImageUrls(parseImageUrls(event.imageUrls)),
   price: String(event.price ?? DEFAULT_PRICE),
   currency: event.currency || DEFAULT_CURRENCY,
+  options: toOptionInputs((event as { options?: string }).options),
   status: event.status === EventStatus.INACTIVE ? EventStatus.INACTIVE : EventStatus.ACTIVE,
 })
 
@@ -195,8 +219,27 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
       return;
     }
 
-    const priceNum = parseInt(data.price, 10);
-    if (priceNum < 0) {
+    const cleanedOptions: { id: string; label: string; price: number }[] = [];
+    for (const option of data.options ?? []) {
+      const label = option.label.trim();
+      const priceRaw = option.price.trim();
+      if (!label && !priceRaw) continue;
+      if (!label || !/^\d+$/.test(priceRaw)) {
+        toast.error("Svaka opcija mora imati naziv i cenu.");
+        return;
+      }
+      cleanedOptions.push({
+        id: option.id || crypto.randomUUID(),
+        label,
+        price: parseInt(priceRaw, 10),
+      });
+    }
+
+    const priceNum =
+      cleanedOptions.length > 0
+        ? cleanedOptions[0].price
+        : parseInt(data.price, 10);
+    if (!Number.isInteger(priceNum) || priceNum < 0) {
       setError("price", {
         message: "Cena ne može biti negativna.",
       });
@@ -224,6 +267,7 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
       price: priceNum,
       currency: data.currency,
       status: data.status,
+      options: cleanedOptions,
     };
 
     try {
@@ -555,6 +599,8 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
           )}
         />
       </div>
+
+      <WorkshopOptionsFields control={control} />
 
       <div className="flex flex-col gap-2">
         <span className="label">Slike (do 6, opciono)</span>

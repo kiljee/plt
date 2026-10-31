@@ -11,7 +11,7 @@ export const buildReservationConfirmationText = (data: ReservationConfirmationDa
   const itemsText = data.items
     .map(
       (item) =>
-        `- ${item.title}\n  Datum i vreme: ${item.dateTime}\n  Cena: ${formatPrice(item.price, item.currency)}\n  Količina: ${item.quantity} mesto\n  Ukupno: ${formatPrice(item.total, item.currency)}`,
+        `- ${item.title}\n  Datum i vreme: ${item.dateTime}\n  ${item.selectionSummary ? `Opcije: ${item.selectionSummary}` : `Cena: ${formatPrice(item.price, item.currency)}`}\n  Količina: ${item.quantity} mesto\n  Ukupno: ${formatPrice(item.total, item.currency)}`,
     )
     .join("\n\n")
 

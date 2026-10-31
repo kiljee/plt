@@ -48,6 +48,7 @@ export const getEventBySlugPublic: GetEventBySlugPublic = async (
       imageUrls: true,
       price: true,
       currency: true,
+      options: true,
       createdAt: true,
     },
   } as Parameters<typeof context.entities.Event.findMany>[0]);

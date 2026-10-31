@@ -11,6 +11,8 @@ export type ReservationShareItem = {
   amountPaid?: number | null;
   price?: number | null;
   currency?: string | null;
+  expectedAmount?: number | null;
+  optionSummary?: string | null;
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -49,7 +51,12 @@ const getPaymentInfo = (reservation: ReservationShareItem): PaymentInfo => {
   const paidAmount = reservation.amountPaid ?? 0;
   const currency = reservation.currency ?? DEFAULT_CURRENCY;
 
-  if (reservation.price == null) {
+  const storedExpected =
+    typeof reservation.expectedAmount === "number"
+      ? reservation.expectedAmount
+      : null;
+
+  if (reservation.price == null && storedExpected == null) {
     if (paidAmount > 0) {
       return {
         state: "paid",
@@ -68,7 +75,7 @@ const getPaymentInfo = (reservation: ReservationShareItem): PaymentInfo => {
     };
   }
 
-  const expectedAmount = reservation.price * seats;
+  const expectedAmount = storedExpected ?? (reservation.price ?? 0) * seats;
 
   if (expectedAmount === 0) {
     return {
@@ -141,6 +148,9 @@ export const buildReservationsListShareText = (params: {
         `   Šifra: ${formatReservationCode(reservation.id)}`,
         `   Mesta: ${seats}${status ? ` · ${status}` : ""}`,
       );
+      if (reservation.optionSummary) {
+        lines.push(`   Opcije: ${reservation.optionSummary}`);
+      }
       if (reservation.email) lines.push(`   Email: ${reservation.email}`);
       if (reservation.phone) lines.push(`   Telefon: ${reservation.phone}`);
       if (index < params.reservations.length - 1) lines.push("");
@@ -198,6 +208,9 @@ export const buildReservationsListShareText = (params: {
       `   Šifra: ${formatReservationCode(reservation.id)}`,
       `   Mesta: ${seats}${status ? ` · ${status}` : ""}`,
     );
+    if (reservation.optionSummary) {
+      lines.push(`   Opcije: ${reservation.optionSummary}`);
+    }
     if (reservation.email) lines.push(`   Email: ${reservation.email}`);
     if (reservation.phone) lines.push(`   Telefon: ${reservation.phone}`);
     if (payment) {

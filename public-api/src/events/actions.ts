@@ -8,6 +8,7 @@ import { HttpError } from "wasp/server";
 import { type CreateEvent } from "wasp/server/operations";
 import { deleteEventImages, deleteSingleImage, uploadEventImage as uploadToMinio } from "../lib/minio";
 import { EventStatus } from "./constants";
+import { normalizeWorkshopOptions, type WorkshopOption } from "./workshopOptions";
 
 export { EventStatus };
 
@@ -25,6 +26,7 @@ export type CreateEventArgs = {
   imageUrls: string[];
   price: number;
   currency: string;
+  options?: WorkshopOption[];
 };
 
 export type UpdateEventArgs = CreateEventArgs & {
@@ -64,6 +66,22 @@ const getValidLocation = (location: string) =>
 const getImageUrlsJson = (imageUrls: string[]) =>
   JSON.stringify(Array.isArray(imageUrls) ? imageUrls.slice(0, MAX_IMAGES) : []);
 
+const getEventPricing = (args: { price: number; options?: WorkshopOption[] }) => {
+  const normalized = normalizeWorkshopOptions(args.options ?? []);
+  if ("error" in normalized) {
+    throw new HttpError(400, normalized.error);
+  }
+  const options = normalized.options;
+  const price =
+    options.length > 0
+      ? options[0].price
+      : Math.max(0, Number(args.price) || 0);
+  return {
+    price,
+    options: JSON.stringify(options),
+  };
+};
+
 const getEventDate = (dateValue: string): Date => {
   const d = new Date(dateValue);
   if (Number.isNaN(d.getTime())) {
@@ -97,7 +115,7 @@ export const createEvent: CreateEvent<CreateEventArgs, Event> = async (
     ageCategory: args.ageCategory ?? "",
     capacity: Math.max(0, Number(args.capacity) || 0),
     imageUrls: getImageUrlsJson(args.imageUrls),
-    price: Math.max(0, Number(args.price) || 0),
+    ...getEventPricing(args),
     currency: args.currency || "RSD",
     user: { connect: { id: userId } },
   };
@@ -135,7 +153,7 @@ export const updateEvent: UpdateEventAction = async (
     ageCategory: args.ageCategory ?? "",
     capacity: Math.max(0, Number(args.capacity) || 0),
     imageUrls: getImageUrlsJson(args.imageUrls),
-    price: Math.max(0, Number(args.price) || 0),
+    ...getEventPricing(args),
     currency: args.currency || "RSD",
     ...(args.status === EventStatus.ACTIVE || args.status === EventStatus.INACTIVE
       ? { status: args.status }

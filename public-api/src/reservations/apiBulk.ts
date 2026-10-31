@@ -3,6 +3,7 @@ import {
   ReservationStatus,
   ActiveReservationStatuses,
   parseBulkRequestBody,
+  type BulkReservationItem,
 } from "./types";
 import {
   getAvailabilityHttpStatus,
@@ -13,6 +14,7 @@ import {
   sendReservationShortEmail,
   sendAdminReservationNotification,
 } from "./sendReservationConfirmation";
+import { buildReservationPricing } from "../events/workshopOptions";
 
 const sendConfirmationWithRetry = async (
   params: Parameters<typeof sendReservationConfirmation>[0],
@@ -156,25 +158,64 @@ export const createReservationsBulkPublic: CreateReservationsBulkPublic =
         }
       }
 
+      const pricedItems: {
+        item: BulkReservationItem;
+        pricing: {
+          optionSelections: string;
+          expectedAmount: number;
+          selectionSummary: string;
+        };
+      }[] = [];
+      for (const item of items) {
+        const event = eventMap.get(item.eventId)!;
+        const pricing = buildReservationPricing(
+          event,
+          item.seats,
+          item.optionIds,
+        );
+        if ("error" in pricing) {
+          res.status(400).json({ error: pricing.error, eventId: item.eventId });
+          return;
+        }
+        pricedItems.push({ item, pricing });
+      }
+
       const createdReservations =
         await context.entities.Reservation.createManyAndReturn({
-          data: items.map((item) => ({
+          data: pricedItems.map(({ item, pricing }) => ({
             eventId: item.eventId,
             email: normalizedEmail,
             name: normalizedName,
             phone: normalizedPhone,
             seats: item.seats,
+            optionSelections: pricing.optionSelections,
+            expectedAmount: pricing.expectedAmount,
             status: ReservationStatus.PENDING,
           })),
         });
 
+      const unmatchedPricedItems = [...pricedItems];
       const reservationsWithEvent = createdReservations.map((r) => {
         const event = eventMap.get(r.eventId)!;
+        const matchIndex = unmatchedPricedItems.findIndex(
+          (priced) =>
+            priced.item.eventId === r.eventId &&
+            priced.item.seats === (r.seats ?? 1) &&
+            priced.pricing.optionSelections === r.optionSelections,
+        );
+        const pricing =
+          matchIndex >= 0
+            ? unmatchedPricedItems.splice(matchIndex, 1)[0]?.pricing
+            : undefined;
+        const seats = r.seats ?? 1;
         return {
           id: r.id,
           eventId: r.eventId,
-          seats: r.seats ?? 1,
+          seats,
           createdAt: r.createdAt,
+          expectedAmount:
+            r.expectedAmount ?? pricing?.expectedAmount ?? event.price * seats,
+          selectionSummary: pricing?.selectionSummary ?? "",
           event: {
             title: event.title,
             date: event.date,

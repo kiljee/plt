@@ -1,10 +1,11 @@
-import type { EventLocation } from "./event";
+import type { EventLocation, WorkshopOption } from "./event";
 
 export interface CartEvent {
   id: string;
   title: string;
   price: number;
   currency: string;
+  options?: WorkshopOption[];
   imageUrls: string;
   date: string;
   startTime?: string;
@@ -17,4 +18,5 @@ export interface CartItem {
   eventId: string;
   event: CartEvent;
   seats: number;
+  optionIds?: string[];
 }

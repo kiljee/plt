@@ -9,6 +9,8 @@ import type { CartItem as CartItemType } from "@/types/cart";
 import { LOCATION_LABELS } from "@/types/event";
 import { COLORS } from "@/lib/colors";
 import { formatPrice } from "@/lib/price";
+import { alignOptionIds, selectedOptionsTotal } from "@/lib/workshopOptions";
+import { SeatOptionCards } from "@/components/SeatOptionCards/SeatOptionCards";
 import { locationToCitySlug } from "@/lib/slug";
 import { useCartStore } from "@/store/cart";
 import { QuantitySelector } from "@/components/QuantitySelector/QuantitySelector";
@@ -43,6 +45,7 @@ export const CartItem = ({
   onRemove,
 }: CartItemProps) => {
   const updateSeats = useCartStore((s) => s.updateSeats);
+  const updateOption = useCartStore((s) => s.updateOption);
   const images = parseImageUrls(item.event.imageUrls);
   const mainImage = images.length > 0 ? images[0] : PLACEHOLDER;
   const citySlug = locationToCitySlug(item.event.location);
@@ -51,6 +54,19 @@ export const CartItem = ({
     ? dayjs.utc(item.event.date).format("DD.MM.YYYY.")
     : "—";
   const timeStr = item.event.startTime ? `${item.event.startTime}` : "";
+  const options = item.event.options ?? [];
+  const hasOptions = options.length > 0;
+  const selectedIds = alignOptionIds(
+    item.optionIds,
+    item.seats,
+    options[0]?.id,
+  );
+  const lineTotal = selectedOptionsTotal(
+    item.event.price,
+    item.seats,
+    options,
+    item.optionIds,
+  );
 
   return (
     <motion.div
@@ -59,61 +75,74 @@ export const CartItem = ({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2 }}
     >
-      <Link href={eventUrl} className={CART_ITEM_STYLES.imageWrapper}>
-        <Image
-          src={mainImage}
-          alt={item.event.title}
-          width={100}
-          height={100}
-          sizes="100px"
-          className={CART_ITEM_STYLES.image}
-          unoptimized={isDataImageSrc(mainImage)}
-        />
-      </Link>
-      <div className={CART_ITEM_STYLES.content}>
-        <div className={CART_ITEM_STYLES.titleRow}>
-          <span className={CART_ITEM_STYLES.title}>{item.event.title}</span>
-          <span className={CART_ITEM_STYLES.price}>
-            {formatPrice(item.event.price * item.seats, item.event.currency)}
-            {item.event.location in LOCATION_LABELS && (
-              <>
-                {" · "}
-                <span
-                  className={CART_ITEM_STYLES.cityLabel}
-                  style={{ color: COLORS.text.label }}
-                >
-                  {LOCATION_LABELS[item.event.location as keyof typeof LOCATION_LABELS]}
-                </span>
-              </>
-            )}
-          </span>
+      <div className={CART_ITEM_STYLES.main}>
+        <Link href={eventUrl} className={CART_ITEM_STYLES.imageWrapper}>
+          <Image
+            src={mainImage}
+            alt={item.event.title}
+            width={100}
+            height={100}
+            sizes="100px"
+            className={CART_ITEM_STYLES.image}
+            unoptimized={isDataImageSrc(mainImage)}
+          />
+        </Link>
+        <div className={CART_ITEM_STYLES.content}>
+          <div className={CART_ITEM_STYLES.titleRow}>
+            <span className={CART_ITEM_STYLES.title}>{item.event.title}</span>
+            <span className={CART_ITEM_STYLES.price}>
+              {formatPrice(lineTotal, item.event.currency)}
+              {item.event.location in LOCATION_LABELS && (
+                <>
+                  {" · "}
+                  <span
+                    className={CART_ITEM_STYLES.cityLabel}
+                    style={{ color: COLORS.text.label }}
+                  >
+                    {LOCATION_LABELS[item.event.location as keyof typeof LOCATION_LABELS]}
+                  </span>
+                </>
+              )}
+            </span>
+          </div>
+          <div className={CART_ITEM_STYLES.meta}>
+            {formattedDate}
+            {timeStr ? ` · ${timeStr}` : ""}
+          </div>
+          <div className={CART_ITEM_STYLES.quantity}>
+            <QuantitySelector
+              value={item.seats}
+              min={1}
+              max={maxSeats}
+              onChange={(v) => updateSeats(item.eventId, v)}
+              showLabel={false}
+            />
+          </div>
         </div>
-        <div className={CART_ITEM_STYLES.meta}>
-          {formattedDate}
-          {timeStr ? ` · ${timeStr}` : ""}
-        </div>
-        <div className="mt-2">
-          <QuantitySelector
-            value={item.seats}
-            min={1}
-            max={maxSeats}
-            onChange={(v) => updateSeats(item.eventId, v)}
-            showLabel={false}
+      </div>
+      {hasOptions && (
+        <div className={CART_ITEM_STYLES.options}>
+          <SeatOptionCards
+            groupKey={item.eventId}
+            options={options}
+            selectedIds={selectedIds}
+            currency={item.event.currency}
+            onSelect={(index, optionId) => updateOption(item.eventId, index, optionId)}
           />
         </div>
-        <motion.button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            onRemove();
-          }}
-          className={CART_ITEM_STYLES.removeButton}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          Ukloni
-        </motion.button>
-      </div>
+      )}
+      <motion.button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          onRemove();
+        }}
+        className={CART_ITEM_STYLES.removeButton}
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+      >
+        Ukloni
+      </motion.button>
     </motion.div>
   );
 };

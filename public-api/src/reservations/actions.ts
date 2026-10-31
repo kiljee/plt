@@ -20,6 +20,10 @@ import {
   buildReservationRejectionHtml,
   buildReservationRejectionText,
 } from "../email/reservation-rejection";
+import {
+  formatSelectionSummary,
+  reservationExpectedAmount,
+} from "../events/workshopOptions";
 
 export const deleteReservation: DeleteReservation<{ id: string }> = async (
   { id },
@@ -64,7 +68,15 @@ export const confirmReservation: ConfirmReservation<{ id: string }> = async (
 
   const event = reservation.event;
   const seats = reservation.seats ?? 1;
-  const total = event.price * seats;
+  const total = reservationExpectedAmount(
+    reservation.expectedAmount,
+    event.price,
+    seats,
+  );
+  const selectionSummary = formatSelectionSummary(
+    reservation.optionSelections,
+    event.currency,
+  );
   const location: "BELGRADE" | "NOVI_SAD" =
     event.location === "BELGRADE" || event.location === "NOVI_SAD"
       ? event.location
@@ -86,6 +98,7 @@ export const confirmReservation: ConfirmReservation<{ id: string }> = async (
         currency: event.currency,
         quantity: seats,
         total,
+        ...(selectionSummary ? { selectionSummary } : {}),
       },
     ],
     total,

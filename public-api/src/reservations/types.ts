@@ -35,6 +35,7 @@ export const MAX_SEATS_PER_ITEM = 99;
 export interface BulkReservationItem {
   eventId: string;
   seats: number;
+  optionIds?: string[];
 }
 
 export interface BulkReservationRequest {
@@ -45,7 +46,7 @@ export interface BulkReservationRequest {
 }
 
 export interface BulkReservationRequestBody {
-  items?: Array<{ eventId?: string; seats?: number }>;
+  items?: Array<{ eventId?: string; seats?: number; optionIds?: unknown }>;
   email?: string;
   name?: string;
   phone?: string;
@@ -54,8 +55,16 @@ export interface BulkReservationRequestBody {
 const isBulkRequestBody = (v: object): v is BulkReservationRequestBody =>
   !Array.isArray(v);
 
+const parseOptionIds = (raw: unknown): string[] | undefined => {
+  if (!Array.isArray(raw)) return undefined;
+  const optionIds = raw.filter(
+    (id): id is string => typeof id === "string" && id.trim().length > 0,
+  );
+  return optionIds.length > 0 ? optionIds : undefined;
+};
+
 const parseItem = (
-  item: { eventId?: string; seats?: number }
+  item: { eventId?: string; seats?: number; optionIds?: unknown }
 ): BulkReservationItem | undefined => {
   const eventId = typeof item.eventId === "string" ? item.eventId : "";
   if (!eventId) return undefined;
@@ -63,7 +72,7 @@ const parseItem = (
     typeof item.seats === "number" && item.seats > 0
       ? Math.min(item.seats, MAX_SEATS_PER_ITEM)
       : 1;
-  return { eventId, seats };
+  return { eventId, seats, optionIds: parseOptionIds(item.optionIds) };
 };
 
 const parseString = (v: string | undefined): string =>

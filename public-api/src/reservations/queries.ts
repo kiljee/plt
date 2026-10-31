@@ -27,6 +27,8 @@ const RESERVATION_SELECT = {
   id: true,
   status: true,
   seats: true,
+  optionSelections: true,
+  expectedAmount: true,
   createdAt: true,
   email: true,
   name: true,
@@ -110,6 +112,8 @@ export type ReservationWithEvent = {
   id: string;
   status: string;
   seats: number;
+  optionSelections: string;
+  expectedAmount: number | null;
   amountPaid: number | null;
   createdAt: Date;
   email: string;

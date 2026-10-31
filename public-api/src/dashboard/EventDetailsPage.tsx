@@ -25,6 +25,7 @@ import {
   mapEventToFormValues,
 } from "../events/components/CreateEventForm";
 import { useRequireAdmin } from "../hooks/useRequireAdmin";
+import { parseWorkshopOptions } from "../events/workshopOptions";
 
 const SUCCESS_MESSAGE = "Radionica je uspešno ažurirana.";
 
@@ -83,6 +84,8 @@ export const EventDetailsPage = () => {
       </div>
     );
   }
+
+  const workshopOptions = parseWorkshopOptions(event?.options);
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -152,13 +155,24 @@ export const EventDetailsPage = () => {
                   <span className="text-muted-foreground">Kapacitet</span>
                   <div className="font-medium">{event.capacity}</div>
                 </div>
-                <div>
+                <div className="col-span-2 lg:col-span-1">
                   <span className="text-muted-foreground">Cena</span>
-                  <div className="font-medium">
-                    {event.price === 0
-                      ? "Besplatno"
-                      : `${event.price} ${event.currency}`}
-                  </div>
+                  {workshopOptions.length === 0 ? (
+                    <div className="font-medium">
+                      {event.price === 0
+                        ? "Besplatno"
+                        : `${event.price} ${event.currency}`}
+                    </div>
+                  ) : (
+                    <ul className="mt-1 space-y-1 font-medium">
+                      {workshopOptions.map((option) => (
+                        <li key={option.id}>
+                          {option.price.toLocaleString("sr-RS")} {event.currency}{" "}
+                          – {option.label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </CardContent>
             </Card>

@@ -1,5 +1,6 @@
 import { EventLocation } from "@/types/event";
 import type { EventItem, EventDetailItem } from "@/types/event";
+import { parseWorkshopOptions } from "@/lib/workshopOptions";
 
 const ensureString = (v: unknown, fallback = ""): string =>
   typeof v === "string" ? v : fallback;
@@ -23,6 +24,7 @@ export const normalizeEventItem = (raw: Record<string, unknown>): EventItem => (
   imageUrls: ensureString(raw.imageUrls, "[]"),
   price: ensureNumber(raw.price),
   currency: ensureString(raw.currency, "RSD"),
+  options: parseWorkshopOptions(raw.options),
   createdAt: ensureString(raw.createdAt),
   placesLeft: typeof raw.placesLeft === "number" ? raw.placesLeft : undefined,
 });

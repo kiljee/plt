@@ -17,6 +17,10 @@ import { Label } from "../components/ui/label";
 import { formatEventDateTime } from "../lib/date";
 import { formatReservationCode } from "../lib/reservationCode";
 import { ReservationLocationCircle } from "./ReservationLocationCircle";
+import {
+  parseOptionSelections,
+  reservationExpectedAmount,
+} from "../events/workshopOptions";
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING: "Nepotvrđena",
@@ -255,13 +259,30 @@ const ReservationDetailPanelInner = ({
                 </span>
                 <div className="font-medium">{reservation.seats ?? 1}</div>
               </div>
+              {parseOptionSelections(reservation.optionSelections).length > 0 && (
+                <div>
+                  <span className="text-sm text-muted-foreground">Opcije</span>
+                  <ul className="mt-1 space-y-1">
+                    {parseOptionSelections(reservation.optionSelections).map(
+                      (selection, index) => (
+                        <li key={`${selection.optionId}-${index}`} className="font-medium">
+                          Osoba {index + 1}: {selection.label}
+                          {reservation.event
+                            ? ` — ${selection.price.toLocaleString("sr-RS")} ${reservation.event.currency}`
+                            : ""}
+                        </li>
+                      ),
+                    )}
+                  </ul>
+                </div>
+              )}
               <div>
                 <span className="text-sm text-muted-foreground">
                   Iznos za uplatu
                 </span>
                 <div className="font-medium">
                   {reservation.event
-                    ? `${reservation.event.price * (reservation.seats ?? 1)} ${reservation.event.currency}`
+                    ? `${reservationExpectedAmount(reservation.expectedAmount, reservation.event.price, reservation.seats ?? 1)} ${reservation.event.currency}`
                     : "—"}
                 </div>
               </div>

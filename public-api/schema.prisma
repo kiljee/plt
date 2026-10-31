@@ -30,6 +30,7 @@ model Event {
   imageUrls    String   @default("[]")
   price        Int      @default(0)
   currency     String   @default("RSD")
+  options      String   @default("[]")
   status       String   @default("ACTIVE")
   createdAt    DateTime @default(now())
 
@@ -46,8 +47,10 @@ model Reservation {
   email     String
   name      String?
   phone     String?
-  seats       Int      @default(1)
-  amountPaid  Int?
+  seats            Int      @default(1)
+  optionSelections String   @default("[]")
+  expectedAmount   Int?
+  amountPaid       Int?
   status      String   @default("PENDING")
   createdAt   DateTime @default(now())
 

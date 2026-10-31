@@ -1,6 +1,7 @@
 export interface BulkReservationItem {
   eventId: string;
   seats: number;
+  optionIds?: string[];
 }
 
 export interface BulkReservationRequest {

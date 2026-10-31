@@ -14,6 +14,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader } from "../../components/ui/card";
 import { ReservationLocationCircle } from "../../reservations/ReservationLocationCircle";
+import { summarizeOptionSelections } from "../../events/workshopOptions";
 
 interface EventCardProps {
   event: Event;
@@ -106,6 +107,11 @@ export const EventCard = ({ event }: EventCardProps) => {
                       ? ` · ${(r as { seats: number }).seats} mesta`
                       : ""}
                   </span>
+                  {summarizeOptionSelections(r.optionSelections) ? (
+                    <div className="text-xs text-muted-foreground">
+                      {summarizeOptionSelections(r.optionSelections)}
+                    </div>
+                  ) : null}
                 </div>
                 <div className="flex gap-1">
                   <Button asChild size="sm" variant="outline">
