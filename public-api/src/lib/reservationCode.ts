@@ -145,13 +145,11 @@ export const buildReservationsListShareText = (params: {
         : null;
       lines.push(
         `${index + 1}. ${reservation.name ?? "—"}`,
-        `   Šifra: ${formatReservationCode(reservation.id)}`,
         `   Mesta: ${seats}${status ? ` · ${status}` : ""}`,
       );
       if (reservation.optionSummary) {
         lines.push(`   Opcije: ${reservation.optionSummary}`);
       }
-      if (reservation.email) lines.push(`   Email: ${reservation.email}`);
       if (reservation.phone) lines.push(`   Telefon: ${reservation.phone}`);
       if (index < params.reservations.length - 1) lines.push("");
     });

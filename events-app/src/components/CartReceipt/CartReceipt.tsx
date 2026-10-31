@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "motion/react";
 import type { CartItem as CartItemType } from "@/types/cart";
 import { CartItem } from "@/components/CartItem/CartItem";
@@ -31,7 +32,22 @@ export const CartReceipt = ({
   formId,
   loading = false,
   onRemove,
-}: CartReceiptProps) => (
+}: CartReceiptProps) => {
+  const [openGuestKey, setOpenGuestKey] = useState<string | null>(null);
+
+  const toggleGuest = (eventId: string, index: number) => {
+    const key = `${eventId}:${index}`;
+    setOpenGuestKey((current) => (current === key ? null : key));
+  };
+
+  const openGuestIndexFor = (eventId: string) => {
+    const prefix = `${eventId}:`;
+    if (!openGuestKey?.startsWith(prefix)) return null;
+    const index = Number(openGuestKey.slice(prefix.length));
+    return Number.isInteger(index) ? index : null;
+  };
+
+  return (
   <div className={CART_RECEIPT_STYLES.wrapper}>
     <div
       className={CART_RECEIPT_STYLES.zigzagTop}
@@ -54,6 +70,8 @@ export const CartReceipt = ({
             <CartItem
               item={item}
               maxSeats={item.event.placesLeft ?? 99}
+              openGuestIndex={openGuestIndexFor(item.eventId)}
+              onToggleGuest={(guestIndex) => toggleGuest(item.eventId, guestIndex)}
               onRemove={() => onRemove(item.eventId)}
             />
           </motion.div>
@@ -76,4 +94,5 @@ export const CartReceipt = ({
       }}
     />
   </div>
-);
+  );
+};

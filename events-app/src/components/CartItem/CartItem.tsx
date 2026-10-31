@@ -36,12 +36,16 @@ dayjs.extend(utc);
 interface CartItemProps {
   item: CartItemType;
   maxSeats?: number;
+  openGuestIndex?: number | null;
+  onToggleGuest?: (index: number) => void;
   onRemove: () => void;
 }
 
 export const CartItem = ({
   item,
   maxSeats = 99,
+  openGuestIndex = null,
+  onToggleGuest,
   onRemove,
 }: CartItemProps) => {
   const updateSeats = useCartStore((s) => s.updateSeats);
@@ -127,6 +131,10 @@ export const CartItem = ({
             options={options}
             selectedIds={selectedIds}
             currency={item.event.currency}
+            compact
+            collapsible
+            openIndex={openGuestIndex}
+            onToggle={onToggleGuest}
             onSelect={(index, optionId) => updateOption(item.eventId, index, optionId)}
           />
         </div>
