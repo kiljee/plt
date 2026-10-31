@@ -9,12 +9,12 @@ import { ReservationStatus } from "./types";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const FOLLOW_UP_MINUTES = 3;
+export const FOLLOW_UP_HOURS = 24;
 const WORKSHOP_TIMEZONE = "Europe/Belgrade";
 const CODE_PATTERN = /^[0-9a-f]{8}$/;
 
 export const followUpDueFrom = (from: Date): Date =>
-  dayjs(from).add(FOLLOW_UP_MINUTES, "minute").toDate();
+  dayjs(from).add(FOLLOW_UP_HOURS, "hour").toDate();
 
 export const followUpLinks = (
   reservationId: string,
