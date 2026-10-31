@@ -21,11 +21,12 @@ import {
   parseOptionSelections,
   reservationExpectedAmount,
 } from "../events/workshopOptions";
+import { ReservationStatus } from "./types";
 
 const STATUS_LABELS: Record<string, string> = {
-  PENDING: "Nepotvrđena",
-  CONFIRMED: "Potvrđena",
-  CANCELLED: "Otkazana",
+  [ReservationStatus.PENDING]: "Nepotvrđena",
+  [ReservationStatus.CONFIRMED]: "Potvrđena",
+  [ReservationStatus.CANCELLED]: "Otkazana",
 };
 
 interface ReservationDetailPanelInnerProps {
@@ -309,14 +310,54 @@ const ReservationDetailPanelInner = ({
                   </Button>
                 </div>
               </div>
+              {reservation.status === ReservationStatus.PENDING && (
+                <>
+                  <div>
+                    <span className="text-sm text-muted-foreground">
+                      Rok za potvrdu
+                    </span>
+                    <div className="font-medium">
+                      {reservation.followUpDueAt
+                        ? dayjs(reservation.followUpDueAt).format(
+                            "DD.MM.YYYY HH:mm",
+                          )
+                        : "—"}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-sm text-muted-foreground">
+                      Upit poslat
+                    </span>
+                    <div className="font-medium">
+                      {reservation.followUpSentAt
+                        ? dayjs(reservation.followUpSentAt).format(
+                            "DD.MM.YYYY HH:mm",
+                          )
+                        : "Nije"}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-sm text-muted-foreground">
+                      Produženje
+                    </span>
+                    <div className="font-medium">
+                      {reservation.extendedAt
+                        ? dayjs(reservation.extendedAt).format(
+                            "DD.MM.YYYY HH:mm",
+                          )
+                        : "Nije"}
+                    </div>
+                  </div>
+                </>
+              )}
               <div>
                 <span className="text-sm text-muted-foreground">Status</span>
                 <div className="font-medium">
                   <span
                     className={
-                      reservation.status === "CONFIRMED"
+                      reservation.status === ReservationStatus.CONFIRMED
                         ? "text-green-600"
-                        : reservation.status === "CANCELLED"
+                        : reservation.status === ReservationStatus.CANCELLED
                           ? "text-red-600"
                           : "text-amber-600"
                     }
@@ -327,7 +368,7 @@ const ReservationDetailPanelInner = ({
               </div>
 
               <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap sm:pt-4">
-                {reservation.status === "PENDING" && (
+                {reservation.status === ReservationStatus.PENDING && (
                   <>
                     <Button
                       onClick={handleConfirm}

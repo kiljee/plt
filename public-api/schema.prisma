@@ -51,8 +51,11 @@ model Reservation {
   optionSelections String   @default("[]")
   expectedAmount   Int?
   amountPaid       Int?
-  status      String   @default("PENDING")
-  createdAt   DateTime @default(now())
+  status         String    @default("PENDING")
+  followUpDueAt  DateTime?
+  followUpSentAt DateTime?
+  extendedAt     DateTime?
+  createdAt      DateTime  @default(now())
 
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String

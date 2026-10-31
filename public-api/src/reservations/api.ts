@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import type { CreateReservationPublic } from "wasp/server/api";
 import { sendEmail } from "../lib/mailtrap";
 import {
@@ -19,6 +20,7 @@ import {
 } from "./sendReservationConfirmation";
 import { ActiveReservationStatuses } from "./types";
 import { buildReservationPricing } from "../events/workshopOptions";
+import { followUpDueFrom } from "./followUp";
 
 export const createReservationPublic: CreateReservationPublic = async (
   req,
@@ -106,6 +108,7 @@ export const createReservationPublic: CreateReservationPublic = async (
       optionSelections: pricing.optionSelections,
       expectedAmount: pricing.expectedAmount,
       status: "PENDING",
+      followUpDueAt: followUpDueFrom(dayjs().toDate()),
     },
   });
 

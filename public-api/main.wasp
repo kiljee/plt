@@ -155,6 +155,17 @@ action updateReservationPayment {
   entities: [Reservation, User]
 }
 
+job checkPendingReservationFollowUps {
+  executor: PgBoss,
+  perform: {
+    fn: import { checkPendingReservationFollowUps } from "@src/reservations/followUpJob"
+  },
+  schedule: {
+    cron: "*/15 * * * *"
+  },
+  entities: [Reservation, Event]
+}
+
 query getReservationReport {
   fn: import { getReservationReport } from "@src/reservations/reportQueries",
   entities: [Reservation, Event, User]
@@ -268,5 +279,26 @@ api createReservationsBulkPublic {
   entities: [Reservation, Event, EmailBlacklist],
   auth: false,
   httpRoute: (POST, "/api/reservations/bulk")
+}
+
+api getReservationFollowUpPublic {
+  fn: import { getReservationFollowUpPublic } from "@src/reservations/followUpApi",
+  entities: [Reservation, Event],
+  auth: false,
+  httpRoute: (GET, "/api/reservations/follow-up")
+}
+
+api extendReservationPublic {
+  fn: import { extendReservationPublic } from "@src/reservations/followUpApi",
+  entities: [Reservation, Event],
+  auth: false,
+  httpRoute: (POST, "/api/reservations/extend")
+}
+
+api cancelReservationPublic {
+  fn: import { cancelReservationPublic } from "@src/reservations/followUpApi",
+  entities: [Reservation, Event],
+  auth: false,
+  httpRoute: (POST, "/api/reservations/cancel")
 }
 // #endregion Events

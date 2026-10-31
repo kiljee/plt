@@ -18,3 +18,22 @@ export interface BulkReservationErrorResponse {
   availableSeats?: number;
   requestedSeats?: number;
 }
+
+export interface ReservationFollowUp {
+  code: string;
+  status: string;
+  eventTitle: string;
+  eventDateTime: string;
+  seats: number;
+  locationLabel: string;
+  followUpSent: boolean;
+  extended: boolean;
+  eventPassed: boolean;
+  canExtend: boolean;
+  canCancel: boolean;
+}
+
+export interface ReservationFollowUpError {
+  error?: string;
+  reason?: string;
+}

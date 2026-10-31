@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import type { CreateReservationsBulkPublic } from "wasp/server/api";
 import {
   ReservationStatus,
@@ -15,6 +16,7 @@ import {
   sendAdminReservationNotification,
 } from "./sendReservationConfirmation";
 import { buildReservationPricing } from "../events/workshopOptions";
+import { followUpDueFrom } from "./followUp";
 
 const sendConfirmationWithRetry = async (
   params: Parameters<typeof sendReservationConfirmation>[0],
@@ -180,6 +182,7 @@ export const createReservationsBulkPublic: CreateReservationsBulkPublic =
         pricedItems.push({ item, pricing });
       }
 
+      const followUpDueAt = followUpDueFrom(dayjs().toDate());
       const createdReservations =
         await context.entities.Reservation.createManyAndReturn({
           data: pricedItems.map(({ item, pricing }) => ({
@@ -191,6 +194,7 @@ export const createReservationsBulkPublic: CreateReservationsBulkPublic =
             optionSelections: pricing.optionSelections,
             expectedAmount: pricing.expectedAmount,
             status: ReservationStatus.PENDING,
+            followUpDueAt,
           })),
         });
 

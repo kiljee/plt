@@ -34,6 +34,9 @@ const RESERVATION_SELECT = {
   name: true,
   phone: true,
   amountPaid: true,
+  followUpDueAt: true,
+  followUpSentAt: true,
+  extendedAt: true,
   event: {
     select: {
       id: true,
@@ -115,6 +118,9 @@ export type ReservationWithEvent = {
   optionSelections: string;
   expectedAmount: number | null;
   amountPaid: number | null;
+  followUpDueAt: Date | null;
+  followUpSentAt: Date | null;
+  extendedAt: Date | null;
   createdAt: Date;
   email: string;
   name: string | null;
