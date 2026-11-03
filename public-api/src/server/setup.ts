@@ -1,5 +1,6 @@
 import express from "express"
 import type { ServerSetupFn } from "wasp/server"
+import { ensurePublicBucket } from "../lib/minio"
 
 const DEFAULT_CORS_ORIGIN = "http://localhost:3000"
 
@@ -19,6 +20,10 @@ const getAllowedOrigins = (): string[] => {
 }
 
 export const serverSetup: ServerSetupFn = async ({ app }) => {
+  void ensurePublicBucket().catch((err: unknown) => {
+    console.error('MinIO public bucket setup failed', err)
+  })
+
   const allowedOrigins = getAllowedOrigins()
 
   app.use((req, res, next) => {

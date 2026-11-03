@@ -49,7 +49,7 @@ const renderBody = (data: ReservationFollowUpData) => `
         Poštovani <strong>${escapeHtml(data.customerName || "Korisniče")}</strong>,
       </p>
       <p style="margin: 0 0 20px 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: ${STYLES.text}; line-height: 1.6;">
-        Prošlo je 24 sata od vaše rezervacije, a ona još uvek nije potvrđena. Izaberite da li vam treba još 24 sata ili odustajete.
+        Prošlo je 48 sati od vaše rezervacije, a ona još uvek nije potvrđena. Izaberite da li vam treba još 24 sata ili odustajete.
       </p>
 
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; margin-bottom: 20px; border: 1px solid ${STYLES.border};">

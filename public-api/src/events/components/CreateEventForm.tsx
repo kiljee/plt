@@ -641,7 +641,7 @@ export const CreateEventForm = forwardRef<CreateEventFormRef, CreateEventFormPro
                   <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/*,.heic,.heif"
                       className="w-full max-w-xs text-sm text-zinc-600 file:mr-2 file:rounded file:border-0 file:bg-primary-100 file:px-3 file:py-1.5 file:text-primary-700"
                       disabled={uploadingIndex !== null}
                       onChange={(e) => {

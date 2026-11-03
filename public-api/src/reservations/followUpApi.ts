@@ -13,7 +13,7 @@ import {
 } from "../email/reservation-follow-up";
 import {
   buildFollowUpPayload,
-  followUpDueFrom,
+  extensionDueFrom,
   messageForReason,
   normalizeReservationCode,
   reasonForCancel,
@@ -138,7 +138,7 @@ export const extendReservationPublic: ExtendReservationPublic = async (
     },
     data: {
       extendedAt: now,
-      followUpDueAt: followUpDueFrom(now),
+      followUpDueAt: extensionDueFrom(now),
     },
   });
 

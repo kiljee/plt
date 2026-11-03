@@ -75,7 +75,7 @@ export const screenForReservationDecision = (
   if (!data.followUpSent) {
     return {
       title: "Link još nije aktivan",
-      lead: "Ovaj link počinje da važi kada vam pošaljemo mejl, 24 sata nakon rezervacije, ako ona još uvek nije potvrđena.",
+      lead: "Ovaj link počinje da važi kada vam pošaljemo mejl, 48 sati nakon rezervacije, ako ona još uvek nije potvrđena.",
     };
   }
   if (variant === "extend" && data.extended) {
@@ -93,7 +93,7 @@ export const screenForReservationDecision = (
   if (variant === "extend" && data.canExtend) {
     return {
       title: "Rezervacija još nije potvrđena",
-      lead: "Prošlo je 24 sata od rezervacije. Ako vam treba još vremena, možemo sačekati još 24 sata. Posle toga vas nećemo ponovo pitati.",
+      lead: "Prošlo je 48 sati od rezervacije. Ako vam treba još vremena, možemo sačekati još 24 sata. Posle toga vas nećemo ponovo pitati.",
       actionLabel: "Produži za 24h",
     };
   }

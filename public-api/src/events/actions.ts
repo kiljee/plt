@@ -6,7 +6,7 @@ import {
 import { type Event } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import { type CreateEvent } from "wasp/server/operations";
-import { deleteEventImages, deleteSingleImage, uploadEventImage as uploadToMinio } from "../lib/minio";
+import { deleteEventImages, uploadEventImage as uploadToMinio } from "../lib/minio";
 import { EventStatus } from "./constants";
 import { normalizeWorkshopOptions, type WorkshopOption } from "./workshopOptions";
 
@@ -165,9 +165,7 @@ export const updateEvent: UpdateEventAction = async (
     data,
   });
 
-  if (removedUrls.length > 0) {
-    await deleteEventImages(removedUrls);
-  }
+  await deleteUnusedImageUrls(removedUrls, context);
 
   return updated;
 };
@@ -235,7 +233,7 @@ export const deleteEventImage: DeleteEventImageAction = async (
     data: { imageUrls: JSON.stringify(filtered) },
   });
 
-  await deleteSingleImage(args.imageUrl);
+  await deleteUnusedImageUrls([args.imageUrl], context);
 
   return { imageUrls: filtered };
 };
@@ -272,7 +270,7 @@ export const deleteGalleryImage: DeleteGalleryImageAction = async (
     });
   }
 
-  await deleteSingleImage(url);
+  await deleteUnusedImageUrls([url], context);
 };
 
 export type UploadEventImageArgs = {
@@ -308,6 +306,28 @@ const parseImageUrls = (raw: string): string[] => {
   }
 };
 
+const deleteUnusedImageUrls = async (
+  urls: string[],
+  context: EventActionContext,
+) => {
+  const unique = [...new Set(urls.map((url) => url.trim()).filter(Boolean))];
+  if (!unique.length) return;
+
+  const events = await context.entities.Event.findMany({
+    select: { imageUrls: true },
+  });
+  const used = new Set<string>();
+  for (const event of events) {
+    for (const url of parseImageUrls(event.imageUrls)) {
+      const trimmed = url.trim();
+      if (trimmed) used.add(trimmed);
+    }
+  }
+
+  const unused = unique.filter((url) => !used.has(url));
+  await deleteEventImages(unused);
+};
+
 export type DeleteEventArgs = { id: string };
 
 type DeleteEventAction = AuthenticatedActionDefinition<
@@ -326,8 +346,8 @@ export const deleteEvent: DeleteEventAction = async (args, context) => {
     throw new HttpError(404, "Radionica nije pronađena.");
   }
   const urls = parseImageUrls(event.imageUrls);
-  await deleteEventImages(urls);
   await context.entities.Event.delete({
     where: { id: args.id },
   });
+  await deleteUnusedImageUrls(urls, context);
 };

@@ -13,7 +13,7 @@ REZERVACIJA NIJE POTVRĐENA
 
 Poštovani ${customerName},
 
-Prošlo je 24 sata od vaše rezervacije, a ona još uvek nije potvrđena. Izaberite da li vam treba još 24 sata ili odustajete.
+Prošlo je 48 sati od vaše rezervacije, a ona još uvek nije potvrđena. Izaberite da li vam treba još 24 sata ili odustajete.
 
 Radionica: ${data.eventTitle}
 Termin: ${data.eventDateTime}
